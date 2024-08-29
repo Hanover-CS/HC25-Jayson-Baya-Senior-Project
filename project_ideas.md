@@ -12,7 +12,7 @@
 > **5. Donation Option:** Include a feature where users can choose to donate unsold items to a local charity or student organization.
 
 #### Benefits:
-> **Affordability:** Students can save money by purchasing second-hand items instead of new ones.
-> **Sustainability:** Promotes recycling and reduces waste by giving items a second life.
-> **Community Building:** Fosters a sense of community as students trade and interact.
-> **Convenience:** Provides a dedicated platform for campus-specific needs, reducing the need for broader, less targeted platforms like general online marketplaces.
+> **Affordability:** Students can save money by purchasing second-hand items instead of new ones. \
+> **Sustainability:** Promotes recycling and reduces waste by giving items a second life. \
+> **Community Building:** Fosters a sense of community as students trade and interact. \
+> **Convenience:** Provides a dedicated platform for campus-specific needs, reducing the need for broader, less targeted platforms like general online marketplaces. \
