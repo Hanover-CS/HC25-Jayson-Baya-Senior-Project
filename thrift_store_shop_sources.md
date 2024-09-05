@@ -48,3 +48,8 @@ The Thrift Store GitHub repository hosts a project for a web-based thrift store 
 **Relation to my Goal:**  
 The features in this repository align closely with the objectives of my Panther Thrift Shop app. By studying the implementation of this project, I can gain valuable insights into how to structure my application, particularly in areas such as user authentication, item categorization, and transaction workflows. Also, the repository may provide practical coding examples and best practices that I can adapt to suit the specific needs of my campus-focused platform.
 
+# Requirement of this project
+**WebStorm** for my IDE \
+**React** for my Libraries \
+**Mac TextEdit** for HTML \
+**Visual Studio** code for CSS
