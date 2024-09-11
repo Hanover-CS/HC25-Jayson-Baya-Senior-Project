@@ -1,16 +1,41 @@
-# CS Senior Project Proposal: Panther Thrift Shop
+# **CS Senior Project Proposal: Panther Thrift Shop**
 
-Description:
-This Panther Thrift Shop aims to open space and focus on the benefit of all students who want to sell and buy their used and new products across campus. This is a web application that can be accessed on all browser platforms. This will help all students in selling their items before, during, and after class. I personally think that this will help all student in recycling. 
+### **1. Introduction**
+The **Panther Thrift Shop** web application aims to provide a convenient, campus-specific platform where students can buy and sell used or new items, encouraging recycling and affordable exchanges. The platform focuses on ease of use, allowing students to browse, buy, and sell goods such as clothing, shoes, appliances, room decor, and textbooks directly through the application. By catering exclusively to students, this project enhances accessibility, trust, and community engagement.
 
+### **2. Project Features**
+The Panther Thrift Shop will incorporate several key features aimed at improving the buying and selling experience for users:
 
+1. **Product Categories**:
+    - Items will be organized into specific categories such as:
+        - Men's Clothing (Shirts, Pants, Shoes)
+        - Women's Clothing (Shirts, Pants, Shoes)
+        - Appliances
+        - Room Decoration
+        - Textbooks, and more.
 
+2. **Product Listings and Images**:
+    - Sellers can upload multiple images of their products, offering a detailed view of item conditions and quality.
 
+3. **Seller Review System**:
+    - Buyers can leave feedback and reviews for sellers, promoting trust and accountability in transactions.
 
+4. **Shopping Cart**:
+    - Buyers will have the option to add multiple items to their shopping cart, simplifying the purchasing process.
 
+5. **Real-Time Chat**:
+    - A built-in real-time chat feature will allow buyers and sellers to communicate directly about product details, negotiations, and logistics.
 
+6. **Transaction Status Updates**:
+    - **Seller Mark as Sold**: Once an item has been purchased, the seller can mark the product as "Sold" to avoid future inquiries.
+    - **Buyer Mark as Received**: After completing a transaction and receiving the item, buyers can mark the product as "Received," confirming the completion of the deal.
 
+7. **Flexible Payment Options**:
+    - While the platform does not handle payment processing directly, transactions can be arranged through external methods such as Venmo, cash, or any other preferred payment method. This flexibility enables buyers and sellers to make secure transactions outside of the platform.
 
+8. **Responsive Web Design**:
+    - The application will be accessible through various browser platforms.
+    
 
 
 
