@@ -35,7 +35,26 @@ The Panther Thrift Shop will incorporate several key features aimed at improving
 
 8. **Responsive Web Design**:
     - The application will be accessible through various browser platforms.
-    
+
+### **3. Technologies**
+
+1. **React (JavaScript Library)**:
+    - React is a powerful front-end JavaScript library used to build user interfaces, especially single-page applications. It allows for fast and efficient rendering of dynamic content, making it ideal for building interactive and responsive web applications like **Panther Thrift Shop**. React’s component-based architecture will help in organizing and managing different parts of the application (e.g., product listings, chat functionality, cart system) more effectively, allowing for reusable and maintainable code. 
+
+2. **Next.js (React Framework)**:
+    - Next.js is a powerful React framework that enables server-side rendering and static site generation, which enhances performance and SEO for web applications. By using Next.js for the **Panther Thrift Shop**, the application will benefit from faster page loads and improved scalability. Next.js also simplifies routing and provides a robust development environment, making it easier to build complex features like product listings, real-time chat, and user authentication.
+
+
+3. **JavaScript (Programming Language)**:
+    - JavaScript will be used as the primary programming language for the application. It is essential for creating interactive features such as real-time chat, form validation, dynamic updates (e.g., adding items to the cart without refreshing the page), and other behaviors that enhance user experience. JavaScript also seamlessly integrates with React, enabling smooth operation of all interactive elements of the web app.
+
+
+4. **HTML (Markup Language)**:
+    - HTML (HyperText Markup Language) is the standard language used to structure the content of web pages. For **Panther Thrift Shop**, HTML will be used to define the structure of the web pages, such as product categories, product listings, forms, and user interfaces. It ensures that the content is properly displayed and accessible to users across different devices and browsers.
+
+
+5. **CSS (Cascading Style Sheets)**:
+    - CSS is responsible for the visual styling of the web application. In **Panther Thrift Shop**, CSS will be used to design an attractive and responsive layout, ensuring that the web app looks clean, modern, and functions well on a variety of devices (desktops, tablets, and mobile phones). Features such as product galleries, navigation menus, and chat windows will be visually enhanced through CSS to improve user engagement and experience.
 
 
 
