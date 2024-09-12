@@ -60,8 +60,6 @@ The Panther Thrift Shop will incorporate several key features aimed at improving
    - WebStorm is a powerful IDE designed for JavaScript development, providing a wide range of tools and features that will streamline the development process for Panther Thrift Shop. It offers advanced code editing, refactoring tools, debugging, and seamless integration with Git, React, and Next.js. WebStorm’s intelligent code completion, error detection, and built-in support for web technologies (HTML, CSS, JavaScript) will help ensure efficient, error-free development, improving both the speed and quality of the project.
 
 ## Work on a proposal draft
-> Store in Documents folder, on file proposal.md \
-> Drafts due by Sunday end of week 2 \
 > Follow markdown syntax, especially the parts about links/references, headings/sections. \
 > Should have a clear title of 5-8 words, succintly describing the project. \
 > Should have a section describing the project and its main features \
