@@ -56,7 +56,8 @@ The Panther Thrift Shop will incorporate several key features aimed at improving
 5. **CSS (Cascading Style Sheets)**:
     - CSS is responsible for the visual styling of the web application. In **Panther Thrift Shop**, CSS will be used to design an attractive and responsive layout, ensuring that the web app looks clean, modern, and functions well on a variety of devices (desktops, tablets, and mobile phones). Features such as product galleries, navigation menus, and chat windows will be visually enhanced through CSS to improve user engagement and experience.
 
-
+6. **WebStorm (Editor)**:
+   - WebStorm is a powerful IDE designed for JavaScript development, providing a wide range of tools and features that will streamline the development process for Panther Thrift Shop. It offers advanced code editing, refactoring tools, debugging, and seamless integration with Git, React, and Next.js. WebStorm’s intelligent code completion, error detection, and built-in support for web technologies (HTML, CSS, JavaScript) will help ensure efficient, error-free development, improving both the speed and quality of the project.
 
 ## Work on a proposal draft
 > Store in Documents folder, on file proposal.md \
