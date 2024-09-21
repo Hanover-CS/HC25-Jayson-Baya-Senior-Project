@@ -66,7 +66,7 @@ The Panther Thrift Shop will incorporate several key features aimed at improving
 ### Similar Solutions 
 1. **Hanover College Campus Store**
    - Slingshot is the current Hanover College partner, managing the campus store and providing services such as book acquisition, delivery, and mailroom operations. Slingshot primarily offers brand new Hanover College merchandise and manages the buyback of used books. However, they purchase these books at a low price compared to their high resale value. The Panther Thrift Shop is being developed as a complementary platform to address these limitations by allowing students to buy and sell a wider variety of used items at fair prices, creating a more affordable and inclusive marketplace for the campus community [^1].
-   
+<img src="images/Slingshot_img.png" alt="Home Screen Concept">
 
 2. **Amazon**
    - Amazon serves as a comprehensive e-commerce platform that offers features like categorized product listings, user reviews, shopping cart functionality, and flexible payment options, all designed to enhance the user experience. These features are closely related to those planned for the Panther Thrift Shop, which aims to provide a similar, yet campus-specific, marketplace where students can buy and sell items such as clothing, appliances, and textbooks. By implementing features like detailed product categories, a seller review system, and a responsive design, Panther Thrift Shop will mirror Amazon’s successful model on a smaller scale, fostering a trusted and efficient community-driven exchange platform tailored to student needs [^2].
