@@ -46,8 +46,7 @@ The Panther Thrift Shop will incorporate several key features aimed at improving
     - Next.js is a powerful React framework that enables a hybrid approach of server-side rendering (SSR) and client-side rendering (CSR), similar to Amazon's architecture. This combination is beneficial for Panther Thrift Shop as it requires both SSR for features like product listings and SEO optimization, and CSR for real-time functionalities such as chat and user authentication. Next.js provides faster page loads, improved scalability, and a robust development environment, making it easier to build complex features. Compared to Gatsby, which mainly focuses on static site generation, Next.js offers more versatility for implementing a broader range of features.
 
 
-3. **JavaScript (Programm
-4. ing Language)**:
+3. **JavaScript (Programming Language)**:
     - JavaScript will be used as the primary programming language for the application. It is essential for creating interactive features such as real-time chat, form validation, dynamic updates (e.g., adding items to the cart without refreshing the page), and other behaviors that enhance user experience. JavaScript also seamlessly integrates with React, enabling smooth operation of all interactive elements of the web app. While TypeScript offers additional type safety, JavaScript’s simplicity and flexibility make it a more accessible choice for rapid development in this context.
    
 
@@ -65,38 +64,45 @@ The Panther Thrift Shop will incorporate several key features aimed at improving
 
 ### **Similar Solutions** 
 1. **Hanover College Campus Store**
-   - Slingshot is the current Hanover College partner, managing the campus store and providing services such as book acquisition, delivery, and mailroom operations. Slingshot primarily offers brand new Hanover College merchandise and manages the buyback of used books. However, they purchase these books at a low price compared to their high resale value. The Panther Thrift Shop is being developed as a complementary platform to address these limitations by allowing students to buy and sell a wider variety of used items at fair prices, creating a more affordable and inclusive marketplace for the campus community [^1].
-     <img src="images/Slingshot_img.png" alt="Slingshot Webpage">
+   - Slingshot is the current Hanover College partner, managing the campus store and providing services such as book acquisition, delivery, and mailroom operations. Slingshot primarily offers brand new Hanover College merchandise and manages the buyback of used books. However, they purchase these books at a low price compared to their high resale value. The Panther Thrift Shop is being developed as a complementary platform to address these limitations by allowing students to buy and sell a wider variety of used items at fair prices, creating a more affordable and inclusive marketplace for the campus community [^1]. <br> <br />
+     
+      <img src="images/Slingshot_img.png" alt="Slingshot Webpage">
 
 
 2. **Amazon**
-   - Amazon serves as a comprehensive e-commerce platform that offers features like categorized product listings, user reviews, shopping cart functionality, and flexible payment options, all designed to enhance the user experience. These features are closely related to those planned for the Panther Thrift Shop, which aims to provide a similar, yet campus-specific, marketplace where students can buy and sell items such as clothing, appliances, and textbooks. By implementing features like detailed product categories, a seller review system, and a responsive design, Panther Thrift Shop will mirror Amazon’s successful model on a smaller scale, fostering a trusted and efficient community-driven exchange platform tailored to student needs [^2].
-     <img src="images/Amazon_img.png" alt="Amazon Webpage">
+   - Amazon serves as a comprehensive e-commerce platform that offers features like categorized product listings, user reviews, shopping cart functionality, and flexible payment options, all designed to enhance the user experience. These features are closely related to those planned for the Panther Thrift Shop, which aims to provide a similar, yet campus-specific, marketplace where students can buy and sell items such as clothing, appliances, and textbooks. By implementing features like detailed product categories, a seller review system, and a responsive design, Panther Thrift Shop will mirror Amazon’s successful model on a smaller scale, fostering a trusted and efficient community-driven exchange platform tailored to student needs [^2]. <br> <br />
+     
+      <img src="images/Amazon_img.png" alt="Amazon Webpage">
 
 
 3. **Ebay**
-   - eBay is similar to Panther Thrift Shop in that it facilitates the buying and selling of various items, including clothing, electronics, and textbooks. Both platforms enable users to list products with multiple images, providing detailed views to potential buyers. However, while Panther Thrift Shop is campus-specific and focuses on peer-to-peer exchanges among Hanover College students, eBay operates on a global scale, catering to a much broader audience. This difference impacts the level of personalization and security; Panther Thrift Shop’s restricted user base offers a more trusted environment for transactions. Additionally, eBay handles payment processing through platforms like PayPal and charges fees on sales, whereas Panther Thrift Shop allows users to negotiate payments independently, offering flexibility and avoiding transaction fees [^3].
-     <img src="images/Ebay_img.png" alt="Ebay Webpage">
+   - eBay is similar to Panther Thrift Shop in that it facilitates the buying and selling of various items, including clothing, electronics, and textbooks. Both platforms enable users to list products with multiple images, providing detailed views to potential buyers. However, while Panther Thrift Shop is campus-specific and focuses on peer-to-peer exchanges among Hanover College students, eBay operates on a global scale, catering to a much broader audience. This difference impacts the level of personalization and security; Panther Thrift Shop’s restricted user base offers a more trusted environment for transactions. Additionally, eBay handles payment processing through platforms like PayPal and charges fees on sales, whereas Panther Thrift Shop allows users to negotiate payments independently, offering flexibility and avoiding transaction fees [^3]. <br> <br />
+   
+      <img src="images/Ebay_img.png" alt="Ebay Webpage">
 
 
 4. **Facebook Marketplace**
-   - Facebook Marketplace and Panther Thrift Shop are similar in that they both enable local buying and selling of items like clothing, furniture, and textbooks. Both platforms allow users to communicate directly through messaging about product details and transactions. However, while Facebook Marketplace is available to anyone in a given geographic area, Panther Thrift Shop is exclusive to Hanover College students, fostering a tighter-knit, more secure community. Unlike Facebook Marketplace, which does not have a dedicated review system for sellers, Panther Thrift Shop includes a feedback mechanism to promote trust and accountability. Additionally, Panther Thrift Shop's category organization specifically addresses student needs, such as room decor and textbooks, which may be less emphasized on Facebook Marketplace [^4].
-     <img src="images/FacebookMarketplace_img.png" alt="Facebook Marketplace Categories" height = "450">
+   - Facebook Marketplace and Panther Thrift Shop are similar in that they both enable local buying and selling of items like clothing, furniture, and textbooks. Both platforms allow users to communicate directly through messaging about product details and transactions. However, while Facebook Marketplace is available to anyone in a given geographic area, Panther Thrift Shop is exclusive to Hanover College students, fostering a tighter-knit, more secure community. Unlike Facebook Marketplace, which does not have a dedicated review system for sellers, Panther Thrift Shop includes a feedback mechanism to promote trust and accountability. Additionally, Panther Thrift Shop's category organization specifically addresses student needs, such as room decor and textbooks, which may be less emphasized on Facebook Marketplace [^4]. <br> <br />
+     
+      <img src="images/FacebookMarketplace_img.png" alt="Facebook Marketplace Categories" height = "450">
 
 
 5. **Chegg**
-   - Chegg and Panther Thrift Shop both cater to students, particularly in the realm of textbooks. Chegg offers a structured platform for buying, renting, and selling textbooks, with a focus on academic resources. Panther Thrift Shop similarly allows students to sell textbooks but in a peer-to-peer format, potentially at lower costs and without standardized pricing. Chegg’s model includes features like eTextbooks and online tutoring, which Panther Thrift Shop does not offer, as its primary goal is to serve as a marketplace for a variety of student needs, including clothing and household items, rather than solely academic support. Chegg’s handling of payment and shipping is more integrated, while Panther Thrift Shop provides flexibility by enabling students to arrange transactions independently [^5].
-     <img src="images/Chegg_img.png" alt="Chegg Webpage">
+   - Chegg and Panther Thrift Shop both cater to students, particularly in the realm of textbooks. Chegg offers a structured platform for buying, renting, and selling textbooks, with a focus on academic resources. Panther Thrift Shop similarly allows students to sell textbooks but in a peer-to-peer format, potentially at lower costs and without standardized pricing. Chegg’s model includes features like eTextbooks and online tutoring, which Panther Thrift Shop does not offer, as its primary goal is to serve as a marketplace for a variety of student needs, including clothing and household items, rather than solely academic support. Chegg’s handling of payment and shipping is more integrated, while Panther Thrift Shop provides flexibility by enabling students to arrange transactions independently [^5]. <br> <br />
+   
+      <img src="images/Chegg_img.png" alt="Chegg Webpage">
 
 
 6. **Poshmark**
-   - Poshmark is similar to Panther Thrift Shop in that it allows users to sell clothing and accessories through detailed listings with multiple images. Both platforms enable direct communication between buyers and sellers, promoting transparent transactions. However, Poshmark’s primary focus is on fashion, and it includes features like shipping labels and a standardized payment system, which Panther Thrift Shop does not provide. Panther Thrift Shop, in contrast, supports a broader range of product categories such as appliances and textbooks, catering to the diverse needs of the campus community. This versatility and the absence of mandatory transaction fees make Panther Thrift Shop a more flexible and cost-effective solution for students [^6].
-     <img src="images/Poshmark_img.png" alt="Poshmark Webpage">
+   - Poshmark is similar to Panther Thrift Shop in that it allows users to sell clothing and accessories through detailed listings with multiple images. Both platforms enable direct communication between buyers and sellers, promoting transparent transactions. However, Poshmark’s primary focus is on fashion, and it includes features like shipping labels and a standardized payment system, which Panther Thrift Shop does not provide. Panther Thrift Shop, in contrast, supports a broader range of product categories such as appliances and textbooks, catering to the diverse needs of the campus community. This versatility and the absence of mandatory transaction fees make Panther Thrift Shop a more flexible and cost-effective solution for students [^6]. <br> <br />
+   
+      <img src="images/Poshmark_img.png" alt="Poshmark Webpage">
 
 
 7. **OfferUp**
-   - OfferUp shares similarities with Panther Thrift Shop by focusing on local buying and selling of items, making it easy for users to browse and post listings. Both platforms do not process payments directly, allowing users to coordinate payment and pickup details independently. However, OfferUp’s broader community reach means it serves a more diverse audience beyond just students, whereas Panther Thrift Shop’s exclusive focus on Hanover College fosters a more secure and familiar environment. OfferUp is optimized for mobile use, while Panther Thrift Shop ensures accessibility across both mobile and desktop platforms, catering to a wider range of user preferences. Additionally, Panther Thrift Shop’s review system and community-centric features like real-time chat enhance trust and usability within the student body [^7].
-     <img src="images/OfferUp_img.png" alt="OfferUp Webpage">
+   - OfferUp shares similarities with Panther Thrift Shop by focusing on local buying and selling of items, making it easy for users to browse and post listings. Both platforms do not process payments directly, allowing users to coordinate payment and pickup details independently. However, OfferUp’s broader community reach means it serves a more diverse audience beyond just students, whereas Panther Thrift Shop’s exclusive focus on Hanover College fosters a more secure and familiar environment. OfferUp is optimized for mobile use, while Panther Thrift Shop ensures accessibility across both mobile and desktop platforms, catering to a wider range of user preferences. Additionally, Panther Thrift Shop’s review system and community-centric features like real-time chat enhance trust and usability within the student body [^7]. <br> <br />
+     
+      <img src="images/OfferUp_img.png" alt="OfferUp Webpage">
 
 
 # **Sources**
