@@ -1,6 +1,6 @@
 # **Panther Thrift Shop Web Application**
 
-### **ntroduction**
+### **Introduction**
 The **Panther Thrift Shop** web application aims to provide a convenient, campus-specific platform where students can buy and sell used or new items, encouraging recycling and affordable exchanges. The platform focuses on ease of use, allowing students to browse, buy, and sell goods such as clothing, shoes, appliances, room decor, and textbooks directly through the application. By catering exclusively to students, this project enhances accessibility, trust, and community engagement.
 
 ### **Project Features**
