@@ -99,6 +99,8 @@ The Panther Thrift Shop will incorporate several key features aimed at improving
       <img src="images/OfferUp_img.png" alt="OfferUp Webpage">
 
 
+
+#### Github Page: [proposal.html](https://hanover-cs.github.io/HC25-Jayson-Baya-Senior-Project/proposal.html)
 # **Sources**
 [^1]: Y. Fedyk, "The Best Web Application Development Languages," in Inverita Soft, Inveritasoft, 15 Jun. 2023. [Online]. Available: [Inveritasoft](https://inveritasoft.com/blog/the-best-web-application-development-languages). [Accessed: 21 Sept. 2024].
 
