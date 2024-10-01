@@ -1,0 +1,25 @@
+flowchart TD
+    A[User Registration/Login] --> B{Is User Registered?}
+    B -- Yes --> C[Browse Products]
+    B -- No --> A1[Register Account]
+
+    C --> D[Search or Browse by Category]
+    D --> E[View Product Details]
+    E --> F[Add to Cart]
+    F --> G[View Cart and Checkout]
+
+    G --> H[Order Confirmation]
+    H --> I[Order Processing]
+    I --> J[Order Delivered]
+    J --> K[Order Paid]
+    K --> L[Mark Sold]
+
+    L --> M[Customer's Review]
+
+    subgraph Seller Workflow
+        S1[Seller Register/Login] --> S2[Add Product]
+        S2 --> S3[Manage Listings]
+        S3 --> S4[Handle Orders]
+        S4 --> S5[Ship Product]
+        S5 --> J
+    end

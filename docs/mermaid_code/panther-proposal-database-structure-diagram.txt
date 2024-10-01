@@ -1,0 +1,82 @@
+erDiagram
+    USERS {
+        int user_id PK
+        string username
+        string email
+        string password_hash
+        string shipping_address
+        string payment_method
+        date created_at
+        date updated_at
+    }
+
+    PRODUCTS {
+        int product_id PK
+        string name
+        string description
+        float price
+        int stock_quantity
+        int category_id FK
+        int seller_id FK
+        date created_at
+        date updated_at
+    }
+
+    CATEGORIES {
+        int category_id PK
+        string category_name
+    }
+
+    ORDERS {
+        int order_id PK
+        int user_id FK
+        date order_date
+        float total_amount
+        string status
+    }
+
+    ORDER_ITEMS {
+        int order_item_id PK
+        int order_id FK
+        int product_id FK
+        int quantity
+        float price_per_unit
+    }
+
+    REVIEWS {
+        int review_id PK
+        int product_id FK
+        int user_id FK
+        int rating
+        string review_text
+        date created_at
+    }
+
+    SELLERS {
+        int seller_id PK
+        string store_name
+        string contact_info
+    }
+
+    CARTS {
+        int cart_id PK
+        int user_id FK
+        date created_at
+    }
+
+    CART_ITEMS {
+        int cart_item_id PK
+        int cart_id FK
+        int product_id FK
+        int quantity
+    }
+
+    USERS ||--o{ ORDERS: places
+    USERS ||--o{ REVIEWS: writes
+    USERS ||--o{ CARTS: owns
+    CARTS ||--o{ CART_ITEMS: contains
+    PRODUCTS ||--o{ ORDER_ITEMS: includes
+    PRODUCTS ||--o{ REVIEWS: receives
+    CATEGORIES ||--o{ PRODUCTS: has
+    SELLERS ||--o{ PRODUCTS: offers
+    ORDERS ||--o{ ORDER_ITEMS: contains
