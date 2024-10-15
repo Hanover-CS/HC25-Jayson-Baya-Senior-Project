@@ -116,7 +116,7 @@ In my project, I have designed a comprehensive database structure and workflow m
 
 ### Webpage Workflow Guide
 The workflow guides both users and sellers through a series of steps on the platform. Users begin by either registering or logging in. Once authenticated, they can browse products or search by category, view detailed product information, and add items to their shopping cart. Upon proceeding to checkout, users select a shipping address and payment method before confirming their order. Sellers, on the other hand, can register their business, add and manage product listings, handle incoming orders, and ship products to customers. The workflow efficiently supports the user’s journey from product discovery to order fulfillment, and allows sellers to manage their operations seamlessly within the platform. \
-<img src="images/panther-proposal-workflow-flowchart.png" alt="Webpage Workflow" height = "450">
+<img src="images/panther-proposal-workflow-flowchart.png" alt="Webpage Workflow" height = "800">
 
 #### Github Page: [proposal.html](https://hanover-cs.github.io/HC25-Jayson-Baya-Senior-Project/proposal.html)
 # **Sources**
