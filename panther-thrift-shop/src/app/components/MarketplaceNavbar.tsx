@@ -8,7 +8,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 const MarketplaceNavBar = () => {
     const [userEmail, setUserEmail] = useState("");
     const router = useRouter();
-    const [isDropdownOpen, setDropdownOpen] = useState(false);
 
     // Listen to the authentication state
     useEffect(() => {
@@ -40,30 +39,19 @@ const MarketplaceNavBar = () => {
                         Thrift Shop{' '}
                     </button>
 
-                    {/* User Email and Account Settings */}
-                    <div className="relative">
-                        <span className="mr-4 text-gray-700">{userEmail}</span>
+                    {/* User Email, Account Settings, and Logout */}
+                    <div className="flex items-center space-x-4">
+                        <span className="text-gray-700">{userEmail}</span>
                         <button
-                            onClick={() => setDropdownOpen(!isDropdownOpen)}
-                            className="text-gray-900 focus:outline-none">
-                            Account
+                            onClick={() => router.push('/pages/AccountSettings')}
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                            Account Settings
                         </button>
-
-                        {/* Dropdown menu */}
-                        {isDropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2">
-                                <button
-                                    onClick={() => router.push('/account-settings')}
-                                    className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
-                                    Account Settings
-                                </button>
-                                <button
-                                    onClick={handleLogout}
-                                    className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
-                                    Logout
-                                </button>
-                            </div>
-                        )}
+                        <button
+                            onClick={handleLogout}
+                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+                            Logout
+                        </button>
                     </div>
                 </div>
             </div>
