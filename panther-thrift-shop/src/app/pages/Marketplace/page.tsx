@@ -1,96 +1,106 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebaseConfig';
-import MarketplaceNavBar from '@/app/components/MarketplaceNavbar';
+import {onAuthStateChanged, signOut} from "firebase/auth";
+import { auth } from "@/lib/firebaseConfig";
+import MarketplaceNavBar from "@/app/components/MarketplaceNavbar"; // Import the Navbar
 
 const Marketplace = () => {
-    const [isSidebarOpen, setSidebarOpen] = useState(true); // Sidebar toggle
-    const [loading, setLoading] = useState(true); // Loading state to check if user is authenticated
-    const router = useRouter(); // To programmatically navigate
+    const [userEmail, setUserEmail] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("Browse All"); // Default selection
+    const router = useRouter();
 
-    // Check if the user is authenticated
+    const categories = [
+        { name: "Men's Clothing", subcategories: ["Shirts", "Pants", "Shoes"] },
+        { name: "Women's Clothing", subcategories: ["Shirts", "Pants", "Shoes"] },
+        { name: "Appliances" },
+        { name: "Room Decoration" },
+        { name: "Textbooks" },
+    ];
+
+    // Listen to the authentication state
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                // If no user is authenticated, redirect to the login page
-                router.push('/pages/Login');
+            if (user) {
+                setUserEmail(user.email || "");
             } else {
-                // If the user is logged in, allow access
-                setLoading(false);
+                router.push("/pages/Login");
             }
         });
 
-        // Cleanup the subscription
         return () => unsubscribe();
     }, [router]);
 
-    if (loading) {
-        // Show a loading state while checking for authentication
-        return <div>Loading...</div>;
-    }
+    const handleCategoryClick = (category: string) => {
+        setSelectedCategory(category);
+    };
 
-    const categories = [
-        { name: "Men's Clothing", subcategories: ['Shirts', 'Pants', 'Shoes'] },
-        { name: "Women's Clothing", subcategories: ['Shirts', 'Pants', 'Shoes'] },
-        { name: 'Appliances' },
-        { name: 'Room Decoration' },
-        { name: 'Textbooks' }
-    ];
-
-    const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
+    const handleLogout = async () => {
+        await signOut(auth);
+        router.push("/pages/Login");
+    };
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-100">
-            {/* Include the Navbar with Logout and Account Settings */}
+        <div className="min-h-screen flex flex-col">
+            {/* Include the Navbar at the top */}
             <MarketplaceNavBar />
 
             <div className="flex flex-grow">
                 {/* Sidebar */}
-                <div
-                    className={`${
-                        isSidebarOpen ? 'w-64' : 'w-16'
-                    } bg-white shadow-md transition-all duration-300`}>
+                <div className="w-64 bg-gray-100 p-4 space-y-4">
                     <button
-                        className="p-2 bg-blue-500 text-white w-full text-left"
-                        onClick={toggleSidebar}>
-                        {isSidebarOpen ? 'Close Categories' : 'Open Categories'}
+                        onClick={() => handleCategoryClick("Browse All")}
+                        className="block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded">
+                        Browse All
+                    </button>
+                    <button
+                        onClick={() => handleCategoryClick("Buying")}
+                        className="block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded">
+                        Buying
+                    </button>
+                    <button
+                        onClick={() => handleCategoryClick("Selling")}
+                        className="block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded">
+                        Selling
                     </button>
 
+                    {/* Categories */}
                     <div className="mt-4">
-                        {isSidebarOpen && (
-                            <ul className="space-y-4 p-4">
-                                {categories.map((category, index) => (
-                                    <li key={index} className="text-gray-700 font-bold">
-                                        {category.name}
-                                        {/* Subcategories (if any) */}
-                                        {category.subcategories && (
-                                            <ul className="ml-4 mt-2 space-y-2 text-sm">
-                                                {category.subcategories.map((subcategory, idx) => (
-                                                    <li key={idx} className="text-gray-600">
-                                                        {subcategory}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                        <h3 className="text-lg font-semibold mb-2">Categories</h3>
+                        {categories.map((category, index) => (
+                            <div key={index}>
+                                <button
+                                    onClick={() => handleCategoryClick(category.name)}
+                                    className="block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded">
+                                    {category.name}
+                                </button>
+
+                                {/* Subcategories */}
+                                {category.subcategories &&
+                                    category.subcategories.map((subcategory, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => handleCategoryClick(subcategory)}
+                                            className="ml-4 block text-left w-full text-gray-500 hover:bg-gray-200 p-2 rounded">
+                                            {subcategory}
+                                        </button>
+                                    ))}
+                            </div>
+                        ))}
                     </div>
                 </div>
 
                 {/* Main Content */}
                 <div className="flex-grow p-6">
-                    <h1 className="text-2xl font-bold mb-6">Marketplace</h1>
-                    {/* Placeholder for product listings */}
+                    <h1 className="text-2xl font-bold mb-4">{selectedCategory}</h1>
+                    {/* Display products here based on the selected category */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Example product item */}
+                        {/* Example Product Item (you can replace this with dynamic content) */}
                         <div className="bg-white p-4 shadow rounded">
                             <h2 className="text-lg font-semibold">Product Name</h2>
                             <p className="text-gray-600">$Price</p>
                         </div>
+                        {/* Repeat Product Items */}
                     </div>
                 </div>
             </div>
