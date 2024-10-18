@@ -4,6 +4,8 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/firebaseConfig"; // Import Firebase Auth and Firestore
 import { doc, setDoc } from "firebase/firestore"; // Firestore methods
+import Link from "next/link";
+import NavBar from "@/app/components/Navbar"; // Import NavBar
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
@@ -11,7 +13,6 @@ const SignUp = () => {
     const [message, setMessage] = useState(""); // To store success or error messages
 
     const handleSignUp = async () => {
-        // Email validation for "@hanover.edu"
         const emailRegex = /^[a-zA-Z0-9._%+-]+@hanover\.edu$/;
         if (!emailRegex.test(email)) {
             setMessage("Email must be a valid @hanover.edu address.");
@@ -19,22 +20,19 @@ const SignUp = () => {
         }
 
         try {
-            // Try to create the user with the provided email and password
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Store additional user information in Firestore
             await setDoc(doc(db, "users", user.uid), {
                 email: user.email,
-                role: "customer", // Set a default role for now
+                role: "customer",
                 createdAt: new Date(),
             });
 
             console.log("Registered!");
-            setMessage("You successfully registered!"); // Show success message
+            setMessage("You successfully registered!");
 
         } catch (error: any) {
-            // Check if the error is due to an already registered email
             if (error.code === "auth/email-already-in-use") {
                 setMessage("Email ID already registered.");
             } else {
@@ -44,22 +42,47 @@ const SignUp = () => {
     };
 
     return (
-        <div>
-            <h1>Sign Up</h1>
-            <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-            />
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-            />
-            <button onClick={handleSignUp}>Sign Up</button>
-            {message && <p style={{ color: 'red' }}>{message}</p>}
+        <div className="min-h-screen bg-gray-100 flex flex-col">
+            <NavBar />
+            <div className="flex flex-grow justify-center items-center">
+                <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+                    <h1 className="text-4xl font-bold text-center mb-4">
+                        <span className="text-red-600">Panther</span> Thrift Shop
+                    </h1>
+                    <p className="text-center text-lg mb-6">Sign up to create an account</p>
+
+                    <div>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                            className="w-full p-2 border rounded mb-4"
+                        />
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Password"
+                            className="w-full p-2 border rounded mb-4"
+                        />
+                        <button
+                            onClick={handleSignUp}
+                            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+                        >
+                            Sign Up
+                        </button>
+                        {message && <p className="text-red-600 mt-4 text-center">{message}</p>}
+                    </div>
+
+                    <p className="text-center mt-6">
+                        Already have an account?{" "}
+                        <Link href="/pages/Login" className="text-blue-600 hover:underline">
+                            Log In
+                        </Link>
+                    </p>
+                </div>
+            </div>
         </div>
     );
 };
