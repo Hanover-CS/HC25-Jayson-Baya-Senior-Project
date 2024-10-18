@@ -1,21 +1,31 @@
 "use client"
 import { useRouter } from 'next/navigation';
-import { signOut } from 'firebase/auth'; // Import signOut function from Firebase Auth
-import { auth } from '@/lib/firebaseConfig'; // Import Firebase Auth instance
-import { useState } from 'react';
+import { signOut } from 'firebase/auth';
+import { useState, useEffect } from 'react';
+import { auth } from '@/lib/firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const MarketplaceNavBar = () => {
+    const [userEmail, setUserEmail] = useState("");
     const router = useRouter();
-    const [isDropdownOpen, setDropdownOpen] = useState(false); // Toggle dropdown state
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
 
-    // Handle logout function
+    // Listen to the authentication state
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUserEmail(user.email || ""); // Set the email when user is authenticated
+            } else {
+                router.push('/pages/Login'); // If no user, redirect to login
+            }
+        });
+
+        return () => unsubscribe();
+    }, [router]);
+
     const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            router.push('/'); // Redirect to login page after logout
-        } catch (error) {
-            console.error('Error logging out: ', error);
-        }
+        await signOut(auth);
+        router.push('/pages/Login');
     };
 
     return (
@@ -26,11 +36,13 @@ const MarketplaceNavBar = () => {
                     <button
                         onClick={() => window.location.reload()}
                         className="text-2xl font-bold text-gray-900">
-                        Panther Thrift Shop
+                        <span className="bg-red-600 px-2 text-white">Panther</span>{' '}
+                        Thrift Shop{' '}
                     </button>
 
-                    {/* Account Settings and Logout */}
+                    {/* User Email and Account Settings */}
                     <div className="relative">
+                        <span className="mr-4 text-gray-700">{userEmail}</span>
                         <button
                             onClick={() => setDropdownOpen(!isDropdownOpen)}
                             className="text-gray-900 focus:outline-none">

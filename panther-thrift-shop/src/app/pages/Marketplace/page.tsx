@@ -1,9 +1,35 @@
 "use client";
-import { useState } from 'react';
-import MarketplaceNavBar from '@/app/components/MarketplaceNavbar'; // Import your Navbar
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/firebaseConfig';
+import MarketplaceNavBar from '@/app/components/MarketplaceNavbar';
 
 const Marketplace = () => {
-    const [isSidebarOpen, setSidebarOpen] = useState(true); // Toggle sidebar state
+    const [isSidebarOpen, setSidebarOpen] = useState(true); // Sidebar toggle
+    const [loading, setLoading] = useState(true); // Loading state to check if user is authenticated
+    const router = useRouter(); // To programmatically navigate
+
+    // Check if the user is authenticated
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // If no user is authenticated, redirect to the login page
+                router.push('/pages/Login');
+            } else {
+                // If the user is logged in, allow access
+                setLoading(false);
+            }
+        });
+
+        // Cleanup the subscription
+        return () => unsubscribe();
+    }, [router]);
+
+    if (loading) {
+        // Show a loading state while checking for authentication
+        return <div>Loading...</div>;
+    }
 
     const categories = [
         { name: "Men's Clothing", subcategories: ['Shirts', 'Pants', 'Shoes'] },
@@ -13,13 +39,11 @@ const Marketplace = () => {
         { name: 'Textbooks' }
     ];
 
-    const toggleSidebar = () => {
-        setSidebarOpen(!isSidebarOpen);
-    };
+    const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-100">
-            {/* Include the minimalistic Navbar */}
+            {/* Include the Navbar with Logout and Account Settings */}
             <MarketplaceNavBar />
 
             <div className="flex flex-grow">
@@ -62,12 +86,11 @@ const Marketplace = () => {
                     <h1 className="text-2xl font-bold mb-6">Marketplace</h1>
                     {/* Placeholder for product listings */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Product Item (Example) */}
+                        {/* Example product item */}
                         <div className="bg-white p-4 shadow rounded">
                             <h2 className="text-lg font-semibold">Product Name</h2>
                             <p className="text-gray-600">$Price</p>
                         </div>
-                        {/* More product items can be added here */}
                     </div>
                 </div>
             </div>

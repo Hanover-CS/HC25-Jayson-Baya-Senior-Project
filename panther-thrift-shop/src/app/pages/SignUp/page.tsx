@@ -1,16 +1,18 @@
-"use client"; // Ensure this is a client-side component
+"use client";
 
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "@/lib/firebaseConfig"; // Import Firebase Auth and Firestore
-import { doc, setDoc } from "firebase/firestore"; // Firestore methods
+import { auth, db } from "@/lib/firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
 import Link from "next/link";
-import NavBar from "@/app/components/Navbar"; // Import NavBar
+import { useRouter } from "next/navigation";
+import NavBar from "@/app/components/Navbar";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [message, setMessage] = useState(""); // To store success or error messages
+    const [message, setMessage] = useState("");
+    const router = useRouter();
 
     const handleSignUp = async () => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@hanover\.edu$/;
@@ -29,9 +31,10 @@ const SignUp = () => {
                 createdAt: new Date(),
             });
 
-            console.log("Registered!");
             setMessage("You successfully registered!");
 
+            // Redirect to Marketplace after successful sign up
+            router.push("/marketplace");
         } catch (error: any) {
             if (error.code === "auth/email-already-in-use") {
                 setMessage("Email ID already registered.");
@@ -50,7 +53,6 @@ const SignUp = () => {
                         <span className="text-red-600">Panther</span> Thrift Shop
                     </h1>
                     <p className="text-center text-lg mb-6">Sign up to create an account</p>
-
                     <div>
                         <input
                             type="email"
@@ -74,7 +76,6 @@ const SignUp = () => {
                         </button>
                         {message && <p className="text-red-600 mt-4 text-center">{message}</p>}
                     </div>
-
                     <p className="text-center mt-6">
                         Already have an account?{" "}
                         <Link href="/pages/Login" className="text-blue-600 hover:underline">

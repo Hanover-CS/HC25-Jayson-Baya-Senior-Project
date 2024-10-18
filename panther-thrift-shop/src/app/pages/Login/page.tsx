@@ -1,28 +1,28 @@
-"use client" // Ensure this is a client-side component
+"use client";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebaseConfig"; // Import Firebase Auth
+import { auth } from "@/lib/firebaseConfig";
 import Link from "next/link";
-import NavBar from "@/app/components/Navbar"; // Import NavBar
+import { useRouter } from "next/navigation";
+import NavBar from "@/app/components/Navbar";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState(""); // To store success messages
+    const [success, setSuccess] = useState("");
+    const router = useRouter();
 
     const handleLogin = async () => {
         try {
-            // Attempt to log in the user
             await signInWithEmailAndPassword(auth, email, password);
-            console.log("User logged in!");
-
-            // Update the UI with a success message
             setSuccess("User successfully logged in!");
-            setError(""); // Clear any previous errors if the login is successful
+            setError("");
+            // Redirect to Marketplace after successful login
+            router.push("/pages/Marketplace");
         } catch (error: any) {
-            setError("User is not registered!"); // Display the error message
-            setSuccess(""); // Clear any previous success messages
+            setError("User is not registered!");
+            setSuccess("");
         }
     };
 
@@ -35,7 +35,6 @@ const Login = () => {
                         <span className="text-red-600">Panther</span> Thrift Shop
                     </h1>
                     <p className="text-center text-lg mb-6">Log in to continue</p>
-
                     <div>
                         <input
                             type="email"
@@ -60,7 +59,6 @@ const Login = () => {
                         {error && <p className="text-red-600 mt-4 text-center">{error}</p>}
                         {success && <p className="text-green-600 mt-4 text-center">{success}</p>}
                     </div>
-
                     <p className="text-center mt-6">
                         Don't have an account?{" "}
                         <Link href="/pages/SignUp" className="text-blue-600 hover:underline">
