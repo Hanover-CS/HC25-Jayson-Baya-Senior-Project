@@ -1,13 +1,24 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import {onAuthStateChanged, signOut} from "firebase/auth";
-import { auth } from "@/lib/firebaseConfig";
-import MarketplaceNavBar from "@/app/components/MarketplaceNavbar"; // Import the Navbar
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth, db } from "@/lib/firebaseConfig"; // Import Firestore
+import { collection, query, where, getDocs } from "firebase/firestore";
+import MarketplaceNavBar from "@/app/components/MarketplaceNavbar";
+import MarketplaceSidebar from "@/app/components/MarketplaceSidebar";
+
+interface Product {
+    name: string;
+    category: string;
+    imageURL: string;
+    description: string;
+    price: number;
+}
 
 const Marketplace = () => {
     const [userEmail, setUserEmail] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("Browse All"); // Default selection
+    const [selectedCategory, setSelectedCategory] = useState("Browse All");
+    const [products, setProducts] = useState<Product[]>([]); // Use the Product type here
     const router = useRouter();
 
     const categories = [
@@ -18,7 +29,24 @@ const Marketplace = () => {
         { name: "Textbooks" },
     ];
 
-    // Listen to the authentication state
+    const fetchProducts = async (category: string) => {
+        try {
+            let productQuery;
+            if (category === "Browse All") {
+                productQuery = query(collection(db, "products"));
+            } else {
+                productQuery = query(collection(db, "products"), where("category", "==", category));
+            }
+
+            const querySnapshot = await getDocs(productQuery);
+            const productList: Product[] = querySnapshot.docs.map((doc) => doc.data() as Product);
+
+            setProducts(productList);
+        } catch (error) {
+            console.error("Error fetching products: ", error);
+        }
+    };
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -31,76 +59,38 @@ const Marketplace = () => {
         return () => unsubscribe();
     }, [router]);
 
+    useEffect(() => {
+        fetchProducts(selectedCategory);
+    }, [selectedCategory]);
+
     const handleCategoryClick = (category: string) => {
         setSelectedCategory(category);
     };
 
-    const handleLogout = async () => {
-        await signOut(auth);
-        router.push("/pages/Login");
-    };
-
     return (
         <div className="min-h-screen flex flex-col">
-            {/* Include the Navbar at the top */}
             <MarketplaceNavBar />
 
             <div className="flex flex-grow">
                 {/* Sidebar */}
-                <div className="w-64 bg-gray-100 p-4 space-y-4">
-                    <button
-                        onClick={() => handleCategoryClick("Browse All")}
-                        className="block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded">
-                        Browse All
-                    </button>
-                    <button
-                        onClick={() => handleCategoryClick("Buying")}
-                        className="block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded">
-                        Buying
-                    </button>
-                    <button
-                        onClick={() => handleCategoryClick("Selling")}
-                        className="block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded">
-                        Selling
-                    </button>
-
-                    {/* Categories */}
-                    <div className="mt-4">
-                        <h3 className="text-lg font-semibold mb-2">Categories</h3>
-                        {categories.map((category, index) => (
-                            <div key={index}>
-                                <button
-                                    onClick={() => handleCategoryClick(category.name)}
-                                    className="block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded">
-                                    {category.name}
-                                </button>
-
-                                {/* Subcategories */}
-                                {category.subcategories &&
-                                    category.subcategories.map((subcategory, idx) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => handleCategoryClick(subcategory)}
-                                            className="ml-4 block text-left w-full text-gray-500 hover:bg-gray-200 p-2 rounded">
-                                            {subcategory}
-                                        </button>
-                                    ))}
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <MarketplaceSidebar selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
 
                 {/* Main Content */}
                 <div className="flex-grow p-6">
                     <h1 className="text-2xl font-bold mb-4">{selectedCategory}</h1>
-                    {/* Display products here based on the selected category */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Example Product Item (you can replace this with dynamic content) */}
-                        <div className="bg-white p-4 shadow rounded">
-                            <h2 className="text-lg font-semibold">Product Name</h2>
-                            <p className="text-gray-600">$Price</p>
-                        </div>
-                        {/* Repeat Product Items */}
+                        {products.length > 0 ? (
+                            products.map((product, index) => (
+                                <div key={index} className="bg-white p-4 shadow rounded">
+                                    <img src={product.imageURL} alt={product.name} className="w-full h-48 object-cover mb-4" />
+                                    <h2 className="text-lg font-semibold">{product.name}</h2>
+                                    <p className="text-gray-600">${product.price}</p>
+                                    <p className="text-gray-500">{product.description}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No products found for this category.</p>
+                        )}
                     </div>
                 </div>
             </div>
