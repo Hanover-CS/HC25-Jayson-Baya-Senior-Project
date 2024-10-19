@@ -41,7 +41,9 @@ const MarketplaceNavBar = () => {
 
                     {/* User Email, Account Settings, and Logout */}
                     <div className="flex items-center space-x-4">
-                        <span className="text-gray-700">{userEmail}</span>
+                        <span> Login in as: {" "}
+                            <span className="text-gray-700">{userEmail}</span>
+                        </span>
                         <button
                             onClick={() => router.push('/pages/AccountSettings')}
                             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
