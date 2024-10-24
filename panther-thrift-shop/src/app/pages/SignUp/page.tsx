@@ -34,7 +34,7 @@ const SignUp = () => {
             setMessage("You successfully registered!");
 
             // Redirect to Marketplace after successful sign up
-            router.push("/marketplace");
+            router.push("/pages/BrowsePage");
         } catch (error: any) {
             if (error.code === "auth/email-already-in-use") {
                 setMessage("Email ID already registered.");

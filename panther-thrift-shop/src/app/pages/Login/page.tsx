@@ -19,7 +19,7 @@ const Login = () => {
             setSuccess("User successfully logged in!");
             setError("");
             // Redirect to Marketplace after successful login
-            router.push("/pages/Marketplace");
+            router.push("/pages/BrowsePage");
         } catch (error: any) {
             setError("User is not registered!");
             setSuccess("");
