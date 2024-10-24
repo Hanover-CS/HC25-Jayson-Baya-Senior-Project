@@ -1,35 +1,40 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from '@/lib/firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
-import MarketplaceNavBar from '@/app/components/MarketplaceNavbar';
-import MarketplaceSidebar from '@/app/components/MarketplaceSidebar';
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "@/lib/firebaseConfig";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import MarketplaceNavBar from "@/app/components/MarketplaceNavbar";
+import MarketplaceSidebar from "@/app/components/MarketplaceSidebar";
+import Modal from "@/app/components/Modal"; // Modal for product details
 
+// Define the structure of a Product document
 interface Product {
+    id: string;
     productName: string;
     price: number;
     category: string;
     imageURL: string;
     description: string;
     seller: string;
+    sold?: boolean;
 }
 
 const BrowsePage = () => {
     const [userEmail, setUserEmail] = useState("");
     const [products, setProducts] = useState<Product[]>([]);
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // For the selected product
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("Browse All");
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // To show the product details
+    const [showProductModal, setShowProductModal] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUserEmail(user.email || "");
-                fetchAllProducts();
+                fetchAvailableProducts(); // Fetch available products (excluding sold)
             } else {
                 router.push("/pages/Login");
             }
@@ -38,12 +43,13 @@ const BrowsePage = () => {
         return () => unsubscribe();
     }, [router]);
 
-    const fetchAllProducts = async () => {
+    // Fetch products that are not sold
+    const fetchAvailableProducts = async () => {
         try {
             setLoading(true);
-            const productsQuery = collection(db, "products");
+            const productsQuery = query(collection(db, "products"), where("sold", "==", false));
             const querySnapshot = await getDocs(productsQuery);
-            const productList: Product[] = querySnapshot.docs.map((doc) => doc.data() as Product);
+            const productList: Product[] = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Product));
             setProducts(productList);
             setLoading(false);
         } catch (error) {
@@ -52,14 +58,10 @@ const BrowsePage = () => {
         }
     };
 
-    // Open the product detail modal
-    const openProductModal = (product: Product) => {
+    // Handle product click
+    const handleProductClick = (product: Product) => {
         setSelectedProduct(product);
-    };
-
-    // Close the modal
-    const closeProductModal = () => {
-        setSelectedProduct(null);
+        setShowProductModal(true); // Show product details in a modal
     };
 
     return (
@@ -67,8 +69,10 @@ const BrowsePage = () => {
             <MarketplaceNavBar />
 
             <div className="flex flex-grow">
+                {/* Sidebar */}
                 <MarketplaceSidebar selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
 
+                {/* Main Content */}
                 <div className="flex-grow p-6">
                     <h1 className="text-2xl font-bold mb-4">Browse All Products</h1>
 
@@ -82,13 +86,13 @@ const BrowsePage = () => {
                                 products.map((product, index) => (
                                     <div
                                         key={index}
-                                        onClick={() => openProductModal(product)} // Make product clickable
                                         className="bg-white p-4 shadow rounded cursor-pointer"
+                                        onClick={() => handleProductClick(product)} // Make product clickable
                                     >
                                         <img
                                             src={product.imageURL}
                                             alt={product.productName}
-                                            className="w-full h-48 object-cover mb-4"
+                                            className="w-full h-48 object-contain mb-4"
                                         />
                                         <h2 className="text-lg font-semibold">{product.productName}</h2>
                                         <p className="text-gray-600">${product.price}</p>
@@ -100,25 +104,26 @@ const BrowsePage = () => {
                             )}
                         </div>
                     )}
-
-                    {/* Product detail modal */}
-                    {selectedProduct && (
-                        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                            <div className="bg-white p-6 rounded shadow-md w-full max-w-lg">
-                                <h2 className="text-2xl font-bold mb-4">{selectedProduct.productName}</h2>
-                                <img src={selectedProduct.imageURL} alt={selectedProduct.productName} className="w-full h-64 object-cover mb-4" />
-                                <p className="text-gray-600">Price: ${selectedProduct.price}</p>
-                                <p className="text-gray-500">Category: {selectedProduct.category}</p>
-                                <p className="text-gray-500 mb-4">{selectedProduct.description}</p>
-                                <p className="text-gray-500">Seller: {selectedProduct.seller}</p>
-                                <button onClick={closeProductModal} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
+
+            {/* Product Details Modal */}
+            {showProductModal && selectedProduct && (
+                <Modal onClose={() => setShowProductModal(false)}>
+                    <div className="p-6">
+                        <h2 className="text-xl font-bold mb-4">{selectedProduct.productName}</h2>
+                        <img
+                            src={selectedProduct.imageURL}
+                            alt={selectedProduct.productName}
+                            className="w-full h-48 object-contain mb-4"
+                        />
+                        <p className="text-gray-600 mb-2">Price: ${selectedProduct.price}</p>
+                        <p className="text-gray-600 mb-2">Category: {selectedProduct.category}</p>
+                        <p className="text-gray-600 mb-4">Description: {selectedProduct.description}</p>
+                        <p className="text-gray-600 font-bold">Seller: {selectedProduct.seller}</p>
+                    </div>
+                </Modal>
+            )}
         </div>
     );
 };

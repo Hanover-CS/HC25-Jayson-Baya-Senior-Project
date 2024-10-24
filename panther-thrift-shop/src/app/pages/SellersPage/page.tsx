@@ -22,9 +22,13 @@ interface Product {
 
 const SellerPage = () => {
     const [userEmail, setUserEmail] = useState("");
+    const [name, setName] = useState("");
+    const [category, setCategory] = useState("");
+    const [price, setPrice] = useState(0);
+    const [description, setDescription] = useState("");
+    const [image, setImage] = useState<File | null>(null);
     const [products, setProducts] = useState<Product[]>([]);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // For editing
-    const [newImage, setNewImage] = useState<File | null>(null); // For new image uploads
     const [showEditModal, setShowEditModal] = useState(false); // State for controlling the pop-up
     const [message, setMessage] = useState("");
     const [showPopup, setShowPopup] = useState(false);
@@ -57,6 +61,57 @@ const SellerPage = () => {
         }
     };
 
+    // Handle form submission for creating a new listing
+    const handleCreateListing = async () => {
+        if (!name || !category || !image || !price || !description) {
+            setMessage("All fields are required!");
+            setShowPopup(true);
+            return;
+        }
+
+        // Upload image to Firebase Storage
+        const storageRef = ref(storage, `products/${image.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, image);
+
+        uploadTask.on(
+            "state_changed",
+            () => {},
+            (error) => {
+                setMessage("Error uploading image: " + error.message);
+                setShowPopup(true);
+            },
+            async () => {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+
+                try {
+                    await addDoc(collection(db, "products"), {
+                        productName: name,
+                        category,
+                        price,
+                        description,
+                        imageURL: downloadURL,
+                        seller: userEmail,
+                        createdAt: new Date(),
+                    });
+
+                    setMessage("Product listed successfully!");
+                    setShowPopup(true);
+
+                    setName("");
+                    setCategory("");
+                    setPrice(0);
+                    setDescription("");
+                    setImage(null);
+
+                    fetchSellerProducts(userEmail);
+                } catch (error) {
+                    setMessage("Error adding product: " + (error as Error).message);
+                    setShowPopup(true);
+                }
+            }
+        );
+    };
+
     // Handle product click for editing
     const handleEditProduct = (product: Product) => {
         setSelectedProduct(product); // Set the selected product for editing
@@ -68,34 +123,14 @@ const SellerPage = () => {
         if (selectedProduct) {
             try {
                 const productRef = doc(db, "products", selectedProduct.id);
-                const updates: Partial<Product> = {
+                await updateDoc(productRef, {
                     productName: selectedProduct.productName,
                     category: selectedProduct.category,
                     price: selectedProduct.price,
                     description: selectedProduct.description,
                     sold: selectedProduct.sold,
-                };
+                });
 
-                // Handle image upload if a new image is selected
-                if (newImage) {
-                    const storageRef = ref(storage, `products/${newImage.name}`);
-                    const uploadTask = uploadBytesResumable(storageRef, newImage);
-
-                    uploadTask.on(
-                        "state_changed",
-                        () => {},
-                        (error) => {
-                            setMessage("Error uploading new image: " + error.message);
-                            setShowPopup(true);
-                        },
-                        async () => {
-                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                            updates.imageURL = downloadURL; // Add new image URL to the updates
-                        }
-                    );
-                }
-
-                await updateDoc(productRef, updates);
                 setMessage("Product updated successfully!");
                 setShowPopup(true);
                 setSelectedProduct(null); // Reset after update
@@ -117,6 +152,75 @@ const SellerPage = () => {
 
                 <div className="flex-grow p-6">
                     <h1 className="text-2xl font-bold mb-6">My Listings</h1>
+
+                    {/* Create New Listing */}
+                    <div className="bg-white p-6 rounded shadow-md max-w-lg mx-auto mb-6">
+                        <h2 className="text-xl font-bold mb-4">Create New Listing</h2>
+                        <div className="mb-4">
+                            <label className="block mb-2 text-gray-700">Product Name</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full p-2 border rounded"
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block mb-2 text-gray-700">Category</label>
+                            <select
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                className="w-full p-2 border rounded"
+                            >
+                                <option value="">Select Category</option>
+                                {categories.map((category, idx) => (
+                                    <option key={idx} value={category}>
+                                        {category}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block mb-2 text-gray-700">Price</label>
+                            <input
+                                type="number"
+                                value={price}
+                                onChange={(e) => setPrice(Number(e.target.value))}
+                                className="w-full p-2 border rounded"
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block mb-2 text-gray-700">Description</label>
+                            <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                className="w-full p-2 border rounded"
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block mb-2 text-gray-700">Product Image</label>
+                            <input
+                                type="file"
+                                onChange={(e) => {
+                                    if (e.target.files && e.target.files.length > 0) {
+                                        setImage(e.target.files[0]);
+                                    }
+                                }}
+                                className="w-full"
+                            />
+                        </div>
+
+                        <button
+                            onClick={handleCreateListing}
+                            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
+                        >
+                            Create Listing
+                        </button>
+                    </div>
 
                     {/* Existing Listings */}
                     <div>
@@ -140,7 +244,7 @@ const SellerPage = () => {
                                         {product.sold ? (
                                             <p className="text-red-500 font-bold">Sold</p>
                                         ) : (
-                                            <p className="text-green-500 font-bold">Mark As Sold</p>
+                                            <p className="text-green-500 font-bold">Still Selling</p>
                                         )}
                                     </div>
                                 ))
@@ -150,133 +254,138 @@ const SellerPage = () => {
                         </div>
                     </div>
 
-                    {/* Edit Product Modal */}
-                    {selectedProduct && showEditModal && (
-                        <Modal onClose={() => setShowEditModal(false)}>
-                            <div className="p-6">
-                                <h2 className="text-xl font-bold mb-4">Edit Product</h2>
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Product Name</label>
-                                    <input
-                                        type="text"
-                                        value={selectedProduct.productName}
-                                        onChange={(e) =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                productName: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Category</label>
-                                    <select
-                                        value={selectedProduct.category}
-                                        onChange={(e) =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                category: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
-                                    >
-                                        <option value="">Select Category</option>
-                                        {categories.map((category, idx) => (
-                                            <option key={idx} value={category}>
-                                                {category}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Price</label>
-                                    <input
-                                        type="number"
-                                        value={selectedProduct.price}
-                                        onChange={(e) =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                price: Number(e.target.value),
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Description</label>
-                                    <textarea
-                                        value={selectedProduct.description}
-                                        onChange={(e) =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                description: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Change Product Image</label>
-                                    <input
-                                        type="file"
-                                        onChange={(e) => {
-                                            if (e.target.files && e.target.files.length > 0) {
-                                                setNewImage(e.target.files[0]);
-                                            }
-                                        }}
-                                        className="w-full"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Sold Status</label>
-                                    <button
-                                        onClick={() =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                sold: !prev!.sold,
-                                            }))
-                                        }
-                                        className={`${selectedProduct.sold ? "bg-green-500" : "bg-red-500"
-                                        } text-white py-2 px-4 rounded hover:opacity-90 transition`}
-                                    >
-                                        {selectedProduct.sold ? "Mark as Sold" : "Mark as Sold"}
-                                    </button>
-                                </div>
-
-                                <button
-                                    onClick={handleUpdateProduct}
-                                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
-                                >
-                                    Update Product
-                                </button>
-                            </div>
-                        </Modal>
-                    )}
-
                     {/* Popup for success or error messages */}
                     {showPopup && (
                         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-                            <div className="bg-white p-6 rounded shadow-md text-center">
-                                <p>{message}</p>
-                                <button
-                                    onClick={() => setShowPopup(false)}
-                                    className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
+                        <div className="bg-white p-6 rounded shadow-md text-center">
+                        <p>{message}</p>
+                <button
+                    onClick={() => setShowPopup(false)}
+                    className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                    Close
+                </button>
             </div>
         </div>
-    );
+    )}
+
+    {/* Edit Product Modal */}
+    {selectedProduct && showEditModal && (
+        <Modal onClose={() => setShowEditModal(false)}>
+            <div className="p-6">
+                <h2 className="text-xl font-bold mb-4">Edit Product</h2>
+
+                <div className="mb-4">
+                    <label className="block mb-2 text-gray-700">Product Name</label>
+                    <input
+                        type="text"
+                        value={selectedProduct.productName}
+                        onChange={(e) =>
+                            setSelectedProduct((prev) => ({
+                                ...prev!,
+                                productName: e.target.value,
+                            }))
+                        }
+                        className="w-full p-2 border rounded"
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block mb-2 text-gray-700">Category</label>
+                    <select
+                        value={selectedProduct.category}
+                        onChange={(e) =>
+                            setSelectedProduct((prev) => ({
+                                ...prev!,
+                                category: e.target.value,
+                            }))
+                        }
+                        className="w-full p-2 border rounded"
+                    >
+                        <option value="">Select Category</option>
+                        {categories.map((category, idx) => (
+                            <option key={idx} value={category}>
+                                {category}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="mb-4">
+                    <label className="block mb-2 text-gray-700">Price</label>
+                    <input
+                        type="number"
+                        value={selectedProduct.price}
+                        onChange={(e) =>
+                            setSelectedProduct((prev) => ({
+                                ...prev!,
+                                price: Number(e.target.value),
+                            }))
+                        }
+                        className="w-full p-2 border rounded"
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block mb-2 text-gray-700">Description</label>
+                    <textarea
+                        value={selectedProduct.description}
+                        onChange={(e) =>
+                            setSelectedProduct((prev) => ({
+                                ...prev!,
+                                description: e.target.value,
+                            }))
+                        }
+                        className="w-full p-2 border rounded"
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block mb-2 text-gray-700">Product Images</label>
+                    <input
+                        type="file"
+                        multiple
+                        onChange={(e) => {
+                            if (e.target.files) {
+                                const files = Array.from(e.target.files);
+                                // Logic to handle uploading multiple files
+                                // Set the selected files here or manage them accordingly
+                            }
+                        }}
+                        className="w-full"
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block mb-2 text-gray-700">Status</label>
+                    <select
+                        value={selectedProduct.sold ? "Sold" : "Still Selling"}
+                        onChange={(e) =>
+                            setSelectedProduct((prev) => ({
+                                ...prev!,
+                                sold: e.target.value === "Sold",
+                            }))
+                        }
+                        className="w-full p-2 border rounded"
+                    >
+                        <option value="Still Selling">Still Selling</option>
+                        <option value="Sold">Sold</option>
+                    </select>
+                </div>
+
+                <button
+                    onClick={handleUpdateProduct}
+                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+                >
+                    Update Product
+                </button>
+            </div>
+        </Modal>
+    )}
+</div>
+</div>
+</div>
+);
 };
 
 export default SellerPage;
