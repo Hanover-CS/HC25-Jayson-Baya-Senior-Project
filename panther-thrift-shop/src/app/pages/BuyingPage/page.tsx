@@ -117,7 +117,7 @@ const BuyingPage = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {savedItems.map((item, index) => (
                                         <div key={index} className="bg-white p-4 shadow rounded">
-                                            <img src={item.imageURL} alt={item.productName} className="w-full h-48 object-cover mb-4" />
+                                            <img src={item.imageURL} alt={item.productName} className="w-full h-48 object-contain mb-4" />
                                             <h2 className="text-lg font-semibold">{item.productName}</h2>
                                             <p className="text-gray-600">${item.price}</p>
                                             <p className="text-gray-500">{item.description}</p>
