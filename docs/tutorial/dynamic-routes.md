@@ -21,11 +21,11 @@ export default function Page() {
   return <p>Post: {router.query.slug}</p>;
 }
 ```
-| Route                    | Example URL      | Params                |
-|--------------------------|------------------|-----------------------|
-| `pages/blog/[slug].tsx`  | `/blog/a`        | `{ slug: 'a' }`       |
-| `pages/blog/[slug].tsx`  | `/blog/b`        | `{ slug: 'b' }`       |
-| `pages/blog/[slug].tsx`  | `/blog/c`        | `{ slug: 'c' }`       |
+| Route                    | Example URL | Params         |
+|--------------------------|-----------|----------------|
+| `pages/blog/[slug].tsx`  | `/blog/a` | `{ slug: 'a' }` |
+| `pages/blog/[slug].tsx`  | `/blog/b` | `{ slug: 'b' }` |
+| `pages/blog/[slug].tsx`  | `/blog/c` | `{ slug: 'c' }` |
 
 ----
 
