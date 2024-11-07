@@ -3,35 +3,29 @@ name: Sync with Hanover-CS Repo
 on:
   push:
     branches:
-      - main
+      - main # Trigger the action when there's a new commit on the main branch of the professor's repo
+  workflow_dispatch: # Allows manual triggering if needed
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source repository
-        uses: actions/checkout@v3
+      - name: Checkout Forked Repository
+        uses: actions/checkout@v2
+        with:
+          repository: bayaj0110/HC25-Jayson-Baya-Senior-Project
+          token: ${{ secrets.HANOVER_CS_TOKEN }}
 
-      - name: Configure Git
-        run: |
-          git config --global user.email "yesjaysonb@gmail.com"
-          git config --global user.name "bayaj0110"
+      - name: Hanover-CS/HC25-Jayson-Baya-Senior-Project repository
+        run: git remote add upstream https://github.com/Hanover-CS/HC25-Jayson-Baya-Senior-Project
 
-      - name: Clone and sync with destination repository
-        run: |
-          # Clone the forked repository (destination) where you want to sync
-          git clone https://${{ secrets.HANOVER-CS-TOKEN }}@github.com/bayaj0110/HC25-Jayson-Baya-Senior-Project.git
-          cd HC25-Jayson-Baya-Senior-Project
+      - name: Fetch Upstream Changes
+        run: git fetch upstream
 
-          # Add the original repository (source) as a remote and fetch updates
-          git remote add upstream https://github.com/Hanover-CS/HC25-Jayson-Baya-Senior-Project.git
-          git fetch upstream main
+      - name: Merge Upstream Changes
+        run: git merge upstream/main --allow-unrelated-histories
 
-          # Merge changes from the source repo's main branch
-          git merge upstream/main
-
-          # Push the changes to the fork's main branch
-          git push origin main
+      - name: Push Changes to Forked Repository
+        run: git push origin main
         env:
-          HANOVER-CS-TOKEN: ${{ secrets.HANOVER-CS-TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.HANOVER_CS_TOKEN }}
