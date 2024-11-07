@@ -25,7 +25,7 @@ jobs:
           cd HC25-Jayson-Baya-Senior-Project
 
           # Add the original repository (source) as a remote and fetch updates
-          git remote add upstream https://${{ secrets.HANOVER-CS-TOKEN }}@github.com/Hanover-CS/HC25-Jayson-Baya-Senior-Project.git
+          git remote add upstream https://github.com/Hanover-CS/HC25-Jayson-Baya-Senior-Project.git
           git fetch upstream main
 
           # Merge changes from the source repo's main branch
