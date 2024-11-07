@@ -8,16 +8,30 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          repository: Hanover-CS/HC25-Jayson-Baya-Senior-Project
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: source_repo
 
-      - name: Push to Forked Repository
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v2
+
+      - name: Configure Git
         run: |
-          cd source_repo
-          git remote set-url origin https://github.com/bayaj0110/HC25-Jayson-Baya-Senior-Project.git
+          git config --global user.email "yesjaysonb@gmail.com"
+          git config --global user.name "bayaj0110"
+
+      - name: Clone and sync with destination repository
+        run: |
+          # Clone the forked repository (destination) where you want to sync
+          git clone https://${{ secrets.HANOVER-CS-TOKEN }}@github.com/bayaj0110/HC25-Jayson-Baya-Senior-Project.git
+          cd HC25-Jayson-Baya-Senior-Project
+
+          # Add the original repository (source) as a remote and fetch updates
+          git remote add upstream https://${{ secrets.HANOVER-CS-TOKEN }}@github.com/Hanover-CS/HC25-Jayson-Baya-Senior-Project.git
+          git fetch upstream main
+
+          # Merge changes from the source repo's main branch
+          git merge upstream/main
+
+          # Push the changes to the fork's main branch
           git push origin main
+        env:
+          HANOVER-CS-TOKEN: ${{ secrets.HANOVER-CS-TOKEN }} 
