@@ -41,7 +41,7 @@ jobs:
       - name: Copy Over the App
         run: |
           mkdir -p outputdir
-          mv panther-thrift-shop/dist outputdir/app
+          mv panther-thrift-shop/build outputdir/app
 
 
       - name: Setup Pages
