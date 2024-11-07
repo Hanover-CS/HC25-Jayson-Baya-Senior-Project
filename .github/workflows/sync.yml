@@ -1,9 +1,9 @@
 name: Sync with Hanover-CS Repo
 
 on:
-  workflow_dispatch:
-  repository_dispatch:
-    types: sync
+  push:
+    branches:
+      - main
 
 jobs:
   sync:
