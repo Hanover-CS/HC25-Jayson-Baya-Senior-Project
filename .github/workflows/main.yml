@@ -1,0 +1,11 @@
+name: PTS Web Application Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
