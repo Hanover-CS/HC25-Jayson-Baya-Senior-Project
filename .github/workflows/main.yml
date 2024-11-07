@@ -30,10 +30,19 @@ jobs:
         run: npm run build
         working-directory: panther-thrift-shop
 
-      - name: Copy
+      - name: Build project
+        run: npm run build
+        working-directory: panther-thrift-shop
+
+      - name: Verify Build Output
+        run: ls panther-thrift-shop/dist
+        working-directory: panther-thrift-shop
+
+      - name: Copy Over the App
         run: |
           mkdir -p outputdir
-          mv dist outputdir/app
+          mv panther-thrift-shop/dist outputdir/app
+
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
