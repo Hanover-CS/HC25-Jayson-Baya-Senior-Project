@@ -9,8 +9,8 @@ allowing for versatile and scalable applications.
 
 In this guide, you will explore the following key aspects of Next.js routing:
 
-1. Introduction
-2. pre-requisite
+1. **[Introduction](introduction.md)**:
+2. **[Pre-requisites](pre-requisite.md)**:
 3. **[Pages and Layouts](pages-and-layouts.md)**: Learn how to create your first pages and shared layouts.
 4. **[Dynamic Routes](dynamic-routes.md)**: Understand how to handle routes with dynamic parameters.
 5. **[Linking and Navigating](linking-and-navigating.md)**: Discover how to navigate between pages using the `Link` component and `useRouter` hook.

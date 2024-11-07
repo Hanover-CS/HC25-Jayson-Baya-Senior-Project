@@ -12,4 +12,4 @@ Before diving into Next.js routing, ensure you have the following:
 - Node.js installed on your system
 - Basic setup of a Next.js project
 
-### [Next: Pages and Layouts](pages-and-layouts.md)
+[<< index](index.md) | [Next: Pages and Layouts](pages-and-layouts.md)

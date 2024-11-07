@@ -153,5 +153,4 @@ export default function Layout({ children }: LayoutProps) {
 }
 ```
 ---
-Previous: **[Pre-requisite](pre-requisite.md)** <br>
-Next: **[Dynamic Routes](dynamic-routes.md)**
+[<< Pre-requisite](pre-requisite.md) | [Dynamic Routes >>](dynamic-routes.md)

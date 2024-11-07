@@ -49,5 +49,4 @@ For more details, consider exploring these topics:
 **[Linking and Navigating](linking-and-navigating.md):** Learn about using the Link component and useRouter hook to navigate in Next.js. <br>
 **[useRouter:](useRouter.md)** Access the Next.js Router instance within a page using the useRouter hook.
 
-Previous: **[Pages and Layouts](pages-and-layouts.md)** <br>
-Next: **[Linking and Navigating](linking-and-navigating.md)**
+[<< Pages and Layouts](pages-and-layouts.md) | [Linking and Navigating >>](linking-and-navigating.md)
