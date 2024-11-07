@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: bayaj0110/HC25-Jayson-Baya-Senior-Project
-          token: ${{ secrets.HANOVER_CS_TOKEN }}
+          token: ${{ secrets.HANOVER-CS-TOKEN }}
 
       - name: Hanover-CS/HC25-Jayson-Baya-Senior-Project repository
         run: git remote add upstream https://github.com/Hanover-CS/HC25-Jayson-Baya-Senior-Project
@@ -28,4 +28,4 @@ jobs:
       - name: Push Changes to Forked Repository
         run: git push origin main
         env:
-          GITHUB_TOKEN: ${{ secrets.HANOVER_CS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.HANOVER-CS-TOKEN }}
