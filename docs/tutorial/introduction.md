@@ -21,4 +21,4 @@ This guide covers each of these elements in detail, providing a comprehensive un
 and enhance your Next.js application. Whether you’re building a static website, a complex app with dynamic data, 
 or a globally accessible platform, Next.js routing features make it an efficient and powerful choice.
 
-[<< index](index.md) | [Pre-requisites>>](pre-requisite.md)
+[<< index](index.md) | [Pre-requisites >>](pre-requisite.md)

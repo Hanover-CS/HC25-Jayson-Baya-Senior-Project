@@ -47,4 +47,4 @@ Keep experimenting and expanding your skills—there’s always more to learn!
 
 Happy coding!
 
-[<< Linking and Navigating](linking-and-navigating.md) | [Index](index.md)
+[<< Linking and Navigating](linking-and-navigating.md) | [Index: Home >>](index.md)
