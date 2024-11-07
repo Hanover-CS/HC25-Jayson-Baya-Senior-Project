@@ -3,7 +3,7 @@ name: Sync with Hanover-CS Repo
 on:
   push:
     branches:
-      - main # Trigger the action when there's a new commit on the main branch of the professor's repo
+      - main 
   workflow_dispatch: # Allows manual triggering if needed
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Forked Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: bayaj0110/HC25-Jayson-Baya-Senior-Project
           token: ${{ secrets.HANOVER_CS_TOKEN }}
