@@ -26,7 +26,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd panther-thrift-shop
-          run: npm install
+          npm install
 
       - name: Build
         run: npm run build
