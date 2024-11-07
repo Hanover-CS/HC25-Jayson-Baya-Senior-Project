@@ -1,0 +1,20 @@
+name: Sync with Hanover-CS/HC25-Jayson-Baya-Senior-Project
+
+on:
+  push:
+    branches:
+      - main  # Triggers when there’s a new commit on the main branch in the main repository
+  workflow_dispatch: # Allows manual trigger as well
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: tgymnich/fork-sync@v1.8
+        with:
+          owner: bayaj0110
+          repository: HC25-Jayson-Baya-Senior-Project
+          base: main
+          head: main
+          token: ${{ secrets.GITHUB_TOKEN }}
