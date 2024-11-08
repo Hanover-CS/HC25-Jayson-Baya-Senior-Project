@@ -30,8 +30,11 @@ jobs:
         run: npm run build
         working-directory: panther-thrift-shop
 
-      - name: Disable Jekyll
-        run: touch outputdir/.nojekyll
+      - name: Create Output Directory and Disable Jekyll
+        run: |
+          mkdir -p outputdir
+          touch outputdir/.nojekyll
+
 
       - name: Copy Build Output
         run: |
