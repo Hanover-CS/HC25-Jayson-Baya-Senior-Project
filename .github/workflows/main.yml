@@ -30,13 +30,7 @@ jobs:
         run: npm run build
         working-directory: panther-thrift-shop
 
-      - name: Create Output Directory and Disable Jekyll
-        run: |
-          mkdir -p outputdir
-          touch outputdir/.nojekyll
-
-
-      - name: Copy Build Output
+      - name: Copy Over the App
         run: |
           mkdir -p outputdir
           mv panther-thrift-shop outputdir/app
@@ -44,6 +38,12 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Build Docs
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: docs
+          destination: outputdir/docs
+          
       - name: Upload Artifacts
         id: deployment
         uses: actions/upload-pages-artifact@v3
