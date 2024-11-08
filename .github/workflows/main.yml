@@ -38,18 +38,6 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Build Docs
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: docs
-          destination: outputdir/docs
-          
-      - name: Upload Artifacts
-        id: deployment
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: outputdir
-
   deploy:
     environment:
       name: github-pages
