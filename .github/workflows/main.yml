@@ -39,7 +39,7 @@ jobs:
       - name: Copy Build Output
         run: |
           mkdir -p outputdir
-          mv panther-thrift-shop/dist/* outputdir/
+          mv panther-thrift-shop outputdir/app
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
