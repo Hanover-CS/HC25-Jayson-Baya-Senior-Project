@@ -22,7 +22,6 @@ interface Product {
 }
 
 const BuyingPage = () => {
-    const [userEmail, setUserEmail] = useState("");
     const [savedItems, setSavedItems] = useState<Product[]>([]); // Saved items
     const [purchasedItems, setPurchasedItems] = useState<Product[]>([]); // Purchased items
     const [offers, setOffers] = useState<Product[]>([]); // Offers made by user
@@ -32,7 +31,6 @@ const BuyingPage = () => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                setUserEmail(user.email || "");
                 fetchSavedItems(user.email);
                 fetchPurchasedItems(user.email);
                 fetchOffers(user.email);

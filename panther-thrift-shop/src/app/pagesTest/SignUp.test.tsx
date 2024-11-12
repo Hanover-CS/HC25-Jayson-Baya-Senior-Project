@@ -1,9 +1,9 @@
 import React from "react"
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SignUp from "@/app/pages/SignUp/page";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 jest.mock("@/lib/firebaseConfig", () => ({

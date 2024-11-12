@@ -6,7 +6,7 @@ interface SidebarProps {
     setSelectedCategory: (category: string) => void;
 }
 
-const MarketplaceSidebar = ({ selectedCategory, setSelectedCategory }: SidebarProps) => {
+const MarketplaceSidebar = ({ selectedCategory }: SidebarProps) => {
     const router = useRouter(); // Initialize router
 
     const specialSections = [
