@@ -1,3 +1,4 @@
+// Browsing Page -- User's and buyer's homepage
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";

@@ -1,3 +1,7 @@
+// Buyers can view product details and save items for future reference.
+// They can also make an offer to the products
+// Buyer also has purchase history
+
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";

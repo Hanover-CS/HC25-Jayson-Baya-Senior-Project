@@ -1,3 +1,4 @@
+// Users can sign up to the application (including Firebase Authentication).
 "use client";
 
 import { useState } from "react";

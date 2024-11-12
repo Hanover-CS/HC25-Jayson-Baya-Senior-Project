@@ -1,3 +1,5 @@
+// Sellers can upload and manage their own product listings.
+
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
