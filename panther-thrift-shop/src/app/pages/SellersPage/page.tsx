@@ -1,6 +1,7 @@
 // Sellers can upload and manage their own product listings.
 
 "use client";
+import React from "react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, db, storage } from "@/lib/firebaseConfig";

@@ -1,6 +1,6 @@
 // Account Setting Page
 "use client";
-
+import React from "react";
 import { useState, useEffect } from "react";
 import { reauthenticateWithCredential, EmailAuthProvider, updatePassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";

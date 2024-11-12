@@ -1,5 +1,6 @@
 //  Users can log in to the application (including Firebase Authentication).
 "use client";
+import React from "react";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import React from "react";
 import MaxWidthWrapper from '@/app/components/MaxWidthWrapper';
 import NavBar from '@/app/components/Navbar'; // Import the NavBar component
 

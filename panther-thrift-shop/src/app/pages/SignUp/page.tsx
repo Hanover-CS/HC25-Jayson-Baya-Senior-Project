@@ -1,6 +1,7 @@
 // Users can sign up to the application (including Firebase Authentication).
 "use client";
 
+import React from "react";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/firebaseConfig";
