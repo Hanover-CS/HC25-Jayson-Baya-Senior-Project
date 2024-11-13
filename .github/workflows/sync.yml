@@ -5,12 +5,16 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Main Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Updated to v4 for Node 20 support
         with:
           token: ${{ secrets.HANOVER_CS_TOKEN }}
 
