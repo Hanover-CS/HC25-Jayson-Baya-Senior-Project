@@ -27,7 +27,7 @@ jobs:
       - name: Configure Remote with Username and PAT
         run: |
           git remote remove origin
-          git remote add origin https://bayaj0110:${{ secrets.HANOVER_SENIOR_CS_PROJECT }}@github.com/bayaj0110/HC25-Jayson-Baya-Senior-Project.git
+          git remote add origin https://bayaj0110:${{ secrets.HANOVER_CS_TOKEN }}@github.com/bayaj0110/HC25-Jayson-Baya-Senior-Project.git
 
       - name: Fetch Upstream Changes
         run: git fetch origin
