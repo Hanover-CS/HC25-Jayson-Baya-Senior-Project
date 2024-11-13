@@ -1,0 +1,27 @@
+name: Sync Fork to bayaj0110 repo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Main Repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.HANOVER-CS-TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "Jayson Baya"
+          git config user.email "yesjaysonb@gmail.com"
+
+      - name: Add Forked Remote
+        run: git remote add fork https://github.com/bayaj0110/HC25-Jayson-Baya-Senior-Project.git
+
+      - name: Push Changes to Fork
+        run: |
+          git push fork main --force
