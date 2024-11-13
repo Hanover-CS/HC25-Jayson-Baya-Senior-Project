@@ -12,7 +12,7 @@ jobs:
       - name: Checkout Main Repo
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.HANOVER-CS-TOKEN }}
+          token: ${{ secrets.HANOVER_CS_TOKEN }}
 
       - name: Configure Git
         run: |
