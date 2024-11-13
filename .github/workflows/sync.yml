@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Main Repo with PAT
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.HANOVER_CS_TOKEN }}
           fetch-depth: 0
 
       - name: Set Up Git User
