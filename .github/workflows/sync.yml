@@ -13,17 +13,21 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Main Repo
-        uses: actions/checkout@v4 # Updated to v4 for Node 20 support
+      - name: Checkout Main Repo with PAT
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.HANOVER_SENIOR_CS_PROJECT  }}
+          token: ${{ secrets.HANOVER_SENIOR_CS_PROJECT }}
           fetch-depth: 0
 
-      - name: Set Up Authentication
+      - name: Set Up Git User
         run: |
-          git remote set-url origin https://bayaj0110:${{ secrets.HANOVER_SENIOR_CS_PROJECT }}@github.com/bayaj0110/HC25-Jayson-Baya-Senior-Project.git
-          git config user.name "bayaj0110"
-          git config user.email "yesjaysonb@gmail.com"
+          git config --global user.name "Jayson Baya"
+          git config --global user.email "yesjaysonb@gmail.com"
+
+      - name: Configure Remote with Username and PAT
+        run: |
+          git remote remove origin
+          git remote add origin https://bayaj0110:${{ secrets.HANOVER_SENIOR_CS_PROJECT }}@github.com/bayaj0110/HC25-Jayson-Baya-Senior-Project.git
 
       - name: Fetch Upstream Changes
         run: git fetch origin
