@@ -16,7 +16,8 @@ jobs:
       - name: Checkout Main Repo
         uses: actions/checkout@v4 # Updated to v4 for Node 20 support
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.HANOVER_CS_TOKEN }}
+          fetch-depth: 0
 
       - name: Set Up Authentication
         run: |
