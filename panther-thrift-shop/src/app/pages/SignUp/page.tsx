@@ -43,8 +43,10 @@ const SignUp = () => {
             if (error instanceof FirebaseError) {
                 if (error.code === "auth/email-already-in-use") {
                     setMessage("Email ID already registered.");
+                } else if (error.code === "permission-denied") {
+                    setMessage("Permission denied. Please check Firestore rules.");
                 } else {
-                    setMessage("Error registering user: " + error.message);
+                    setMessage(`Error registering user: ${error.message}`);
                 }
             } else {
                 setMessage("An unknown error occurred.");

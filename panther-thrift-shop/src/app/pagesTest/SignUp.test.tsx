@@ -1,5 +1,6 @@
 import React from "react"
-import { render, screen, fireEvent } from "@testing-library/react";
+import { FirebaseError } from "@firebase/app";
+import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SignUp from "@/app/pages/SignUp/page";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -74,14 +75,16 @@ describe("SignUp Component", () => {
         expect(mockPush).toHaveBeenCalledWith("/pages/BrowsePage");
     });
 
-    it("handles 'email already in use' error", async () => {
+
+
+    it("handles 'Email ID already registered.' error", async () => {
         render(<SignUp />);
         const emailInput = screen.getByPlaceholderText("Email");
         const passwordInput = screen.getByPlaceholderText("Password");
         const signUpButton = screen.getAllByText("Sign Up")[1];
 
-        // Mock Firebase error response
-        const error = { code: "auth/email-already-in-use", message: "Email already in use" };
+        // Correct mock error response using FirebaseError
+        const error = new FirebaseError("auth/email-already-in-use", "Email ID already registered.");
         (createUserWithEmailAndPassword as jest.Mock).mockRejectedValue(error);
 
         // Simulate user input
@@ -89,8 +92,11 @@ describe("SignUp Component", () => {
         fireEvent.change(passwordInput, { target: { value: "password123" } });
         fireEvent.click(signUpButton);
 
-        // Check for error message
-        expect(await screen.findByText("Email ID already registered.")).toBeInTheDocument();
+        // Check for error message using a flexible text matcher
+        await waitFor(() => {
+            expect(screen.getByText((text) => text.includes("Email ID already registered."))).toBeInTheDocument();
+        });
+
         expect(mockPush).not.toHaveBeenCalled();
     });
 
@@ -100,8 +106,8 @@ describe("SignUp Component", () => {
         const passwordInput = screen.getByPlaceholderText("Password");
         const signUpButton = screen.getAllByText("Sign Up")[1];
 
-        // Mock a general error response
-        const error = { code: "auth/unknown-error", message: "Something went wrong" };
+        // Mock a general Firebase error response using FirebaseError
+        const error = new FirebaseError("auth/unknown-error", "Something went wrong");
         (createUserWithEmailAndPassword as jest.Mock).mockRejectedValue(error);
 
         // Simulate user input
@@ -109,8 +115,11 @@ describe("SignUp Component", () => {
         fireEvent.change(passwordInput, { target: { value: "password123" } });
         fireEvent.click(signUpButton);
 
-        // Check for general error message
-        expect(await screen.findByText("Error registering user: Something went wrong")).toBeInTheDocument();
+        // Check for general error message using a flexible matcher
+        await waitFor(() => {
+            expect(screen.getByText((text) => text.includes("Error registering user: Something went wrong"))).toBeInTheDocument();
+        });
         expect(mockPush).not.toHaveBeenCalled();
     });
+
 });
