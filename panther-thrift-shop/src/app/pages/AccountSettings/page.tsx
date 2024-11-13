@@ -2,13 +2,13 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
-import { reauthenticateWithCredential, EmailAuthProvider, updatePassword, onAuthStateChanged } from "firebase/auth";
+import {reauthenticateWithCredential, EmailAuthProvider, updatePassword, onAuthStateChanged, User} from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import { useRouter } from "next/navigation";
 import MarketplaceNavBar from "@/app/components/MarketplaceNavbar";
 
 const AccountSettings = () => {
-    const [currentUser, setCurrentUser] = useState<any>(null); // Holds the current authenticated user
+    const [currentUser, setCurrentUser] = useState<User | null>(null); // Holds the current authenticated user
     const [showPasswordFields, setShowPasswordFields] = useState(false); // Toggles the visibility of the password fields
     const [prevPassword, setPrevPassword] = useState(""); // Stores the previous password
     const [newPassword, setNewPassword] = useState(""); // Stores the new password
@@ -42,19 +42,19 @@ const AccountSettings = () => {
         }
 
         try {
-            const credential = EmailAuthProvider.credential(currentUser.email, prevPassword);
+            const credential = EmailAuthProvider.credential(currentUser!.email!, prevPassword);
             // Re-authenticate the user with the previous password
-            await reauthenticateWithCredential(currentUser, credential);
+            await reauthenticateWithCredential(currentUser!, credential);
 
             // Update the user's password
-            await updatePassword(currentUser, newPassword);
+            await updatePassword(currentUser!, newPassword);
             setMessage("Password updated successfully!");
             setPrevPassword("");
             setNewPassword("");
             setConfirmPassword("");
             setShowPasswordFields(false); // Hide the password fields after success
-        } catch (error: any) {
-            setMessage("Error updating password: " + error.message);
+        } catch (error: unknown) {
+            setMessage("Error updating password: " + (error as Error).message);
         }
     };
 

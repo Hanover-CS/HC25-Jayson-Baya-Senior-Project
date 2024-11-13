@@ -59,6 +59,7 @@ const BrowsePage = () => {
                 setLoading(false);
             },
             (error) => {
+                console.error("Error fetching products:", error);
                 setError("Error fetching products. Please try again later.");
                 setLoading(false);
             }

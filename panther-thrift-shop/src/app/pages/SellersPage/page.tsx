@@ -345,22 +345,6 @@ const SellerPage = () => {
                                 </div>
 
                                 <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Product Images</label>
-                                    <input
-                                        type="file"
-                                        multiple
-                                        onChange={(e) => {
-                                            if (e.target.files) {
-                                                const files = Array.from(e.target.files);
-                                                // Logic to handle uploading multiple files
-                                                // Set the selected files here or manage them accordingly
-                                            }
-                                        }}
-                                        className="w-full"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
                                     <label className="block mb-2 text-gray-700">Status</label>
                                     <select
                                         value={selectedProduct.sold ? "Sold" : "Still Selling"}

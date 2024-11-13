@@ -9,6 +9,7 @@ import { doc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import NavBar from "@/app/components/Navbar";
+import {FirebaseError} from "@firebase/app";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
@@ -37,11 +38,16 @@ const SignUp = () => {
 
             // Redirect to Marketplace after successful sign up
             router.push("/pages/BrowsePage");
-        } catch (error: any) {
-            if (error.code === "auth/email-already-in-use") {
-                setMessage("Email ID already registered.");
+        } catch (error: unknown) {
+            // Use FirebaseError for checking
+            if (error instanceof FirebaseError) {
+                if (error.code === "auth/email-already-in-use") {
+                    setMessage("Email ID already registered.");
+                } else {
+                    setMessage("Error registering user: " + error.message);
+                }
             } else {
-                setMessage("Error registering user: " + error.message);
+                setMessage("An unknown error occurred.");
             }
         }
     };

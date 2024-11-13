@@ -22,8 +22,12 @@ const Login = () => {
             setError("");
             // Redirect to Marketplace after successful login
             router.push("/pages/BrowsePage");
-        } catch (error: any) {
-            setError("User is not registered!");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError("User is not registered!");
+            } else {
+                setError("An unexpected error occurred.");
+            }
             setSuccess("");
         }
     };
@@ -62,7 +66,7 @@ const Login = () => {
                         {success && <p className="text-green-600 mt-4 text-center">{success}</p>}
                     </div>
                     <p className="text-center mt-6">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <Link href="/pages/SignUp" className="text-blue-600 hover:underline">
                             Sign Up
                         </Link>
