@@ -1,4 +1,8 @@
 // Users can sign up to the application (including Firebase Authentication).
+// Users are required to use @hanover.edu domain to register
+// SignUp will print message once users already registered.
+// future features: users need to receive email confirmation to make sure they are really affiliated to Hanover College
+
 "use client";
 
 import React from "react";

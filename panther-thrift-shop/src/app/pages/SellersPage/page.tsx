@@ -1,4 +1,6 @@
-// Sellers can upload and manage their own product listings.
+// Sellers Page
+// features: sellers can upload and manage their own product listings.
+// sellers can also change information and have real time interaction.
 
 "use client";
 import React from "react";

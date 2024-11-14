@@ -1,4 +1,9 @@
 //  Users can log in to the application (including Firebase Authentication).
+// There's different prompts like incorrect password
+// or account is not registered
+// Once Login, it will redirects to the homepage (browsing page)
+// future: add clickable link for reset passwords
+
 "use client";
 import React from "react";
 import { useState } from "react";

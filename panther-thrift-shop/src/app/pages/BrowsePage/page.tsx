@@ -1,4 +1,6 @@
 // Browsing Page -- User's and buyer's homepage
+// future: show customer reviews to seller
+
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
