@@ -50,7 +50,7 @@ export class Product {
         return `${this.productName} - $${this.price} (${this.category})`;
     }
 
-    static fromFirestoreData(id: string, data: any): Product {
+    static fromFirestoreData(id: string, data: FirestoreProductData): Product {
         return new Product(
             id,
             data.productName,
@@ -62,4 +62,14 @@ export class Product {
             data.sold || false
         );
     }
+}
+
+interface FirestoreProductData {
+    productName: string;
+    price: number;
+    category: string;
+    imageURL: string;
+    description: string;
+    seller: string;
+    sold?: boolean;
 }

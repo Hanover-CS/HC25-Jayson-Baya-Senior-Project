@@ -9,18 +9,19 @@ import {collection, query, where, onSnapshot, getDocs, addDoc} from "firebase/fi
 import MarketplaceNavBar from "@/components/MarketplaceNavbar";
 import MarketplaceSidebar from "@/components/MarketplaceSidebar";
 import Modal from "@/components/Modal"; // Modal for product details
+import {Product} from "@/Models/Product";
 
 // Define the structure of a Product document
-interface Product {
-    id: string;
-    productName: string;
-    price: number;
-    category: string;
-    imageURL: string;
-    description: string;
-    seller: string;
-    sold?: boolean;
-}
+// interface Product {
+//     id: string;
+//     productName: string;
+//     price: number;
+//     category: string;
+//     imageURL: string;
+//     description: string;
+//     seller: string;
+//     sold?: boolean;
+// }
 
 const BrowsePage = () => {
     const [userEmail, setUserEmail] = useState("");

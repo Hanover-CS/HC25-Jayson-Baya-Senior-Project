@@ -21,7 +21,23 @@ export class User {
         this.role = newRole;
     }
 
-    static fromFirestoreData(uid: string, data: any): User {
-        return new User(uid, data.email, data.role, new Date(data.createdAt.seconds * 1000));
+    // Define an explicit type for Firestore data
+    static fromFirestoreData(uid: string, data: FirestoreUserData): User {
+        return new User(
+            uid,
+            data.email,
+            data.role,
+            new Date(data.createdAt.seconds * 1000)
+        );
     }
+}
+
+// Define the FirestoreUserData interface
+interface FirestoreUserData {
+    email: string;
+    role: string;
+    createdAt: {
+        seconds: number;
+        nanoseconds: number;
+    };
 }

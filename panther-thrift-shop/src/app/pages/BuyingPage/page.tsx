@@ -11,15 +11,16 @@ import { auth, db } from "@/lib/firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import MarketplaceNavBar from "@/components/MarketplaceNavbar";
 import MarketplaceSidebar from "@/components/MarketplaceSidebar";
+import {Product} from "@/Models/Product";
 
-interface Product {
-    productName: string;
-    price: number;
-    category: string;
-    imageURL: string;
-    description: string;
-    seller: string;
-}
+// interface Product {
+//     productName: string;
+//     price: number;
+//     category: string;
+//     imageURL: string;
+//     description: string;
+//     seller: string;
+// }
 
 const BuyingPage = () => {
     const [savedItems, setSavedItems] = useState<Product[]>([]); // Saved items

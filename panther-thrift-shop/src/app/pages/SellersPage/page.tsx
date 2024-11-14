@@ -11,7 +11,6 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import MarketplaceNavBar from "@/components/MarketplaceNavbar";
 import MarketplaceSidebar from "@/components/MarketplaceSidebar";
 import Modal from "@/components/Modal"; // Modal component for pop-up
-//import {Product} from "@/Models/Product";
 
 interface Product {
     id: string;
