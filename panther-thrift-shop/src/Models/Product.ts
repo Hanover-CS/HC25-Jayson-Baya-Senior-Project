@@ -1,4 +1,24 @@
-// Product.ts
+/**
+ * Product.ts
+ *
+ * This file defines the `Product` class, which represents a product listing
+ * in the Panther Thrift Shop application. It includes properties for product
+ * details such as ID, name, price, category, image URL, description, seller,
+ * and sold status. The class provides methods for marking the product as sold,
+ * updating product details, and generating a summary. Additionally, it includes
+ * a static method for creating a `Product` instance from Firestore data.
+ *
+ * Key Features:
+ * - Represents a product listing with relevant details.
+ * - Methods for updating product information and marking items as sold.
+ * - Utility function to create `Product` instances from Firestore data.
+ *
+ * Dependencies:
+ * - `FirestoreProductData` interface defines the structure of product data from Firestore.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ */
 
 export class Product {
     id: string;

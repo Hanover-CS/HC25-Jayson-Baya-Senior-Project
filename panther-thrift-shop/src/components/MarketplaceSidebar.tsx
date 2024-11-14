@@ -1,3 +1,25 @@
+/**
+ * MarketplaceSidebar.tsx
+ *
+ * This file defines the `MarketplaceSidebar` component for the Panther Thrift Shop web application.
+ * The `MarketplaceSidebar` provides navigation links for users to browse products, view buying history,
+ * and manage their selling listings. It also includes a list of product categories for easy navigation.
+ * The sidebar highlights the currently selected section or category and updates the selected state.
+ *
+ * Key Features:
+ * - Navigation links for special sections: "Browse All", "Buying", and "Selling".
+ * - List of product categories: Men's Clothing, Women's Clothing, Appliances, Room Decoration, Textbooks.
+ * - Highlights the selected section or category for better user experience.
+ * - Uses Next.js `useRouter` for client-side navigation.
+ * - Responsive design using Tailwind CSS.
+ *
+ * Dependencies:
+ * - Next.js `useRouter` for handling navigation.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ */
+
 import React from "react";
 import { useRouter } from "next/navigation"; // Import useRouter
 

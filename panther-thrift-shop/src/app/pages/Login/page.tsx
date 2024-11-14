@@ -1,8 +1,28 @@
-//  Users can log in to the application (including Firebase Authentication).
-// There's different prompts like incorrect password
-// or account is not registered
-// Once Login, it will redirects to the homepage (browsing page)
-// future: add clickable link for reset passwords
+/**
+ * Login.tsx
+ *
+ * This file defines the `Login` component for the Panther Thrift Shop web application.
+ * The `Login` page allows users to log in using Firebase Authentication. Users provide
+ * their email and password, and upon successful login, they are redirected to the
+ * homepage (Browse Page). The component handles error prompts for incorrect credentials
+ * and unregistered accounts. A future enhancement includes adding a clickable link for
+ * password resets.
+ *
+ * Key Features:
+ * - User login with email and password using Firebase Authentication.
+ * - Error handling for incorrect password or unregistered accounts.
+ * - Displays success and error messages based on the login attempt.
+ * - Redirects to the Browse Page upon successful login.
+ * - Responsive design using Tailwind CSS.
+ *
+ * Dependencies:
+ * - Firebase Auth for user authentication.
+ * - `NavBar` component for navigation.
+ * - Next.js `useRouter` for client-side navigation.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ */
 
 "use client";
 import React from "react";

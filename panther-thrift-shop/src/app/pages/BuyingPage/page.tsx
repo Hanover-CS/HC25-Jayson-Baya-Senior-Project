@@ -1,6 +1,30 @@
-// Buyers can view product details and save items for future reference.
-// They can also make an offer to the products
-// Buyer also has purchase history
+/**
+ * BuyingPage.tsx
+ *
+ * This file defines the `BuyingPage` component for the Panther Thrift Shop web application.
+ * The `BuyingPage` serves as the main dashboard for buyers, allowing them to:
+ * - View their saved items.
+ * - Check their purchase history.
+ * - View offers they have made on products.
+ *
+ * The component fetches data in real-time from Firebase Firestore and organizes it into three tabs:
+ * "Saved Items", "Purchased Orders", and "Offers". Buyers can easily navigate between these tabs to
+ * manage their items and track their activities.
+ *
+ * Key Features:
+ * - Real-time data fetching for saved items, purchased items, and offers using Firebase Firestore.
+ * - User authentication via Firebase Auth with redirection to login if the user is not authenticated.
+ * - Responsive UI with tab-based navigation.
+ * - Displays detailed information for each item, including product image, name, price, and description.
+ *
+ * Dependencies:
+ * - Firebase Auth for user authentication.
+ * - Firebase Firestore for data retrieval.
+ * - `MarketplaceNavBar` and `MarketplaceSidebar` components for navigation.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ */
 
 "use client";
 import React from "react";

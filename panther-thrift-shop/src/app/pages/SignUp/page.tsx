@@ -1,7 +1,30 @@
-// Users can sign up to the application (including Firebase Authentication).
-// Users are required to use @hanover.edu domain to register
-// SignUp will print message once users already registered.
-// future features: users need to receive email confirmation to make sure they are really affiliated to Hanover College
+/**
+ * SignUp.tsx
+ *
+ * This file defines the `SignUp` component for the Panther Thrift Shop web application.
+ * The `SignUp` page allows new users to register using Firebase Authentication. Users are
+ * required to use a valid Hanover College email address (ending with @hanover.edu) to sign up.
+ * Upon successful registration, the user's information is stored in Firestore, and they are
+ * redirected to the homepage (Browse Page). Future enhancements include email verification
+ * to ensure affiliation with Hanover College.
+ *
+ * Key Features:
+ * - User registration with email and password using Firebase Authentication.
+ * - Email validation to allow only @hanover.edu domain addresses.
+ * - Error handling for existing user accounts and Firestore permission issues.
+ * - Stores user information in Firestore with default role as "customer".
+ * - Redirects to the Browse Page upon successful sign up.
+ * - Responsive design using Tailwind CSS.
+ *
+ * Dependencies:
+ * - Firebase Auth for user authentication.
+ * - Firebase Firestore for storing user data.
+ * - `NavBar` component for navigation.
+ * - Next.js `useRouter` for client-side navigation.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ */
 
 "use client";
 

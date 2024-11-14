@@ -1,3 +1,24 @@
+/**
+ * NavBar.tsx
+ *
+ * This file defines the `NavBar` component for the Panther Thrift Shop web application.
+ * The `NavBar` component is a simple navigation bar that includes the application logo/title
+ * and provides navigation links for the Login and Sign Up pages. It uses Next.js `Link` for
+ * client-side navigation, ensuring fast transitions between pages.
+ *
+ * Key Features:
+ * - Displays the application title with a styled logo.
+ * - Provides navigation links to the Login and Sign Up pages using Next.js `Link` component.
+ * - Responsive design using Tailwind CSS.
+ *
+ * Dependencies:
+ * - Next.js `Link` for navigation.
+ * - Tailwind CSS for styling.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ **/
+
 import React from "react";
 import Link from "next/link"; // Use Next.js Link for navigation
 

@@ -1,6 +1,28 @@
-// Sellers Page
-// features: sellers can upload and manage their own product listings.
-// sellers can also change information and have real time interaction.
+/**
+ * SellerPage.tsx
+ *
+ * This file defines the `SellerPage` component for the Panther Thrift Shop web application.
+ * The `SellerPage` allows users with a seller role to upload and manage their own product listings.
+ * Sellers can create new listings, edit existing listings, and update the status of their products
+ * (e.g., mark as sold). The component includes real-time interaction with Firebase Firestore and
+ * Firebase Storage for image uploads.
+ *
+ * Key Features:
+ * - Allows sellers to create new product listings with image upload.
+ * - Real-time display of the seller's own product listings.
+ * - Modal for editing product information, including product details and sold status.
+ * - Responsive design using Tailwind CSS.
+ *
+ * Dependencies:
+ * - Firebase Auth for user authentication.
+ * - Firebase Firestore for real-time product data management.
+ * - Firebase Storage for uploading product images.
+ * - `MarketplaceNavBar` and `MarketplaceSidebar` components for navigation.
+ * - `Modal` component for editing product details.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ */
 
 "use client";
 import React from "react";

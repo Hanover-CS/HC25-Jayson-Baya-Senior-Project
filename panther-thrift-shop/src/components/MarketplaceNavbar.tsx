@@ -1,3 +1,27 @@
+/**
+ * MarketplaceNavBar.tsx
+ *
+ * This file defines the `MarketplaceNavBar` component for the Panther Thrift Shop web application.
+ * The `MarketplaceNavBar` serves as the navigation bar for the marketplace pages. It displays the
+ * application title, the logged-in user's email, and provides buttons for navigating to account
+ * settings and logging out. The component listens to the authentication state and redirects users
+ * to the login page if they are not authenticated.
+ *
+ * Key Features:
+ * - Displays the application title and user email.
+ * - Provides navigation buttons for account settings and logout.
+ * - Listens to Firebase authentication state changes for user session management.
+ * - Redirects unauthenticated users to the login page.
+ * - Responsive design using Tailwind CSS.
+ *
+ * Dependencies:
+ * - Firebase Auth for user session management.
+ * - Next.js `useRouter` for client-side navigation.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ */
+
 "use client"
 import React from "react";
 import { useRouter } from 'next/navigation';

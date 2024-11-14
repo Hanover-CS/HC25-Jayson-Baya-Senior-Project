@@ -1,4 +1,26 @@
-// Account Setting Page
+/**
+ * AccountSettings.tsx
+ *
+ * This file defines the `AccountSettings` component for the Panther Thrift Shop web application.
+ * The `AccountSettings` page allows authenticated users to view their email and update their password.
+ * It includes Firebase authentication integration for fetching the current user and updating the password
+ * with reauthentication. If the user is not logged in, they are redirected to the login page.
+ *
+ * Key Features:
+ * - Displays the user's email (read-only) and provides an option to update the password.
+ * - Uses Firebase authentication for reauthentication and password updates.
+ * - Includes client-side form validation and error handling.
+ * - Responsive design using Tailwind CSS.
+ *
+ * Dependencies:
+ * - Firebase Auth for user authentication.
+ * - `MarketplaceNavBar` component for navigation.
+ * - Next.js `useRouter` for client-side navigation.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ */
+
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
