@@ -9,8 +9,8 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import MarketplaceNavBar from "@/app/components/MarketplaceNavbar";
-import MarketplaceSidebar from "@/app/components/MarketplaceSidebar";
+import MarketplaceNavBar from "@/components/MarketplaceNavbar";
+import MarketplaceSidebar from "@/components/MarketplaceSidebar";
 
 interface Product {
     productName: string;

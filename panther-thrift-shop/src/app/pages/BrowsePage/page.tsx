@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebaseConfig";
 import {collection, query, where, onSnapshot, getDocs, addDoc} from "firebase/firestore";
-import MarketplaceNavBar from "@/app/components/MarketplaceNavbar";
-import MarketplaceSidebar from "@/app/components/MarketplaceSidebar";
-import Modal from "@/app/components/Modal"; // Modal for product details
+import MarketplaceNavBar from "@/components/MarketplaceNavbar";
+import MarketplaceSidebar from "@/components/MarketplaceSidebar";
+import Modal from "@/components/Modal"; // Modal for product details
 
 // Define the structure of a Product document
 interface Product {

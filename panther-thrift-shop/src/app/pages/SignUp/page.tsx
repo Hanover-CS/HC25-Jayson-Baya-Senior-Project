@@ -8,7 +8,7 @@ import { auth, db } from "@/lib/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import NavBar from "@/app/components/Navbar";
+import NavBar from "@/components/Navbar";
 import {FirebaseError} from "@firebase/app";
 
 const SignUp = () => {
@@ -46,7 +46,7 @@ const SignUp = () => {
                 } else if (error.code === "permission-denied") {
                     setMessage("Permission denied. Please check Firestore rules.");
                 } else {
-                    setMessage(`Error registering user: ${error.message}`);
+                    setMessage(`Error registering user: ${(error as Error).message}`);
                 }
             } else {
                 setMessage("An unknown error occurred.");

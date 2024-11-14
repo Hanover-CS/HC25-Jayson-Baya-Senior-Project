@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import {reauthenticateWithCredential, EmailAuthProvider, updatePassword, onAuthStateChanged, User} from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import { useRouter } from "next/navigation";
-import MarketplaceNavBar from "@/app/components/MarketplaceNavbar";
+import MarketplaceNavBar from "@/components/MarketplaceNavbar";
 
 const AccountSettings = () => {
     const [currentUser, setCurrentUser] = useState<User | null>(null); // Holds the current authenticated user

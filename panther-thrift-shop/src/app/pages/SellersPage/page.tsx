@@ -8,9 +8,10 @@ import { auth, db, storage } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import MarketplaceNavBar from "@/app/components/MarketplaceNavbar";
-import MarketplaceSidebar from "@/app/components/MarketplaceSidebar";
-import Modal from "@/app/components/Modal"; // Modal component for pop-up
+import MarketplaceNavBar from "@/components/MarketplaceNavbar";
+import MarketplaceSidebar from "@/components/MarketplaceSidebar";
+import Modal from "@/components/Modal"; // Modal component for pop-up
+//import {Product} from "@/Models/Product";
 
 interface Product {
     id: string;
@@ -80,7 +81,7 @@ const SellerPage = () => {
             "state_changed",
             () => {},
             (error) => {
-                setMessage("Error uploading image: " + error.message);
+                setMessage("Error uploading image: " + (error as Error).message);
                 setShowPopup(true);
             },
             async () => {
