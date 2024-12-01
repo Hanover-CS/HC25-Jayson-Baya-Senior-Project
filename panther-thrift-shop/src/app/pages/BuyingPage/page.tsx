@@ -10,6 +10,8 @@
  * The component fetches data in real-time from Firebase Firestore and organizes it into three tabs:
  * "Saved Items", "Purchased Orders", and "Offers". Buyers can easily navigate between these tabs to
  * manage their items and track their activities.
+ * Model, This ensures that all product data fetched from Firestore follows a consistent structure,
+ * making it easier to handle and display.
  *
  * Key Features:
  * - Real-time data fetching for saved items, purchased items, and offers using Firebase Firestore.

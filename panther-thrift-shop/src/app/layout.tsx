@@ -1,3 +1,5 @@
+// TODO: the layout is working, utilize it through moving all the layout format in here including the navbar!
+// TODO:
 import React from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -28,7 +30,9 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      > <p>
+          hello there!
+        </p>
         {children}
       </body>
     </html>
