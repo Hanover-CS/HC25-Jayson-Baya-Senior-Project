@@ -180,25 +180,26 @@ const BrowsePage = () => {
                         </div>
                     )}
                 </div>
-            </div>
 
-            {/* Product Details Modal */}
-            {showProductModal && selectedProduct && (
-                <Modal onClose={() => setShowProductModal(false)}>
-                    <div className="p-6">
-                        <h2 className="text-xl font-bold mb-4">{selectedProduct.productName}</h2>
-                        <img
-                            src={selectedProduct.imageURL}
-                            alt={selectedProduct.productName}
-                            className="w-full h-48 object-contain mb-4"
-                        />
-                        <p className="text-gray-600 mb-2">Price: ${selectedProduct.price}</p>
-                        <p className="text-gray-600 mb-2">Category: {selectedProduct.category}</p>
-                        <p className="text-gray-600 mb-4">Description: {selectedProduct.description}</p>
-                        <p className="text-gray-600 font-bold">Seller: {selectedProduct.seller}</p>
-                    </div>
-                </Modal>
-            )}
+
+                {/* Product Details Modal */}
+                {showProductModal && selectedProduct && (
+                    <Modal onClose={() => setShowProductModal(false)}>
+                        <div className="p-6">
+                            <h2 className="text-xl font-bold mb-4">{selectedProduct.productName}</h2>
+                            <img
+                                src={selectedProduct.imageURL}
+                                alt={selectedProduct.productName}
+                                className="w-full h-48 object-contain mb-4"
+                            />
+                            <p className="text-gray-600 mb-2">Price: ${selectedProduct.price}</p>
+                            <p className="text-gray-600 mb-2">Category: {selectedProduct.category}</p>
+                            <p className="text-gray-600 mb-4">Description: {selectedProduct.description}</p>
+                            <p className="text-gray-600 font-bold">Seller: {selectedProduct.seller}</p>
+                        </div>
+                    </Modal>
+                )}
+            </div>
         </div>
     );
 };
