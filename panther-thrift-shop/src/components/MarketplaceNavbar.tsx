@@ -58,7 +58,7 @@ const MarketplaceNavBar = () => {
                 <div className="flex justify-between items-center py-4">
                     {/* Title: Panther Thrift Shop */}
                     <button
-                        onClick={() => router.push('/pages/Marketplace')}
+                        onClick={() => router.push('/pages/BrowsePage')}
                         className="text-2xl font-bold text-gray-900">
                         <span className="bg-red-600 px-2 text-white">Panther</span>{' '}
                         Thrift Shop{' '}
