@@ -28,7 +28,7 @@ interface SidebarProps {
     setSelectedCategory: (category: string) => void;
 }
 
-const MarketplaceSidebar = ({ selectedCategory }: SidebarProps) => {
+const MarketplaceSidebar: React.FC<SidebarProps> = ({ selectedCategory }: SidebarProps) => {
     const router = useRouter(); // Initialize router
 
     const specialSections = [
