@@ -43,7 +43,6 @@ const BrowsePage = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("Browse All");
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [showProductModal, setShowProductModal] = useState(false);
     const router = useRouter();
