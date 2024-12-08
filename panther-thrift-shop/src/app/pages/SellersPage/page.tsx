@@ -173,10 +173,7 @@ const SellerPage = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <MarketplaceNavBar />
-
             <div className="flex flex-grow">
-                <MarketplaceSidebar selectedCategory={"Selling"} setSelectedCategory={() => {}} />
 
                 <div className="flex-grow p-6">
                     <h1 className="text-2xl font-bold mb-6">My Listings</h1>

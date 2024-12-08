@@ -98,12 +98,7 @@ const BuyingPage = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <MarketplaceNavBar />
-
             <div className="flex flex-grow">
-                {/* Sidebar */}
-                <MarketplaceSidebar selectedCategory={"Buying"} setSelectedCategory={() => {}} />
-
                 {/* Main Content */}
                 <div className="flex-grow p-6">
                     <h1 className="text-2xl font-bold mb-6">My Buying Page</h1>

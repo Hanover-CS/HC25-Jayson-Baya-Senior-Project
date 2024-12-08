@@ -130,14 +130,9 @@ const BrowsePage = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <MarketplaceNavBar />
-
             <div className="flex flex-grow">
-                <MarketplaceSidebar selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
-
                 <div className="flex-grow p-6">
                     <h1 className="text-2xl font-bold mb-4">Browse All Products</h1>
-
                     {loading ? (
                         <p>Loading products...</p>
                     ) : error ? (

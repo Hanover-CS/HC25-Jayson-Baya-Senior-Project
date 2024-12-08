@@ -82,8 +82,6 @@ const AccountSettings = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
-            {/* Include Navbar */}
-            <MarketplaceNavBar />
             <div className="flex flex-grow justify-center items-center">
                 <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
                     <h1 className="text-2xl font-bold text-center mb-6">Account Settings</h1>
