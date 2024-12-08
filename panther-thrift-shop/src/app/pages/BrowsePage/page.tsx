@@ -35,8 +35,6 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebaseConfig";
 import {collection, query, where, onSnapshot, getDocs, addDoc} from "firebase/firestore";
-import MarketplaceNavBar from "@/components/MarketplaceNavbar";
-import MarketplaceSidebar from "@/components/MarketplaceSidebar";
 import Modal from "@/components/Modal"; // Modal for product details
 import {Product} from "@/Models/Product";
 

@@ -32,8 +32,6 @@ import { auth, db, storage } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import MarketplaceNavBar from "@/components/MarketplaceNavbar";
-import MarketplaceSidebar from "@/components/MarketplaceSidebar";
 import Modal from "@/components/Modal"; // Modal component for pop-up
 
 interface Product {
