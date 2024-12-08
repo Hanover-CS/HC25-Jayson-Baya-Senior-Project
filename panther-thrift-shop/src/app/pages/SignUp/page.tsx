@@ -35,7 +35,6 @@ import { auth, db } from "@/lib/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import NavBar from "@/components/Navbar";
 import {FirebaseError} from "@firebase/app";
 
 const SignUp = () => {
@@ -83,7 +82,6 @@ const SignUp = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
-            <NavBar />
             <div className="flex flex-grow justify-center items-center">
                 <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
                     <h1 className="text-4xl font-bold text-center mb-4">

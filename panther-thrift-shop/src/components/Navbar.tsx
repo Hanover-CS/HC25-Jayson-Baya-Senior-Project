@@ -29,7 +29,7 @@ const NavBar = () => {
                 <div className="flex justify-between items-center py-4">
                     <div className="flex items-center">
                         {/* Logo or title */}
-                        <Link href="/panther-thrift-shop/src/public" className="text-2xl font-bold text-gray-900">
+                        <Link href="/" className="text-2xl font-bold text-gray-900">
                             <span className="bg-red-600 px-2 text-white">Panther</span>{' '}
                             Thrift Shop{' '}
                         </Link>
