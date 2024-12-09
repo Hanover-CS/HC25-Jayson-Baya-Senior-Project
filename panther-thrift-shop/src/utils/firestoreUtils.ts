@@ -1,17 +1,17 @@
 import { db } from "@/lib/firebaseConfig";
-import { collection, query, where, addDoc, onSnapshot } from "firebase/firestore";
+import { collection, query, where, addDoc, onSnapshot, FirestoreError } from "firebase/firestore";
 import { Product } from "@/Models/Product";
 
 /**
  * Fetches real-time products based on a query condition.
  */
-type FirestoreOperator = "<" | "<=" | "==" | "!=" | ">=" | ">" | "array-contains" | "in" | "array-contains-any";
+type FirestoreOperator = "<" | "<=" | "==" | "!=" | ">=" | ">" | "array-contains" | "in";
 type FirestoreValue = string | number | boolean | Array<string | number | boolean>;
 export const fetchRealTimeData = (
     collectionName: string,
     queryConditions: { field: string; operator: FirestoreOperator; value: FirestoreValue }[],
     onSuccess: (products: Product[]) => void,
-    onError: (error: any) => void
+    onError: (error: FirestoreError) => void
 ) => {
     const q = query(
         collection(db, collectionName),
@@ -37,7 +37,7 @@ export const fetchRealTimeData = (
  */
 export const saveProduct = async (
     collectionName: string,
-    productData: Record<string, any>
+    productData: Record<string, unknown> // Changed `any` to `unknown` for stricter typing
 ): Promise<void> => {
     await addDoc(collection(db, collectionName), productData);
 };
