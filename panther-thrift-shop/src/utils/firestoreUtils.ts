@@ -1,7 +1,6 @@
 import { db } from "@/lib/firebaseConfig";
-import { collection, getDocs, query, where, addDoc, onSnapshot } from "firebase/firestore";
+import { collection, query, where, addDoc, onSnapshot } from "firebase/firestore";
 import { Product } from "@/Models/Product";
-import {FirebaseFirestore} from "@firebase/firestore-types";
 
 /**
  * Fetches real-time products based on a query condition.
