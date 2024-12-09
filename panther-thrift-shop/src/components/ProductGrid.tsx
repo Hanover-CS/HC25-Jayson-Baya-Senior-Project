@@ -21,9 +21,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.length > 0 ? (
-                products.map((product) => (
+                products.map((product, index) => (
                     <div
-                        key={product.id}
+                        key={product.id || index} // Ensure unique keys
                         className="bg-white p-4 shadow rounded cursor-pointer"
                     >
                         <img
@@ -37,14 +37,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                         <p className="text-gray-500">{product.description}</p>
                         {userEmail && product.seller === userEmail ? (
                             <button
-                                onClick={onSellerRedirect}
+                                onClick={() => onSellerRedirect?.()}
                                 className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
                             >
                                 Listings
                             </button>
                         ) : onSaveProduct ? (
                             <button
-                                onClick={() => onSaveProduct(product)}
+                                onClick={() => onSaveProduct?.(product)}
                                 className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
                             >
                                 Save
