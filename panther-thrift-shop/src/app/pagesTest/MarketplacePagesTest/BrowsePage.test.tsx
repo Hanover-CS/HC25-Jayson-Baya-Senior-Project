@@ -138,8 +138,7 @@ describe("BrowsePage Component", () => {
 
     test("saves product successfully", async () => {
         // Mock implementation of `saveProduct`
-        jest.spyOn(require("@/utils/firestoreUtils"), "saveProduct").mockResolvedValueOnce(undefined);
-        const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
+        jest.spyOn(firestoreUtils, "saveProduct").mockResolvedValueOnce(undefined);
 
         const mockProducts: Product[] = [
             {
@@ -189,4 +188,6 @@ describe("BrowsePage Component", () => {
 
 
 });
+
+
 
