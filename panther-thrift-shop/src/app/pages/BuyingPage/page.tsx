@@ -29,13 +29,14 @@
  */
 
 "use client";
-import React from "react";
-import { useState, useEffect } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import {Product} from "@/Models/Product";
+import { Product } from "@/Models/Product";
+import { FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, ROUTES } from "@/Models/ConstantData";
 
 const BuyingPage = () => {
     const [savedItems, setSavedItems] = useState<Product[]>([]); // Saved items
@@ -51,17 +52,20 @@ const BuyingPage = () => {
                 fetchPurchasedItems(user.email);
                 fetchOffers(user.email);
             } else {
-                router.push("/pages/Login");
+                router.push(ROUTES.LOGIN); // Use constant for login route
             }
         });
 
         return () => unsubscribe();
     }, [router]);
 
-    // Fetch saved items (mock implementation for now)
+    // Fetch saved items
     const fetchSavedItems = async (email: string | null) => {
         try {
-            const savedItemsQuery = query(collection(db, "savedItems"), where("buyerEmail", "==", email));
+            const savedItemsQuery = query(
+                collection(db, FIRESTORE_COLLECTIONS.SAVED_ITEMS), // Use constant for collection
+                where(FIRESTORE_FIELDS.BUYER_EMAIL, "==", email) // Use constant for field
+            );
             const querySnapshot = await getDocs(savedItemsQuery);
             const items: Product[] = querySnapshot.docs.map((doc) => doc.data() as Product);
             setSavedItems(items);
@@ -70,10 +74,13 @@ const BuyingPage = () => {
         }
     };
 
-    // Fetch purchased items (mock implementation for now)
+    // Fetch purchased items
     const fetchPurchasedItems = async (email: string | null) => {
         try {
-            const purchasedQuery = query(collection(db, "purchasedItems"), where("buyerEmail", "==", email));
+            const purchasedQuery = query(
+                collection(db, FIRESTORE_COLLECTIONS.PURCHASED_ITEMS), // Use constant for collection
+                where(FIRESTORE_FIELDS.BUYER_EMAIL, "==", email) // Use constant for field
+            );
             const querySnapshot = await getDocs(purchasedQuery);
             const items: Product[] = querySnapshot.docs.map((doc) => doc.data() as Product);
             setPurchasedItems(items);
@@ -82,10 +89,13 @@ const BuyingPage = () => {
         }
     };
 
-    // Fetch offers (mock implementation for now)
+    // Fetch offers
     const fetchOffers = async (email: string | null) => {
         try {
-            const offersQuery = query(collection(db, "offers"), where("buyerEmail", "==", email));
+            const offersQuery = query(
+                collection(db, FIRESTORE_COLLECTIONS.OFFERS), // Use constant for collection
+                where(FIRESTORE_FIELDS.BUYER_EMAIL, "==", email) // Use constant for field
+            );
             const querySnapshot = await getDocs(offersQuery);
             const items: Product[] = querySnapshot.docs.map((doc) => doc.data() as Product);
             setOffers(items);
@@ -105,19 +115,25 @@ const BuyingPage = () => {
                     <div className="mb-4">
                         <button
                             onClick={() => setSelectedTab("Saved Items")}
-                            className={`px-4 py-2 ${selectedTab === "Saved Items" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                            className={`px-4 py-2 ${
+                                selectedTab === "Saved Items" ? "bg-blue-500 text-white" : "bg-gray-200"
+                            }`}
                         >
                             Saved Items
                         </button>
                         <button
                             onClick={() => setSelectedTab("Purchased Orders")}
-                            className={`ml-2 px-4 py-2 ${selectedTab === "Purchased Orders" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                            className={`ml-2 px-4 py-2 ${
+                                selectedTab === "Purchased Orders" ? "bg-blue-500 text-white" : "bg-gray-200"
+                            }`}
                         >
                             Purchased Orders
                         </button>
                         <button
                             onClick={() => setSelectedTab("Offers")}
-                            className={`ml-2 px-4 py-2 ${selectedTab === "Offers" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                            className={`ml-2 px-4 py-2 ${
+                                selectedTab === "Offers" ? "bg-blue-500 text-white" : "bg-gray-200"
+                            }`}
                         >
                             Offers
                         </button>
@@ -131,7 +147,11 @@ const BuyingPage = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {savedItems.map((item, index) => (
                                         <div key={index} className="bg-white p-4 shadow rounded">
-                                            <img src={item.imageURL} alt={item.productName} className="w-full h-48 object-contain mb-4" />
+                                            <img
+                                                src={item.imageURL}
+                                                alt={item.productName}
+                                                className="w-full h-48 object-contain mb-4"
+                                            />
                                             <h2 className="text-lg font-semibold">{item.productName}</h2>
                                             <p className="text-gray-600">${item.price}</p>
                                             <p className="text-gray-500">{item.description}</p>
@@ -151,7 +171,11 @@ const BuyingPage = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {purchasedItems.map((item, index) => (
                                         <div key={index} className="bg-white p-4 shadow rounded">
-                                            <img src={item.imageURL} alt={item.productName} className="w-full h-48 object-cover mb-4" />
+                                            <img
+                                                src={item.imageURL}
+                                                alt={item.productName}
+                                                className="w-full h-48 object-cover mb-4"
+                                            />
                                             <h2 className="text-lg font-semibold">{item.productName}</h2>
                                             <p className="text-gray-600">${item.price}</p>
                                             <p className="text-gray-500">{item.description}</p>
@@ -171,7 +195,11 @@ const BuyingPage = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {offers.map((item, index) => (
                                         <div key={index} className="bg-white p-4 shadow rounded">
-                                            <img src={item.imageURL} alt={item.productName} className="w-full h-48 object-cover mb-4" />
+                                            <img
+                                                src={item.imageURL}
+                                                alt={item.productName}
+                                                className="w-full h-48 object-cover mb-4"
+                                            />
                                             <h2 className="text-lg font-semibold">{item.productName}</h2>
                                             <p className="text-gray-600">Your offer: $xx.xx</p>
                                             <p className="text-gray-500">{item.description}</p>

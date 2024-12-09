@@ -29,14 +29,22 @@
  */
 
 "use client";
-import React from "react";
-import { useState, useEffect } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebaseConfig";
-import {collection, query, where, onSnapshot, getDocs, addDoc} from "firebase/firestore";
+import {
+    collection,
+    query,
+    where,
+    onSnapshot,
+    getDocs,
+    addDoc,
+} from "firebase/firestore";
 import Modal from "@/components/Modal"; // Modal for product details
-import {Product} from "@/Models/Product";
+import { Product } from "@/Models/Product";
+import { FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, ROUTES } from "@/Models/ConstantData";
 
 const BrowsePage = () => {
     const [userEmail, setUserEmail] = useState("");
@@ -53,7 +61,7 @@ const BrowsePage = () => {
                 setUserEmail(user.email || "");
                 fetchRealTimeProducts(); // Start real-time product listener
             } else {
-                router.push("/pages/Login");
+                router.push(ROUTES.LOGIN); // Use constant for login route
             }
         });
 
@@ -63,7 +71,10 @@ const BrowsePage = () => {
     // Set up real-time listener for available products (not marked as sold)
     const fetchRealTimeProducts = () => {
         setLoading(true);
-        const productsQuery = query(collection(db, "products"), where("sold", "==", false));
+        const productsQuery = query(
+            collection(db, FIRESTORE_COLLECTIONS.PRODUCTS), // Use constant for collection
+            where(FIRESTORE_FIELDS.SOLD, "==", false) // Use constant for field
+        );
         const unsubscribeProducts = onSnapshot(
             productsQuery,
             (snapshot) => {
@@ -87,22 +98,22 @@ const BrowsePage = () => {
     const handleSaveProduct = async (product: Product) => {
         try {
             const savedItemsQuery = query(
-                collection(db, "savedItems"),
-                where("buyerEmail", "==", userEmail),
-                where("productId", "==", product.id)
+                collection(db, FIRESTORE_COLLECTIONS.SAVED_ITEMS), // Use constant for collection
+                where(FIRESTORE_FIELDS.BUYER_EMAIL, "==", userEmail), // Use constant for field
+                where(FIRESTORE_FIELDS.PRODUCT_ID, "==", product.id) // Use constant for field
             );
             const savedSnapshot = await getDocs(savedItemsQuery);
 
             if (savedSnapshot.empty) {
-                await addDoc(collection(db, "savedItems"), {
-                    buyerEmail: userEmail,
-                    productId: product.id,
-                    productName: product.productName,
-                    price: product.price,
-                    imageURL: product.imageURL,
-                    description: product.description,
-                    category: product.category,
-                    seller: product.seller,
+                await addDoc(collection(db, FIRESTORE_COLLECTIONS.SAVED_ITEMS), {
+                    [FIRESTORE_FIELDS.BUYER_EMAIL]: userEmail,
+                    [FIRESTORE_FIELDS.PRODUCT_ID]: product.id,
+                    [FIRESTORE_FIELDS.PRODUCT_NAME]: product.productName,
+                    [FIRESTORE_FIELDS.PRICE]: product.price,
+                    [FIRESTORE_FIELDS.IMAGE_URL]: product.imageURL,
+                    [FIRESTORE_FIELDS.DESCRIPTION]: product.description,
+                    [FIRESTORE_FIELDS.CATEGORY]: product.category,
+                    [FIRESTORE_FIELDS.SELLER]: product.seller,
                 });
                 alert("Item saved successfully!");
             } else {
@@ -122,7 +133,7 @@ const BrowsePage = () => {
 
     // Redirect to seller's listing page if the user is the seller
     const handleSellerRedirect = () => {
-        router.push("/pages/SellersPage");
+        router.push(ROUTES.SELLERS_PAGE); // Use constant for route
     };
 
     return (
@@ -148,7 +159,9 @@ const BrowsePage = () => {
                                             className="w-full h-48 object-contain mb-4"
                                             onClick={() => handleProductClick(product)}
                                         />
-                                        <h2 className="text-lg font-semibold">{product.productName}</h2>
+                                        <h2 className="text-lg font-semibold">
+                                            {product.productName}
+                                        </h2>
                                         <p className="text-gray-600">${product.price}</p>
                                         <p className="text-gray-500">{product.description}</p>
 
@@ -176,21 +189,21 @@ const BrowsePage = () => {
                     )}
                 </div>
 
-
                 {/* Product Details Modal */}
                 {showProductModal && selectedProduct && (
                     <Modal onClose={() => setShowProductModal(false)}>
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">{selectedProduct.productName}</h2>
+                            <h2 className="text-xl font-bold mb-4">{selectedProduct.productName}
+                            </h2>
                             <img
                                 src={selectedProduct.imageURL}
                                 alt={selectedProduct.productName}
                                 className="w-full h-48 object-contain mb-4"
                             />
-                            <p className="text-gray-600 mb-2">Price: ${selectedProduct.price}</p>
-                            <p className="text-gray-600 mb-2">Category: {selectedProduct.category}</p>
-                            <p className="text-gray-600 mb-4">Description: {selectedProduct.description}</p>
-                            <p className="text-gray-600 font-bold">Seller: {selectedProduct.seller}</p>
+                            <p className="text-gray-600 mb-2"> Price: ${selectedProduct.price} </p>
+                            <p className="text-gray-600 mb-2"> Category: {selectedProduct.category} </p>
+                            <p className="text-gray-600 mb-4"> Description: {selectedProduct.description} </p>
+                            <p className="text-gray-600 font-bold"> Seller: {selectedProduct.seller} </p>
                         </div>
                     </Modal>
                 )}
