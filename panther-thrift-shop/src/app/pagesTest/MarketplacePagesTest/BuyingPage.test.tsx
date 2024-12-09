@@ -1,10 +1,11 @@
-// BuyingPage.test.tsx
+//  BuyingPage.test.tsx
 import React from "react";
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { ROUTES } from "@/Models/ConstantData";
-import {useRouter} from "next/navigation";
-import {Product} from "@/Models/Product";
+import { useRouter } from "next/navigation";
+import { Product } from "@/Models/Product";
+import { fetchFirestoreData } from "@/utils/fetchFirestoreData";
 import BuyingPage from "@/app/pages/BuyingPage/page";
 
 // Mock firebase/auth
@@ -17,6 +18,10 @@ jest.mock("next/navigation", () => ({
     useRouter: jest.fn(),
 }));
 
+jest.mock("@/utils/fetchFirestoreData", () => ({
+    fetchFirestoreData: jest.fn(),
+}));
+
 const mockPush = jest.fn();
 
 (useRouter as jest.Mock).mockReturnValue({
@@ -24,7 +29,6 @@ const mockPush = jest.fn();
 });
 
 describe("BuyingPage Component", () => {
-
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -65,7 +69,7 @@ describe("BuyingPage Component", () => {
             return jest.fn(); // Mock unsubscribe function
         });
 
-        jest.spyOn(require("@/utils/fetchFirestoreData"), "fetchFirestoreData")
+        (fetchFirestoreData as jest.Mock)
             .mockResolvedValueOnce(mockSavedItems) // For saved items
             .mockResolvedValueOnce([]) // For purchased items
             .mockResolvedValueOnce([]); // For offers
@@ -82,7 +86,7 @@ describe("BuyingPage Component", () => {
             return jest.fn(); // Mock unsubscribe function
         });
 
-        jest.spyOn(require("@/utils/fetchFirestoreData"), "fetchFirestoreData")
+        (fetchFirestoreData as jest.Mock)
             .mockResolvedValueOnce([]) // For saved items
             .mockResolvedValueOnce([]) // For purchased items
             .mockResolvedValueOnce([]); // For offers
@@ -99,15 +103,20 @@ describe("BuyingPage Component", () => {
     });
 
     test("switches tabs correctly", async () => {
-        const mockSavedItems = [{ id: "1", productName: "Saved Product", price: 20, category: "", imageURL: "", description: "", seller: "", sold: false }];
-        const mockPurchasedItems = [{ id: "2", productName: "Purchased Product", price: 50, category: "", imageURL: "", description: "", seller: "", sold: true }];
+        const mockSavedItems = [
+            { id: "1", productName: "Saved Product", price: 20, category: "", imageURL: "", description: "", seller: "", sold: false },
+        ];
+        const mockPurchasedItems = [
+            { id: "2", productName: "Purchased Product", price: 50, category: "", imageURL: "", description: "", seller: "", sold: true },
+        ];
+
         // Mock authenticated user
         (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
             callback({ email: "user@example.com" }); // Simulate authenticated user
             return jest.fn(); // Mock unsubscribe function
         });
 
-        jest.spyOn(require("@/utils/fetchFirestoreData"), "fetchFirestoreData")
+        (fetchFirestoreData as jest.Mock)
             .mockResolvedValueOnce(mockSavedItems)
             .mockResolvedValueOnce(mockPurchasedItems)
             .mockResolvedValueOnce([]);
@@ -121,9 +130,7 @@ describe("BuyingPage Component", () => {
         await waitFor(() => expect(screen.getByText("Saved Product")).toBeInTheDocument());
     });
 
-
     test("fetches data for all tabs", async () => {
-        // Mock product data
         const mockSavedItems: Product[] = [
             {
                 id: "1",
@@ -142,17 +149,17 @@ describe("BuyingPage Component", () => {
 
         const mockPurchasedItems: Product[] = [
             {
-                id: "1",
-                productName: "Saved Product",
-                price: 20,
+                id: "2",
+                productName: "Purchased Product",
+                price: 50,
                 category: "Category",
                 imageURL: "",
-                description: "Saved product description",
+                description: "Purchased product description",
                 seller: "",
-                sold: false,
+                sold: true,
                 markAsSold: jest.fn(),
                 updateDetails: jest.fn(),
-                getSummary: jest.fn(() => "Saved Product - $20"),
+                getSummary: jest.fn(() => "Purchased Product - $50"),
             },
         ];
 
@@ -162,29 +169,17 @@ describe("BuyingPage Component", () => {
             return jest.fn(); // Mock unsubscribe function
         });
 
-        // Mock fetchFirestoreData calls
-        const fetchFirestoreDataMock = jest.spyOn(require("@/utils/fetchFirestoreData"), "fetchFirestoreData")
+        (fetchFirestoreData as jest.Mock)
             .mockResolvedValueOnce(mockSavedItems) // For savedItems
-            .mockResolvedValueOnce([mockPurchasedItems]) // For purchasedItems
+            .mockResolvedValueOnce(mockPurchasedItems) // For purchasedItems
             .mockResolvedValueOnce([]); // For offers
 
-        // Render component
         render(<BuyingPage />);
 
-        // Ensure all fetchFirestoreData calls are made
-        await waitFor(() => expect(fetchFirestoreDataMock).toHaveBeenCalledTimes(3));
+        await waitFor(() => expect(fetchFirestoreData).toHaveBeenCalledTimes(3));
 
-        // Check specific call arguments
-        expect(fetchFirestoreDataMock).toHaveBeenCalledWith(
-            "savedItems",
-            "user@example.com",
-            "buyerEmail"
-        );
-        expect(fetchFirestoreDataMock).toHaveBeenCalledWith(
-            "purchasedItems",
-            "user@example.com",
-            "buyerEmail"
-        );
+        expect(fetchFirestoreData).toHaveBeenCalledWith("savedItems", "user@example.com", "buyerEmail");
+        expect(fetchFirestoreData).toHaveBeenCalledWith("purchasedItems", "user@example.com", "buyerEmail");
+        expect(fetchFirestoreData).toHaveBeenCalledWith("offers", "user@example.com", "buyerEmail");
     });
-
 });
