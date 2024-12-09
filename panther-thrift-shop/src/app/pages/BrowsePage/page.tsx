@@ -8,7 +8,7 @@ import { Product } from "@/Models/Product";
 import { FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, ROUTES } from "@/Models/ConstantData";
 import { fetchRealTimeData, saveProduct } from "@/utils/firestoreUtils"; // Utility functions
 import ProductGrid from "@/components/ProductGrid";
-import ProductModal from "@/Models/ProductModal"; // Modal for product details
+import ProductModal from "@/components/ProductModal"; // Modal for product details
 
 const BrowsePage = () => {
     const [userEmail, setUserEmail] = useState<string>("");
