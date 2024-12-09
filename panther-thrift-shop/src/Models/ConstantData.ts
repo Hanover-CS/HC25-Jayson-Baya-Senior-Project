@@ -28,3 +28,20 @@ export const TAB_NAMES = {
     PURCHASED_ORDERS: "Purchased Orders",
     OFFERS: "Offers",
 };
+
+export const handleSaveProductAlert = {
+    SAVED_ITEMS: "Item saved successfully!",
+    Error: "Error saving product:",
+    Alert: "Error saving item. Please try again."
+}
+
+export const fetchProductsAlert = {
+    Error: "Error fetching products:",
+    Alert: "Error fetching products. Please try again later."
+}
+
+export const renderTabContentMessage = {
+    emptySaved: "No saved items yet.",
+    emptyPurchased: "No purchased items yet.",
+    emptyOffers: "No offers made yet."
+}

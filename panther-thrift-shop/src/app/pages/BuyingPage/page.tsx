@@ -35,7 +35,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import { fetchFirestoreData } from "@/utils/fetchFirestoreData";
-import { FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, ROUTES } from "@/Models/ConstantData";
+import {FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, renderTabContentMessage, ROUTES} from "@/Models/ConstantData";
 import { TAB_NAMES } from "@/Models/ConstantData";
 import ProductGrid from "@/components/ProductGrid";
 import {Product} from "@/Models/Product";
@@ -75,21 +75,21 @@ const BuyingPage = () => {
                 return (
                     <ProductGrid
                         products={savedItems}
-                        emptyMessage="No saved items yet."
+                        emptyMessage={renderTabContentMessage.emptySaved}
                     />
                 );
             case TAB_NAMES.PURCHASED_ORDERS:
                 return (
                     <ProductGrid
                         products={purchasedItems}
-                        emptyMessage="No purchased items yet."
+                        emptyMessage={renderTabContentMessage.emptyPurchased}
                     />
                 );
             case TAB_NAMES.OFFERS:
                 return (
                     <ProductGrid
                         products={offers}
-                        emptyMessage="No offers made yet."
+                        emptyMessage={renderTabContentMessage.emptyOffers}
                     />
                 );
             default:

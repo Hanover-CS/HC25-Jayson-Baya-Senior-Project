@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 import {onAuthStateChanged, User} from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import { Product } from "@/Models/Product";
-import { FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, ROUTES } from "@/Models/ConstantData";
+import {
+    fetchProductsAlert,
+    FIRESTORE_COLLECTIONS,
+    FIRESTORE_FIELDS,
+    handleSaveProductAlert,
+    ROUTES
+} from "@/Models/ConstantData";
 import { fetchRealTimeData, saveProduct } from "@/utils/firestoreUtils"; // Utility functions
 import ProductGrid from "@/components/ProductGrid";
 import ProductModal from "@/components/ProductModal"; // Modal for product details
@@ -44,8 +50,8 @@ const BrowsePage = () => {
                 setLoading(false);
             },
             (error) => {
-                console.error("Error fetching products:", error);
-                setError("Error fetching products. Please try again later.");
+                console.error(fetchProductsAlert.Error, error);
+                setError(fetchProductsAlert.Alert);
                 setLoading(false);
             }
         );
@@ -66,10 +72,10 @@ const BrowsePage = () => {
             };
 
             await saveProduct(FIRESTORE_COLLECTIONS.SAVED_ITEMS, productData);
-            alert("Item saved successfully!");
+            alert(handleSaveProductAlert.SAVED_ITEMS);
         } catch (error) {
-            console.error("Error saving product:", error);
-            alert("Error saving item. Please try again.");
+            console.error(handleSaveProductAlert.Error, error);
+            alert(handleSaveProductAlert.Alert);
         }
     };
 
