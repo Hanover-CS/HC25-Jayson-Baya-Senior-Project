@@ -32,7 +32,8 @@ import { auth, db, storage } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import Modal from "@/components/Modal"; // Modal component for pop-up
+import Modal from "@/components/Modal";
+import {fetchProductsAlert, FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS} from "@/Models/ConstantData"; // Modal component for pop-up
 
 interface Product {
     id: string;
@@ -77,14 +78,21 @@ const SellerPage = () => {
     // Fetch seller's listings from Firestore
     const fetchSellerProducts = async (userEmail: string | null) => {
         try {
-            const q = query(collection(db, "products"), where("seller", "==", userEmail));
+            const q = query(
+                collection(db, FIRESTORE_COLLECTIONS.PRODUCTS),
+                where(FIRESTORE_FIELDS.SELLER, "==", userEmail)
+            );
             const querySnapshot = await getDocs(q);
-            const listings: Product[] = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Product));
+            const listings: Product[] = querySnapshot.docs.map((doc) => ({
+                ...doc.data(),
+                id: doc.id
+            } as Product));
             setProducts(listings);
         } catch (error) {
-            console.error("Error fetching listings: ", error);
+            console.error(fetchProductsAlert.Error, error);
         }
     };
+
 
     // Handle form submission for creating a new listing
     const handleCreateListing = async () => {
@@ -102,22 +110,22 @@ const SellerPage = () => {
             "state_changed",
             () => {},
             (error) => {
-                setMessage("Error uploading image: " + (error as Error).message);
+                setMessage(fetchProductsAlert.Error + error.message);
                 setShowPopup(true);
             },
             async () => {
                 const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
                 try {
-                    await addDoc(collection(db, "products"), {
-                        productName: name,
-                        category,
-                        price,
-                        description,
-                        imageURL: downloadURL,
-                        seller: userEmail,
-                        sold: false, // New listings are unsold by default
-                        createdAt: new Date(),
+                    await addDoc(collection(db, FIRESTORE_COLLECTIONS.PRODUCTS), {
+                        [FIRESTORE_FIELDS.PRODUCT_NAME]: name,
+                        [FIRESTORE_FIELDS.CATEGORY]: category,
+                        [FIRESTORE_FIELDS.PRICE]: price,
+                        [FIRESTORE_FIELDS.DESCRIPTION]: description,
+                        [FIRESTORE_FIELDS.IMAGE_URL]: downloadURL,
+                        [FIRESTORE_FIELDS.SELLER]: userEmail,
+                        [FIRESTORE_FIELDS.SOLD]: false,
+                        [FIRESTORE_FIELDS.CREATED_AT]: new Date(),
                     });
 
                     setMessage("Product listed successfully!");
@@ -131,7 +139,7 @@ const SellerPage = () => {
 
                     fetchSellerProducts(userEmail);
                 } catch (error) {
-                    setMessage("Error adding product: " + (error as Error).message);
+                    setMessage(fetchProductsAlert.Error + (error as Error).message);
                     setShowPopup(true);
                 }
             }
