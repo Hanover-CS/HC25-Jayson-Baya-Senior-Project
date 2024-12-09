@@ -22,3 +22,9 @@ export const ROUTES = {
     LOGIN: "/pages/Login",
     SELLERS_PAGE: "/pages/SellersPage",
 };
+
+export const TAB_NAMES = {
+    SAVED_ITEMS: "Saved Items",
+    PURCHASED_ORDERS: "Purchased Orders",
+    OFFERS: "Offers",
+};
