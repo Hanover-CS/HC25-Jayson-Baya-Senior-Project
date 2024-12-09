@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged } from "firebase/auth";
+import {onAuthStateChanged, User} from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import { Product } from "@/Models/Product";
 import { FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, ROUTES } from "@/Models/ConstantData";
@@ -19,8 +19,9 @@ const BrowsePage = () => {
     const [showProductModal, setShowProductModal] = useState<boolean>(false);
     const router = useRouter();
 
+
     useEffect(() => {
-        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+        const unsubscribeAuth = onAuthStateChanged(auth, (user: User | null) => {
             if (user) {
                 setUserEmail(user.email || "");
                 fetchProducts(); // Fetch products when authenticated
@@ -31,6 +32,7 @@ const BrowsePage = () => {
 
         return () => unsubscribeAuth(); // Cleanup on unmount
     }, [router]);
+
 
     // Fetch products from Firestore
     const fetchProducts = () => {
