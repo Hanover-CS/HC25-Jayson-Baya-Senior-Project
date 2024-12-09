@@ -1,13 +1,11 @@
 // BuyingPage.test.tsx
 import React from "react";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import BrowsePage from "@/app/pages/BuyingPage/page";
 import { onAuthStateChanged } from "firebase/auth";
 import { ROUTES } from "@/Models/ConstantData";
 import {useRouter} from "next/navigation";
 import {Product} from "@/Models/Product";
 import BuyingPage from "@/app/pages/BuyingPage/page";
-import {before} from "node:test";
 
 // Mock firebase/auth
 jest.mock("firebase/auth", () => ({
