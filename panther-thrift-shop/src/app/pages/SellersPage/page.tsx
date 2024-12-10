@@ -32,9 +32,11 @@ import { auth, db, storage } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import {categories} from "@/Models/ConstantData";
-import Modal from "@/components/Modal";
-import {fetchProductsAlert, FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS} from "@/Models/ConstantData"; // Modal component for pop-up
+import {fetchProductsAlert, FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS} from "@/Models/ConstantData";
+import CreateListingForm from "@/components/SellerPageComponent/CreateNewListing";
+import ProductListings from "@/components/SellerPageComponent/ProductListings";
+import EditProductModal from "@/components/SellerPageComponent/EditProductModal";
+import PopupAlert from "@/components/SellerPageComponent/PopupAlert"; // Modal component for pop-up
 
 interface Product {
     id: string;
@@ -185,217 +187,42 @@ const SellerPage = () => {
                     <h1 className="text-2xl font-bold mb-6">My Listings</h1>
 
                     {/* Create New Listing */}
-                    <div className="bg-white p-6 rounded shadow-md max-w-lg mx-auto mb-6">
-                        <h2 className="text-xl font-bold mb-4">Create New Listing</h2>
-                        <div className="mb-4">
-                            <label className="block mb-2 text-gray-700">Product Name</label>
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-2 text-gray-700">Category</label>
-                            <select
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                                className="w-full p-2 border rounded"
-                            >
-                                <option value="">Select Category</option>
-                                {categories.map((category, idx) => (
-                                    <option key={idx} value={category}>
-                                        {category}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-2 text-gray-700">Price</label>
-                            <input
-                                type="number"
-                                value={price}
-                                onChange={(e) => setPrice(Number(e.target.value))}
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-2 text-gray-700">Description</label>
-                            <textarea
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-2 text-gray-700">Product Image</label>
-                            <input
-                                type="file"
-                                onChange={(e) => {
-                                    if (e.target.files && e.target.files.length > 0) {
-                                        setImage(e.target.files[0]);
-                                    }
-                                }}
-                                className="w-full"
-                            />
-                        </div>
-
-                        <button
-                            onClick={handleCreateListing}
-                            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
-                        >
-                            Create Listing
-                        </button>
-                    </div>
+                    <CreateListingForm
+                        name={name}
+                        setName={setName}
+                        category={category}
+                        setCategory={setCategory}
+                        price={price}
+                        setPrice={setPrice}
+                        description={description}
+                        setDescription={setDescription}
+                        setImage={setImage}
+                        handleCreateListing={handleCreateListing}
+                    />
 
                     {/* Existing Listings */}
-                    <div>
-                        <h2 className="text-xl font-semibold mb-4">My Listings</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {products.length > 0 ? (
-                                products.map((product) => (
-                                    <div
-                                        key={product.id}
-                                        onClick={() => handleEditProduct(product)}
-                                        className="bg-white p-4 shadow rounded cursor-pointer"
-                                    >
-                                        <img
-                                            src={product.imageURL}
-                                            alt={product.productName}
-                                            className="w-full h-48 object-contain mb-4"
-                                        />
-                                        <h2 className="text-lg font-semibold">{product.productName}</h2>
-                                        <p className="text-gray-600">${product.price}</p>
-                                        <p className="text-gray-500">{product.description}</p>
-                                        {product.sold ? (
-                                            <p className="text-red-500 font-bold">Sold</p>
-                                        ) : (
-                                            <p className="text-green-500 font-bold">Still Selling</p>
-                                        )}
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No listings found.</p>
-                            )}
-                        </div>
-                    </div>
+                    <ProductListings
+                        products={products}
+                        handleEditProduct={handleEditProduct}
+                    />
+
 
                     {/* Popup for success or error messages */}
                     {showPopup && (
-                        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-                            <div className="bg-white p-6 rounded shadow-md text-center">
-                                <p>{message}</p>
-                                <button
-                                    onClick={() => setShowPopup(false)}
-                                    className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
+                        <PopupAlert
+                            message={message}
+                            onClose={() => setShowPopup(false)}
+                        />
                     )}
 
                     {/* Edit Product Modal */}
                     {selectedProduct && showEditModal && (
-                        <Modal onClose={() => setShowEditModal(false)}>
-                            <div className="p-6">
-                                <h2 className="text-xl font-bold mb-4">Edit Product</h2>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Product Name</label>
-                                    <input
-                                        type="text"
-                                        value={selectedProduct.productName}
-                                        onChange={(e) =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                productName: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Category</label>
-                                    <select
-                                        value={selectedProduct.category}
-                                        onChange={(e) =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                category: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
-                                    >
-                                        <option value="">Select Category</option>
-                                        {categories.map((category, idx) => (
-                                            <option key={idx} value={category}>
-                                                {category}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Price</label>
-                                    <input
-                                        type="number"
-                                        value={selectedProduct.price}
-                                        onChange={(e) =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                price: Number(e.target.value),
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Description</label>
-                                    <textarea
-                                        value={selectedProduct.description}
-                                        onChange={(e) =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                description: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="block mb-2 text-gray-700">Status</label>
-                                    <select
-                                        value={selectedProduct.sold ? "Sold" : "Still Selling"}
-                                        onChange={(e) =>
-                                            setSelectedProduct((prev) => ({
-                                                ...prev!,
-                                                sold: e.target.value === "Sold",
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
-                                    >
-                                        <option value="Still Selling">Still Selling</option>
-                                        <option value="Sold">Sold</option>
-                                    </select>
-                                </div>
-
-                                <button
-                                    onClick={handleUpdateProduct}
-                                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
-                                >
-                                    Update Product
-                                </button>
-                            </div>
-                        </Modal>
+                        <EditProductModal
+                            selectedProduct={selectedProduct}
+                            setSelectedProduct={setSelectedProduct}
+                            setShowEditModal={setShowEditModal}
+                            handleUpdateProduct={handleUpdateProduct}
+                        />
                     )}
                 </div>
             </div>
