@@ -32,7 +32,7 @@ import { auth, db, storage } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import {fetchProductsAlert, FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS} from "@/Models/ConstantData";
+import {fetchProductsAlert, FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, ROUTES} from "@/Models/ConstantData";
 import CreateListingForm from "@/components/SellerPageComponent/CreateNewListing";
 import ProductListings from "@/components/SellerPageComponent/ProductListings";
 import EditProductModal from "@/components/SellerPageComponent/EditProductModal";
@@ -70,7 +70,7 @@ const SellerPage = () => {
                 setUserEmail(user.email || "");
                 fetchSellerProducts(user.email);
             } else {
-                router.push("/pages/Login");
+                router.push(ROUTES.LOGIN);
             }
         });
 
