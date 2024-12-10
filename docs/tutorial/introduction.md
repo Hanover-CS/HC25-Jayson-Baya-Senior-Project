@@ -2,7 +2,7 @@
 Introduction
 Routing is the backbone of Next.js applications, built around an intuitive file-system structure. By leveraging this, Next.js allows developers to map files within the pages directory directly to URL paths, eliminating the need for complex configurations and making routing as simple as adding a new file. This method simplifies page creation and supports nested routes, dynamic parameters, and more.
 
-## Learning Objectives
+### Learning Objectives
 1. Understand the file-based routing system in Next.js and how it simplifies URL path mapping.
 2. Learn how to create and structure initial pages and shared layouts in Next.js.
 3. Explore dynamic routing for user-specific pages and variable content.
