@@ -65,4 +65,10 @@ export default function ReadMore() {
   );
 }
 ```
+
+## See Also for Additional Information
+
+- [Prefetching Pages in Next.js](https://nextjs.org/docs/routing/introduction#automatic-prefetching): Understand how Next.js optimizes navigation with automatic page prefetching.
+- [Building Navigation with React](https://reactrouter.com/en/main): Learn about general navigation concepts and compare with React Router, a popular library for routing in React applications.
+
 [<< Dynamic Routes](dynamic-routes.md) | [Conclusion >>](conclusion.md)

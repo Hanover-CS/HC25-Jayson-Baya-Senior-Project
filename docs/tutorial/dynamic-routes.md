@@ -43,10 +43,10 @@ For example, pages/shop/[...slug].tsx can match /shop/clothes, /shop/clothes/top
 
 ----
 
-### Next Steps
-For more details, consider exploring these topics:
+## See Also for Additional Information
 
-**[Linking and Navigating](linking-and-navigating.md):** Learn about using the Link component and useRouter hook to navigate in Next.js. <br>
-**[useRouter:](useRouter.md)** Access the Next.js Router instance within a page using the useRouter hook.
+- [Routing with the `useRouter` Hook](https://nextjs.org/docs/api-reference/next/router#userouter): Learn more about accessing route parameters and navigating programmatically with `useRouter`.
+- [Pre-rendering and Data Fetching](https://nextjs.org/docs/basic-features/data-fetching): Discover how to use `getStaticProps` and `getServerSideProps` with dynamic routes.
+- [Linking and Navigating in Next.js](https://nextjs.org/docs/routing/introduction#linking-and-navigating): A guide to using the `Link` component and client-side navigation.
 
 [<< Pages and Layouts](pages-and-layouts.md) | [Linking and Navigating >>](linking-and-navigating.md)

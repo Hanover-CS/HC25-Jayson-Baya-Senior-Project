@@ -152,5 +152,14 @@ export default function Layout({ children }: LayoutProps) {
   );
 }
 ```
+
+## See Also
+
+For more information about routing and pages in Next.js, you can explore the following resources:
+
+- [Next.js Official Documentation on Routing](https://nextjs.org/docs/routing/introduction) - A comprehensive guide to setting up routes, dynamic segments, and advanced routing patterns.
+- [Next.js Metadata](https://nextjs.org/docs/app/building-your-application/optimizing/metadata) - Detailed explanation and examples for setting up global and per-page layouts.
+- [Dynamic Routing in Next.js](https://nextjs.org/docs/routing/dynamic-routes) - Learn more about creating dynamic pages and using parameters in your routes.
+
 ---
 [<< Pre-requisite](pre-requisite.md) | [Dynamic Routes >>](dynamic-routes.md)
