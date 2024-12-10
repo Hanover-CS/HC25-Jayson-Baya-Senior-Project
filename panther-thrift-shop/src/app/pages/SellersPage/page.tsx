@@ -32,6 +32,7 @@ import { auth, db, storage } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {categories} from "@/Models/ConstantData";
 import Modal from "@/components/Modal";
 import {fetchProductsAlert, FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS} from "@/Models/ConstantData"; // Modal component for pop-up
 
@@ -60,7 +61,6 @@ const SellerPage = () => {
     const [showPopup, setShowPopup] = useState(false);
     const router = useRouter();
 
-    const categories = ["Men's Clothing", "Women's Clothing", "Appliances", "Room Decoration", "Textbooks"];
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {

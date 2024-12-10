@@ -1,3 +1,5 @@
+export const categories = ["Men's Clothing", "Women's Clothing", "Appliances", "Room Decoration", "Textbooks"];
+
 export const FIRESTORE_COLLECTIONS = {
     PRODUCTS: "products",
     SAVED_ITEMS: "savedItems",
