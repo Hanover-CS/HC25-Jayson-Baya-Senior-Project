@@ -1,3 +1,30 @@
+/**
+ * BrowsePage.tsx
+ *
+ * This file defines the `BrowsePage` component for the Panther Thrift Shop web application.
+ * The `BrowsePage` serves as the main homepage for users and buyers, allowing them to view
+ * available products and save items for later. It displays product listings in real-time,
+ * fetching data from Firebase Firestore. Users can click on products to view details,
+ * save products to their saved items list, or redirect to the seller's listings if they
+ * are the product owner.
+ *
+ * Key Features:
+ * - Real-time product listings using Firebase Firestore.
+ * - Category-based browsing with a sidebar navigation.
+ * - Save item functionality for buyers.
+ * - Modal pop-up for viewing product details.
+ * - Redirects to the seller's page if the current user is the product owner.
+ *
+ * Dependencies:
+ * - Firebase Auth for user authentication.
+ * - Firebase Firestore for real-time product data.
+ * - `MarketplaceNavBar` and `MarketplaceSidebar` components for navigation.
+ * - `Modal` component for displaying product details.
+ *
+ * Author: Jayson Baya
+ * Last Updated: November 14, 2024
+ */
+
 "use client";
 
 import React, { useState, useEffect } from "react";
