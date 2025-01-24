@@ -52,22 +52,22 @@ const BuyingPage = () => {
             if (user) {
                 const email = user.email || "";
                 fetchFirestoreData(FIRESTORE_COLLECTIONS.SAVED_ITEMS, email, FIRESTORE_FIELDS.BUYER_EMAIL).then(
-                    (data) => setSavedItems(data) // Now properly typed
+                    (data) => setSavedItems(data)
                 );
                 fetchFirestoreData(FIRESTORE_COLLECTIONS.PURCHASED_ITEMS, email, FIRESTORE_FIELDS.BUYER_EMAIL).then(
-                    (data) => setPurchasedItems(data) // Now properly typed
+                    (data) => setPurchasedItems(data)
                 );
                 fetchFirestoreData(FIRESTORE_COLLECTIONS.OFFERS, email, FIRESTORE_FIELDS.BUYER_EMAIL).then(
-                    (data) => setOffers(data) // Now properly typed
+                    (data) => setOffers(data)
                 );
             } else {
                 router.push(ROUTES.LOGIN);
             }
         });
 
-
         return () => unsubscribe();
-    }, [router]);
+    }, [router, savedItems]);
+
 
     const renderTabContent = () => {
         switch (selectedTab) {

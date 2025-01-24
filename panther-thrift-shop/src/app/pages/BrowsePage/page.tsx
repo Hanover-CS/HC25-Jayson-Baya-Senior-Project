@@ -39,7 +39,7 @@ import {
     handleSaveProductAlert,
     ROUTES
 } from "@/Models/ConstantData";
-import { fetchRealTimeData, saveProduct } from "@/utils/firestoreUtils"; // Utility functions
+import {fetchRealTimeData, isProductSaved, saveProduct, unsaveProduct} from "@/utils/firestoreUtils"; // Utility functions
 import ProductGrid from "@/components/ProductGrid";
 import ProductModal from "@/components/ProductModal"; // Modal for product details
 
@@ -84,27 +84,40 @@ const BrowsePage = () => {
         );
     };
 
-    // Handle saving a product
+    // Handle saving and unsaving a product
     const handleSaveProduct = async (product: Product) => {
         try {
-            const productData = {
-                [FIRESTORE_FIELDS.BUYER_EMAIL]: userEmail,
-                [FIRESTORE_FIELDS.PRODUCT_ID]: product.id,
-                [FIRESTORE_FIELDS.PRODUCT_NAME]: product.productName,
-                [FIRESTORE_FIELDS.PRICE]: product.price,
-                [FIRESTORE_FIELDS.IMAGE_URL]: product.imageURL,
-                [FIRESTORE_FIELDS.DESCRIPTION]: product.description,
-                [FIRESTORE_FIELDS.CATEGORY]: product.category,
-                [FIRESTORE_FIELDS.SELLER]: product.seller,
-            };
+            const isSaved = await isProductSaved(FIRESTORE_COLLECTIONS.SAVED_ITEMS, userEmail, product.id);
 
-            await saveProduct(FIRESTORE_COLLECTIONS.SAVED_ITEMS, productData);
-            alert(handleSaveProductAlert.SAVED_ITEMS);
+            if (isSaved) {
+                // If the product is already saved, unsave it
+                await unsaveProduct(FIRESTORE_COLLECTIONS.SAVED_ITEMS, product.id);
+                alert("Item unsaved successfully!");
+            } else {
+                // Save the product
+                const productData = {
+                    [FIRESTORE_FIELDS.BUYER_EMAIL]: userEmail,
+                    [FIRESTORE_FIELDS.PRODUCT_ID]: product.id,
+                    [FIRESTORE_FIELDS.PRODUCT_NAME]: product.productName,
+                    [FIRESTORE_FIELDS.PRICE]: product.price,
+                    [FIRESTORE_FIELDS.IMAGE_URL]: product.imageURL,
+                    [FIRESTORE_FIELDS.DESCRIPTION]: product.description,
+                    [FIRESTORE_FIELDS.CATEGORY]: product.category,
+                    [FIRESTORE_FIELDS.SELLER]: product.seller,
+                };
+
+                await saveProduct(FIRESTORE_COLLECTIONS.SAVED_ITEMS, productData);
+                alert("Item saved successfully!");
+            }
+
+            // Refresh products after saving/unsaving
+            fetchProducts();
         } catch (error) {
             console.error(handleSaveProductAlert.Error, error);
             alert(handleSaveProductAlert.Alert);
         }
     };
+
 
     // Handle product click to open modal
     const handleProductClick = (product: Product) => {
