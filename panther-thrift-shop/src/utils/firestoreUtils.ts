@@ -3,7 +3,6 @@ import {
     collection,
     query,
     where,
-    addDoc,
     onSnapshot,
     FirestoreError,
     getDocs,
