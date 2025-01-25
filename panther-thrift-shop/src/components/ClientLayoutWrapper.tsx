@@ -6,6 +6,9 @@ import MarketplaceNavBar from "@/components/MarketplaceNavbar";
 import MarketplaceSidebar from "@/components/MarketplaceSidebar";
 import NavBar from "@/components/Navbar"; // Navbar with Login/SignUp
 import routeToCategory from "@/components/routeToCategory";
+import ChatPanel from "@/components/BuyingPageComponent/ChatPanel";
+import {onAuthStateChanged} from "firebase/auth";
+import { auth } from "@/lib/firebaseConfig";
 
 type ClientLayoutWrapperProps = {
     children: React.ReactNode;
@@ -13,6 +16,7 @@ type ClientLayoutWrapperProps = {
 
 const ClientLayoutWrapper: React.FC<ClientLayoutWrapperProps> = ({ children }) => {
     const [selectedCategory, setSelectedCategory] = useState<string>("Browse All");
+    const [userEmail, setUserEmail] = useState<string>("");
     const router = useRouter();
     const pathname = usePathname();
 
@@ -23,6 +27,7 @@ const ClientLayoutWrapper: React.FC<ClientLayoutWrapperProps> = ({ children }) =
             setSelectedCategory(category);
         }
     }, [pathname]);
+
 
     // Check if the current route is an auth page (login or signup)
     const isAuthPage = () => {
@@ -38,6 +43,21 @@ const ClientLayoutWrapper: React.FC<ClientLayoutWrapperProps> = ({ children }) =
     const handleCategoryChange = (category: string) => {
         setSelectedCategory(category);
         router.push(`/pages/${category.replace(/\s+/g, "")}Page`);
+    };
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUserEmail(user.email || "");
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    const handleSelectConversation = (conversationId: string) => {
+        console.log("Selected conversation:", conversationId);
+        // Pass this conversationId to the ChatBox (we'll implement next).
     };
 
     return (
@@ -61,6 +81,7 @@ const ClientLayoutWrapper: React.FC<ClientLayoutWrapperProps> = ({ children }) =
                     </div>
                 </>
             )}
+            <ChatPanel userEmail={userEmail} onSelectConversation={handleSelectConversation} />
         </>
     );
 };
