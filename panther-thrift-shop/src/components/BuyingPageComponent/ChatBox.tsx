@@ -47,8 +47,17 @@ interface ChatBoxProps {
     onClose: () => void; // Close the chatbox
 }
 
+interface Message {
+    text: string;
+    sender: string;
+    recipient: string;
+    timestamp: Timestamp;
+    conversationId: string;
+}
+
+
 const ChatBox: React.FC<ChatBoxProps> = ({ conversationId, userEmail, sellerEmail, onClose }) => {
-    const [messages, setMessages] = useState<{ text: string; sender: string; timestamp: Timestamp }[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
     const [isSending, setIsSending] = useState<boolean>(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -62,9 +71,19 @@ const ChatBox: React.FC<ChatBoxProps> = ({ conversationId, userEmail, sellerEmai
         );
 
         const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
-            const fetchedMessages = snapshot.docs.map((doc) => doc.data() as any);
+            const fetchedMessages: Message[] = snapshot.docs.map((doc) => {
+                const data = doc.data();
+                return {
+                    text: data.text,
+                    sender: data.sender,
+                    recipient: data.recipient,
+                    timestamp: data.timestamp,
+                    conversationId: data.conversationId,
+                } as Message;
+            });
             setMessages(fetchedMessages);
         });
+
 
         return () => unsubscribe();
     }, [conversationId]);
