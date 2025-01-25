@@ -29,14 +29,13 @@ interface Conversation {
 
 interface ChatPanelProps {
     userEmail: string;
+    onSelectConversation: (conversationId: string) => void;
 }
 
 const ChatPanel: React.FC<ChatPanelProps> = ({ userEmail }) => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [isOpen, setIsOpen] = useState(false);
-    const [activeChats, setActiveChats] = useState<
-        { conversationId: string; sellerEmail: string }[]
-    >([]);
+    const [activeChats, setActiveChats] = useState<{ conversationId: string; sellerEmail: string }[]>([]);
 
     // Fetch conversations from Firestore
     useEffect(() => {
@@ -59,14 +58,14 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ userEmail }) => {
     }, [userEmail]);
 
     // Open a chatbox
-    const openChatBox = (conversationId: string, sellerEmail: string) => {
+    const openChat = (conversationId: string, sellerEmail: string) => {
         if (!activeChats.find((chat) => chat.conversationId === conversationId)) {
             setActiveChats([...activeChats, { conversationId, sellerEmail }]);
         }
     };
 
     // Close a chatbox
-    const closeChatBox = (conversationId: string) => {
+    const closeChat = (conversationId: string) => {
         setActiveChats(activeChats.filter((chat) => chat.conversationId !== conversationId));
     };
 
@@ -95,7 +94,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ userEmail }) => {
                                         key={conversation.id}
                                         className="cursor-pointer p-2 border-b hover:bg-gray-100"
                                         onClick={() =>
-                                            openChatBox(
+                                            openChat(
                                                 conversation.id,
                                                 conversation.buyer === userEmail
                                                     ? conversation.seller
@@ -129,18 +128,16 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ userEmail }) => {
                 </button>
             )}
 
-            {/* Render Active ChatBoxes */}
-            <div className="absolute bottom-4 left-72 flex gap-4">
-                {activeChats.map((chat) => (
-                    <ChatBox
-                        key={chat.conversationId}
-                        conversationId={chat.conversationId}
-                        userEmail={userEmail}
-                        sellerEmail={chat.sellerEmail}
-                        onClose={() => closeChatBox(chat.conversationId)}
-                    />
-                ))}
-            </div>
+            {/* Active ChatBoxes */}
+            {activeChats.map((chat) => (
+                <ChatBox
+                    key={chat.conversationId}
+                    conversationId={chat.conversationId}
+                    userEmail={userEmail}
+                    sellerEmail={chat.sellerEmail}
+                    onClose={() => closeChat(chat.conversationId)}
+                />
+            ))}
         </>
     );
 };
