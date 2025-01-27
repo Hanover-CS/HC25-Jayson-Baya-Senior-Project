@@ -115,7 +115,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                         {/* Action Buttons */}
                         {userEmail && product.seller === userEmail ? (
                             <button
-                                onClick={() => onSellerRedirect?.()}
+                                onClick={() => {
+                                    if (onSellerRedirect) {
+                                        onSellerRedirect();
+                                    }
+                                }}
                                 className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
                             >
                                 My Listings

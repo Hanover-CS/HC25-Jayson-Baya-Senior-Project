@@ -171,7 +171,7 @@ const addData = async <T extends Product | User | Conversation | Message>(
 
 const getData = async <T>(
     storeName: string,
-    filters: { field: string; value: unknown; operator: string }[] = []
+    filters: { field: string; value: string | number | boolean | string[]; operator: string }[] = []
 ): Promise<T[]> => {
     if (useFirestore) {
         let q: Query<DocumentData> | CollectionReference<DocumentData> = collection(
@@ -179,7 +179,7 @@ const getData = async <T>(
             storeName
         );
         filters.forEach((filter) => {
-            q = query(q, where(filter.field as string, filter.operator as any, filter.value));
+            q = query(q, where(filter.field, filter.operator as any, filter.value));
         });
 
         const snapshot = await getDocs(q);
