@@ -155,7 +155,7 @@ const initializeDB = async (): Promise<IDBPDatabase> => {
 
 const addData = async <T extends Product | User | Conversation | Message>(
     storeName: string,
-    data: {}
+    data: T
 ): Promise<void> => {
     if (useFirestore) {
         const collectionRef = collection(firestoreDB, storeName);

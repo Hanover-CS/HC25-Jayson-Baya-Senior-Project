@@ -30,7 +30,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { addData, getData } from "@/lib/dbHandler"; // Import dbHandler functions
-import { Timestamp } from "firebase/firestore"; // For timestamp formatting
 
 interface ChatBoxProps {
     conversationId: string; // Conversation ID

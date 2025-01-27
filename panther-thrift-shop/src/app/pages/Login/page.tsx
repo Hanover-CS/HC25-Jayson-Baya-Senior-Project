@@ -29,7 +29,6 @@ import React from "react";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
-import { getData } from "@/lib/dbHandler";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
