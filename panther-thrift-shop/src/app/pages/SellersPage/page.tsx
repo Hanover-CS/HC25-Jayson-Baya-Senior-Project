@@ -25,18 +25,30 @@
  */
 
 "use client";
-import React from "react";
-import { useState, useEffect } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { auth, db, storage } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, addDoc, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
+import { auth, storage } from "@/lib/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import {fetchProductsAlert, FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, ROUTES} from "@/Models/ConstantData";
+import { addData, getData, updateData } from "@/lib/dbHandler"; // Import dbHandler functions
+import {
+    fetchProductsAlert,
+    FIRESTORE_COLLECTIONS,
+    FIRESTORE_FIELDS,
+    ROUTES,
+} from "@/Models/ConstantData";
 import CreateListingForm from "@/components/SellerPageComponent/CreateNewListing";
 import ProductListings from "@/components/SellerPageComponent/ProductListings";
 import EditProductModal from "@/components/SellerPageComponent/EditProductModal";
-import PopupAlert from "@/components/SellerPageComponent/PopupAlert"; // Modal component for pop-up
+import PopupAlert from "@/components/SellerPageComponent/PopupAlert";
+import { v4 as uuidv4 } from "uuid";
+
+
+console.log("CreateListingForm:", CreateListingForm);
+console.log("ProductListings:", ProductListings);
+console.log("EditProductModal:", EditProductModal);
+console.log("PopupAlert:", PopupAlert);
 
 interface Product {
     id: string;
@@ -46,23 +58,23 @@ interface Product {
     imageURL: string;
     description: string;
     seller: string;
-    sold?: boolean; // Sold status
+    sold?: boolean;
+    createdAt: string;
 }
 
 const SellerPage = () => {
     const [userEmail, setUserEmail] = useState("");
-    const [name, setName] = useState("");
+    const [productName, setProductName] = useState("");
     const [category, setCategory] = useState("");
     const [price, setPrice] = useState(0);
     const [description, setDescription] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [products, setProducts] = useState<Product[]>([]);
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // For editing
-    const [showEditModal, setShowEditModal] = useState(false); // State for controlling the pop-up
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [message, setMessage] = useState("");
     const [showPopup, setShowPopup] = useState(false);
     const router = useRouter();
-
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -77,34 +89,29 @@ const SellerPage = () => {
         return () => unsubscribe();
     }, [router]);
 
-    // Fetch seller's listings from Firestore
-    const fetchSellerProducts = async (userEmail: string | null) => {
+    // Fetch seller's product listings
+    const fetchSellerProducts = async (email: string | null) => {
+        if (!email) return;
         try {
-            const q = query(
-                collection(db, FIRESTORE_COLLECTIONS.PRODUCTS),
-                where(FIRESTORE_FIELDS.SELLER, "==", userEmail)
-            );
-            const querySnapshot = await getDocs(q);
-            const listings: Product[] = querySnapshot.docs.map((doc) => ({
-                ...doc.data(),
-                id: doc.id
-            } as Product));
-            setProducts(listings);
+            const fetchedProducts = await getData<Product>(FIRESTORE_COLLECTIONS.PRODUCTS, [{
+                field: FIRESTORE_FIELDS.SELLER,
+                operator: "==",
+                value: email
+            }]);
+            setProducts(fetchedProducts);
         } catch (error) {
             console.error(fetchProductsAlert.Error, error);
         }
     };
 
-
     // Handle form submission for creating a new listing
     const handleCreateListing = async () => {
-        if (!name || !category || !image || !price || !description) {
+        if (!productName || !category || !image || !price || !description) {
             setMessage("All fields are required!");
             setShowPopup(true);
             return;
         }
 
-        // Upload image to Firebase Storage
         const storageRef = ref(storage, `products/${image.name}`);
         const uploadTask = uploadBytesResumable(storageRef, image);
 
@@ -112,65 +119,76 @@ const SellerPage = () => {
             "state_changed",
             () => {},
             (error) => {
-                setMessage(fetchProductsAlert.Error + error.message);
+                setMessage(`Error uploading image: ${error.message}`);
                 setShowPopup(true);
             },
             async () => {
                 const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                const newProduct: Product = {
+                    id: uuidv4(),
+                    productName,
+                    category,
+                    price,
+                    description,
+                    imageURL: downloadURL,
+                    seller: userEmail,
+                    sold: false,
+                    createdAt: new Date().toISOString(),
+                };
 
                 try {
-                    await addDoc(collection(db, FIRESTORE_COLLECTIONS.PRODUCTS), {
-                        [FIRESTORE_FIELDS.PRODUCT_NAME]: name,
-                        [FIRESTORE_FIELDS.CATEGORY]: category,
-                        [FIRESTORE_FIELDS.PRICE]: price,
-                        [FIRESTORE_FIELDS.DESCRIPTION]: description,
-                        [FIRESTORE_FIELDS.IMAGE_URL]: downloadURL,
-                        [FIRESTORE_FIELDS.SELLER]: userEmail,
-                        [FIRESTORE_FIELDS.SOLD]: false,
-                        [FIRESTORE_FIELDS.CREATED_AT]: new Date(),
-                    });
-
+                    await addData<Product>(FIRESTORE_COLLECTIONS.PRODUCTS, newProduct);
                     setMessage("Product listed successfully!");
                     setShowPopup(true);
 
-                    setName("");
+                    // Reset form
+                    setProductName("");
                     setCategory("");
                     setPrice(0);
                     setDescription("");
                     setImage(null);
 
+                    // Refresh listings
                     fetchSellerProducts(userEmail);
                 } catch (error) {
-                    setMessage(fetchProductsAlert.Error + (error as Error).message);
+                    setMessage(`Error listing product: ${(error as Error).message}`);
                     setShowPopup(true);
                 }
             }
         );
     };
 
+
     // Handle product click for editing
     const handleEditProduct = (product: Product) => {
-        setSelectedProduct(product); // Set the selected product for editing
-        setShowEditModal(true); // Open the modal
+        setSelectedProduct(product);
+        setShowEditModal(true);
     };
 
     // Handle updating the product
     const handleUpdateProduct = async () => {
         if (selectedProduct) {
             try {
-                const productRef = doc(db, "products", selectedProduct.id);
-                await updateDoc(productRef, {
+                const updatedProduct = {
                     productName: selectedProduct.productName,
                     category: selectedProduct.category,
                     price: selectedProduct.price,
                     description: selectedProduct.description,
                     sold: selectedProduct.sold,
-                });
+                };
+
+                await updateData<Product>(
+                    FIRESTORE_COLLECTIONS.PRODUCTS,
+                    selectedProduct.id,
+                    updatedProduct
+                );
 
                 setMessage("Product updated successfully!");
                 setShowPopup(true);
                 setSelectedProduct(null); // Reset after update
                 setShowEditModal(false); // Close the modal
+
+                // Refresh the products list
                 fetchSellerProducts(userEmail);
             } catch (error) {
                 setMessage("Error updating product: " + (error as Error).message);
@@ -182,14 +200,13 @@ const SellerPage = () => {
     return (
         <div className="min-h-screen flex flex-col">
             <div className="flex flex-grow">
-
                 <div className="flex-grow p-6">
                     <h1 className="text-2xl font-bold mb-6">My Listings</h1>
 
                     {/* Create New Listing */}
                     <CreateListingForm
-                        name={name}
-                        setName={setName}
+                        name={productName}
+                        setName={setProductName}
                         category={category}
                         setCategory={setCategory}
                         price={price}
@@ -205,7 +222,6 @@ const SellerPage = () => {
                         products={products}
                         handleEditProduct={handleEditProduct}
                     />
-
 
                     {/* Popup for success or error messages */}
                     {showPopup && (
@@ -231,4 +247,3 @@ const SellerPage = () => {
 };
 
 export default SellerPage;
-

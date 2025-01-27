@@ -34,41 +34,65 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
-import { fetchFirestoreData } from "@/utils/fetchFirestoreData";
-import {FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, renderTabContentMessage, ROUTES} from "@/Models/ConstantData";
+import { getData } from "@/lib/dbHandler"; // Import the dbHandler function
+import {
+    FIRESTORE_COLLECTIONS,
+    FIRESTORE_FIELDS,
+    renderTabContentMessage,
+    ROUTES,
+} from "@/Models/ConstantData";
 import { TAB_NAMES } from "@/Models/ConstantData";
 import ProductGrid from "@/components/ProductGrid";
-import {Product} from "@/Models/Product";
+import { Product } from "@/Models/Product";
 
 const BuyingPage = () => {
-    const [savedItems, setSavedItems] = useState<Product[]>([]); // Correctly typed
-    const [purchasedItems, setPurchasedItems] = useState<Product[]>([]); // Correctly typed
-    const [offers, setOffers] = useState<Product[]>([]); // Correctly typed
-    const [selectedTab, setSelectedTab] = useState(TAB_NAMES.SAVED_ITEMS);
+    const [savedItems, setSavedItems] = useState<Product[]>([]); // Saved items
+    const [purchasedItems, setPurchasedItems] = useState<Product[]>([]); // Purchased items
+    const [offers, setOffers] = useState<Product[]>([]); // Offers made
+    const [selectedTab, setSelectedTab] = useState(TAB_NAMES.SAVED_ITEMS); // Active tab
     const router = useRouter();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const email = user.email || "";
-                fetchFirestoreData(FIRESTORE_COLLECTIONS.SAVED_ITEMS, email, FIRESTORE_FIELDS.BUYER_EMAIL).then(
-                    (data) => setSavedItems(data)
-                );
-                fetchFirestoreData(FIRESTORE_COLLECTIONS.PURCHASED_ITEMS, email, FIRESTORE_FIELDS.BUYER_EMAIL).then(
-                    (data) => setPurchasedItems(data)
-                );
-                fetchFirestoreData(FIRESTORE_COLLECTIONS.OFFERS, email, FIRESTORE_FIELDS.BUYER_EMAIL).then(
-                    (data) => setOffers(data)
-                );
+
+                try {
+                    // Fetch saved items
+                    const savedItemsData = await getData<Product>(FIRESTORE_COLLECTIONS.SAVED_ITEMS, [{
+                        field: FIRESTORE_FIELDS.BUYER_EMAIL,
+                        operator: "==",
+                        value: email
+                    }]);
+                    setSavedItems(savedItemsData);
+
+                    // Fetch purchased items
+                    const purchasedItemsData = await getData<Product>(FIRESTORE_COLLECTIONS.PURCHASED_ITEMS, [{
+                        field: FIRESTORE_FIELDS.BUYER_EMAIL,
+                        operator: "==",
+                        value: email
+                    }]);
+                    setPurchasedItems(purchasedItemsData);
+
+                    // Fetch offers
+                    const offersData = await getData<Product>(FIRESTORE_COLLECTIONS.OFFERS, [{
+                        field: FIRESTORE_FIELDS.BUYER_EMAIL,
+                        operator: "==",
+                        value: email
+                    }]);
+                    setOffers(offersData);
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
             } else {
-                router.push(ROUTES.LOGIN);
+                router.push(ROUTES.LOGIN); // Redirect to login if not authenticated
             }
         });
 
         return () => unsubscribe();
-    }, [router, savedItems]);
+    }, [router]);
 
-
+    // Render tab content based on the active tab
     const renderTabContent = () => {
         switch (selectedTab) {
             case TAB_NAMES.SAVED_ITEMS:

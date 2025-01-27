@@ -28,14 +28,13 @@
 
 "use client";
 
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "@/lib/firebaseConfig";
-import { doc, setDoc } from "firebase/firestore";
+import { auth } from "@/lib/firebaseConfig";
+import { addData } from "@/lib/dbHandler";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {FirebaseError} from "@firebase/app";
+import { FirebaseError } from "@firebase/app";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
@@ -44,6 +43,7 @@ const SignUp = () => {
     const router = useRouter();
 
     const handleSignUp = async () => {
+        // Validate Hanover College email
         const emailRegex = /^[a-zA-Z0-9._%+-]+@hanover\.edu$/;
         if (!emailRegex.test(email)) {
             setMessage("Email must be a valid @hanover.edu address.");
@@ -51,26 +51,28 @@ const SignUp = () => {
         }
 
         try {
+            // Create user with Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            await setDoc(doc(db, "users", user.uid), {
+            // Add user information to the database
+            await addData("users", {
+                uid: user.uid,
                 email: user.email,
                 role: "customer",
-                createdAt: new Date(),
+                createdAt: new Date().toISOString(), // Store as ISO string
             });
 
             setMessage("You successfully registered!");
-
-            // Redirect to Marketplace after successful sign up
+            // Redirect to BrowsePage after successful sign up
             router.push("/pages/BrowsePage");
         } catch (error: unknown) {
-            // Use FirebaseError for checking
             if (error instanceof FirebaseError) {
+                // Firebase-specific error handling
                 if (error.code === "auth/email-already-in-use") {
                     setMessage("Email ID already registered.");
                 } else if (error.code === "permission-denied") {
-                    setMessage("Permission denied. Please check Firestore rules.");
+                    setMessage("Permission denied. Please check database rules.");
                 } else {
                     setMessage(`Error registering user: ${(error as Error).message}`);
                 }

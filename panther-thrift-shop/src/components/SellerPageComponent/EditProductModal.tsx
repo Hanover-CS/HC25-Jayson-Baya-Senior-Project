@@ -11,6 +11,7 @@ interface Product {
     description: string;
     seller: string;
     sold?: boolean;
+    createdAt: string;
 }
 
 interface EditProductModalProps {

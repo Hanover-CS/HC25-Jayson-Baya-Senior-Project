@@ -29,17 +29,17 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {onAuthStateChanged, User} from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import { Product } from "@/Models/Product";
 import {
-    fetchProductsAlert,
     FIRESTORE_COLLECTIONS,
     FIRESTORE_FIELDS,
+    ROUTES,
     handleSaveProductAlert,
-    ROUTES
+    fetchProductsAlert,
 } from "@/Models/ConstantData";
-import {fetchRealTimeData, isProductSaved, saveProduct, unsaveProduct} from "@/utils/firestoreUtils"; // Utility functions
+import { getData, addData, deleteData } from "@/lib/dbHandler"; // Use dbHandler functions
 import ProductGrid from "@/components/ProductGrid";
 import ProductModal from "@/components/ProductModal"; // Modal for product details
 
@@ -51,7 +51,6 @@ const BrowsePage = () => {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [showProductModal, setShowProductModal] = useState<boolean>(false);
     const router = useRouter();
-
 
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user: User | null) => {
@@ -66,47 +65,48 @@ const BrowsePage = () => {
         return () => unsubscribeAuth(); // Cleanup on unmount
     }, [router]);
 
-
-    // Fetch products from Firestore
-    const fetchProducts = () => {
-        fetchRealTimeData(
-            FIRESTORE_COLLECTIONS.PRODUCTS,
-            [{ field: FIRESTORE_FIELDS.SOLD, operator: "==", value: false }],
-            (fetchedProducts) => {
-                setProducts(fetchedProducts);
-                setLoading(false);
-            },
-            (error) => {
-                console.error(fetchProductsAlert.Error, error);
-                setError(fetchProductsAlert.Alert);
-                setLoading(false);
-            }
-        );
+    // Fetch products from the database
+    const fetchProducts = async () => {
+        setLoading(true);
+        try {
+            const fetchedProducts = await getData<Product>(FIRESTORE_COLLECTIONS.PRODUCTS, [
+                {field: FIRESTORE_FIELDS.sold, operator: "==", value: false},
+            ]);
+            setProducts(fetchedProducts);
+        } catch (error) {
+            console.error(fetchProductsAlert.Error, error);
+            setError(fetchProductsAlert.Alert);
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Handle saving and unsaving a product
     const handleSaveProduct = async (product: Product) => {
         try {
-            const isSaved = await isProductSaved(FIRESTORE_COLLECTIONS.SAVED_ITEMS, userEmail, product.id);
+            // Check if the product is already saved
+            const savedItems = await getData<Product>(FIRESTORE_COLLECTIONS.SAVED_ITEMS, [
+                {field: FIRESTORE_FIELDS.BUYER_EMAIL, operator: "==", value: userEmail},
+                {field: FIRESTORE_FIELDS.PRODUCT_ID, operator: "==", value: product.id},
+            ]);
 
-            if (isSaved) {
+            if (savedItems.length > 0) {
                 // If the product is already saved, unsave it
-                await unsaveProduct(FIRESTORE_COLLECTIONS.SAVED_ITEMS, product.id);
+                await deleteData(FIRESTORE_COLLECTIONS.SAVED_ITEMS, savedItems[0].id);
                 alert("Item unsaved successfully!");
             } else {
                 // Save the product
                 const productData = {
                     [FIRESTORE_FIELDS.BUYER_EMAIL]: userEmail,
                     [FIRESTORE_FIELDS.PRODUCT_ID]: product.id,
-                    [FIRESTORE_FIELDS.PRODUCT_NAME]: product.productName,
+                    [FIRESTORE_FIELDS.productName]: product.productName,
                     [FIRESTORE_FIELDS.PRICE]: product.price,
                     [FIRESTORE_FIELDS.IMAGE_URL]: product.imageURL,
                     [FIRESTORE_FIELDS.DESCRIPTION]: product.description,
-                    [FIRESTORE_FIELDS.CATEGORY]: product.category,
+                    [FIRESTORE_FIELDS.category]: product.category,
                     [FIRESTORE_FIELDS.SELLER]: product.seller,
                 };
-
-                await saveProduct(FIRESTORE_COLLECTIONS.SAVED_ITEMS, productData);
+                await addData(FIRESTORE_COLLECTIONS.SAVED_ITEMS, productData);
                 alert("Item saved successfully!");
             }
 
@@ -117,7 +117,6 @@ const BrowsePage = () => {
             alert(handleSaveProductAlert.Alert);
         }
     };
-
 
     // Handle product click to open modal
     const handleProductClick = (product: Product) => {

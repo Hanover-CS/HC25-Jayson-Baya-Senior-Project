@@ -29,16 +29,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { db } from "@/lib/firebaseConfig";
-import {
-    collection,
-    query,
-    where,
-    onSnapshot,
-    addDoc,
-    orderBy,
-    Timestamp,
-} from "firebase/firestore";
+import { addData, getData } from "@/lib/dbHandler"; // Import dbHandler functions
+import { Timestamp } from "firebase/firestore"; // For timestamp formatting
 
 interface ChatBoxProps {
     conversationId: string; // Conversation ID
@@ -48,13 +40,13 @@ interface ChatBoxProps {
 }
 
 interface Message {
+    id: string;
     text: string;
     sender: string;
     recipient: string;
-    timestamp: Timestamp;
+    timestamp: string;
     conversationId: string;
 }
-
 
 const ChatBox: React.FC<ChatBoxProps> = ({ conversationId, userEmail, sellerEmail, onClose }) => {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -62,30 +54,22 @@ const ChatBox: React.FC<ChatBoxProps> = ({ conversationId, userEmail, sellerEmai
     const [isSending, setIsSending] = useState<boolean>(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Fetch messages for the conversation in real-time
+    // Fetch messages for the conversation
     useEffect(() => {
-        const messagesQuery = query(
-            collection(db, "messages"),
-            where("conversationId", "==", conversationId),
-            orderBy("timestamp", "asc")
-        );
+        const fetchMessages = async () => {
+            try {
+                const fetchedMessages = await getData<Message>("messages", [{
+                    field: "conversationId",
+                    operator: "==",
+                    value: conversationId
+                }]);
+                setMessages(fetchedMessages);
+            } catch (error) {
+                console.error("Error fetching messages:", error);
+            }
+        };
 
-        const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
-            const fetchedMessages: Message[] = snapshot.docs.map((doc) => {
-                const data = doc.data();
-                return {
-                    text: data.text,
-                    sender: data.sender,
-                    recipient: data.recipient,
-                    timestamp: data.timestamp,
-                    conversationId: data.conversationId,
-                } as Message;
-            });
-            setMessages(fetchedMessages);
-        });
-
-
-        return () => unsubscribe();
+        fetchMessages();
     }, [conversationId]);
 
     // Scroll to the bottom of messages on update
@@ -99,17 +83,20 @@ const ChatBox: React.FC<ChatBoxProps> = ({ conversationId, userEmail, sellerEmai
 
         setIsSending(true);
 
-        const messageData = {
+        const messageData: Message = {
+            id: `${conversationId}-${Date.now()}`, // Generate a unique ID
             text: newMessage,
             sender: userEmail,
             recipient: sellerEmail,
-            timestamp: Timestamp.now(),
+            timestamp: new Date().toISOString(),
             conversationId,
         };
 
         try {
-            await addDoc(collection(db, "messages"), messageData);
+            await addData<Message>("messages", messageData);
             setNewMessage(""); // Clear input field
+            // Update the local state to include the new message
+            setMessages((prevMessages) => [...prevMessages, messageData]);
         } catch (error) {
             console.error("Error sending message:", error);
         } finally {
@@ -146,7 +133,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ conversationId, userEmail, sellerEmai
                             {msg.text}
                         </p>
                         <p className="text-xs text-gray-400">
-                            {new Date(msg.timestamp?.toDate()).toLocaleString()}
+                            {new Date(msg.timestamp).toLocaleString()}
                         </p>
                     </div>
                 ))}

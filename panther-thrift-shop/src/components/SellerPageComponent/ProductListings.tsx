@@ -9,6 +9,7 @@ interface Product {
     description: string;
     seller: string;
     sold?: boolean;
+    createdAt: string;
 }
 
 interface ProductListingsProps {
@@ -27,7 +28,7 @@ const ProductListings: React.FC<ProductListingsProps> = ({
                 {products.length > 0 ? (
                     products.map((product) => (
                         <div
-                            key={product.id}
+                            key={product.id} // Ensure the unique `id` field is used
                             onClick={() => handleEditProduct(product)}
                             className="bg-white p-4 shadow rounded cursor-pointer"
                         >

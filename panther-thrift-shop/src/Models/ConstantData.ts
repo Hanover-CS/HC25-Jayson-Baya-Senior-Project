@@ -8,14 +8,15 @@ export const FIRESTORE_COLLECTIONS = {
 };
 
 export const FIRESTORE_FIELDS = {
-    SOLD: "sold",
+    id: "id",
+    sold: "sold",
     BUYER_EMAIL: "buyerEmail",
     PRODUCT_ID: "productId",
-    PRODUCT_NAME: "productName",
+    productName: "productName",
     PRICE: "price",
     IMAGE_URL: "imageURL",
     DESCRIPTION: "description",
-    CATEGORY: "category",
+    category: "category",
     SELLER: "seller",
     CREATED_AT: "createdAt",
 };
