@@ -47,7 +47,7 @@ interface ChatPanelProps {
     onSelectConversation?: (conversationId: string) => void
 }
 
-const ChatPanel: React.FC<ChatPanelProps> = ({userEmail, onSelectConversation}) => {
+const ChatPanel: React.FC<ChatPanelProps> = ({userEmail}) => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [activeChats, setActiveChats] = useState<{ conversationId: string; sellerEmail: string }[]>([]);
