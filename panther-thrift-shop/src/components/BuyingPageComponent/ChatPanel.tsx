@@ -30,8 +30,8 @@
 
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { getData } from "@/lib/dbHandler"; // Use abstraction layer
+import React, {useEffect, useState} from "react";
+import {getData} from "@/lib/dbHandler"; // Use abstraction layer
 import ChatBox from "./ChatBox";
 
 interface Conversation extends Record<string, unknown> {
@@ -43,10 +43,11 @@ interface Conversation extends Record<string, unknown> {
 }
 
 interface ChatPanelProps {
-    userEmail: string;
+    userEmail: string,
+    onSelectConversation?: (conversationId: string) => void
 }
 
-const ChatPanel: React.FC<ChatPanelProps> = ({ userEmail }) => {
+const ChatPanel: React.FC<ChatPanelProps> = ({userEmail, onSelectConversation}) => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [activeChats, setActiveChats] = useState<{ conversationId: string; sellerEmail: string }[]>([]);
@@ -56,7 +57,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ userEmail }) => {
         const fetchConversations = async () => {
             try {
                 const convos = await getData<Conversation>("conversations", [
-                    { field: "participants", operator: "array-contains", value: userEmail },
+                    {field: "participants", operator: "array-contains", value: userEmail},
                 ]);
                 setConversations(convos);
             } catch (error) {
@@ -72,7 +73,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ userEmail }) => {
     // Open a chatbox for a conversation
     const openChat = (conversationId: string, sellerEmail: string) => {
         if (!activeChats.find((chat) => chat.conversationId === conversationId)) {
-            setActiveChats((prevChats) => [...prevChats, { conversationId, sellerEmail }]);
+            setActiveChats((prevChats) => [...prevChats, {conversationId, sellerEmail}]);
         }
     };
 
