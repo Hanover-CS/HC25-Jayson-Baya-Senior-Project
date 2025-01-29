@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, storage } from "@/lib/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import {addData, getData, updateData} from "@/lib/dbHandler"; // Import dbHandler functions
+import {addData, initializeDB, updateData} from "@/lib/dbHandler"; // Import dbHandler functions
 import {
     fetchProductsAlert,
     FIRESTORE_COLLECTIONS,
@@ -43,6 +43,9 @@ import ProductListings from "@/components/SellerPageComponent/ProductListings";
 import EditProductModal from "@/components/SellerPageComponent/EditProductModal";
 import PopupAlert from "@/components/SellerPageComponent/PopupAlert";
 import {uuidv4} from "@firebase/util";
+import {collection, getDocs, query, where} from "firebase/firestore";
+import { db as firestoreDB } from "@/lib/firebaseConfig";
+
 
 
 console.log("CreateListingForm:", CreateListingForm);
@@ -95,16 +98,40 @@ const SellerPage = () => {
     const fetchSellerProducts = async (email: string | null) => {
         if (!email) return;
         try {
-            const fetchedProducts = await getData<Product>(FIRESTORE_COLLECTIONS.PRODUCTS, [{
-                field: FIRESTORE_FIELDS.SELLER,
-                operator: "==",
-                value: email
-            }]);
-            setProducts(fetchedProducts);
+            const db = await initializeDB();
+            const tx = db.transaction(FIRESTORE_COLLECTIONS.PRODUCTS, "readonly");
+            const store = tx.objectStore(FIRESTORE_COLLECTIONS.PRODUCTS);
+            const localProducts = await store.getAll();
+
+            if (localProducts.length > 0) {
+                console.log("Loading from IndexedDB:", localProducts);
+                setProducts(localProducts);
+            } else {
+                console.log("Fetching from Firestore...");
+                const snapshot = await getDocs(query(
+                    collection(firestoreDB, FIRESTORE_COLLECTIONS.PRODUCTS),
+                    where(FIRESTORE_FIELDS.SELLER, "==", email)
+                ));
+
+                const firestoreProducts = snapshot.docs.map((doc) => ({
+                    id: doc.id, ...doc.data()
+                })) as Product[];
+
+                setProducts(firestoreProducts);
+
+                // Save Firestore products to IndexedDB
+                const txWrite = db.transaction(FIRESTORE_COLLECTIONS.PRODUCTS, "readwrite");
+                const storeWrite = txWrite.objectStore(FIRESTORE_COLLECTIONS.PRODUCTS);
+                for (const product of firestoreProducts) {
+                    await storeWrite.put(product);
+                }
+                await txWrite.done;
+            }
         } catch (error) {
-            console.error(fetchProductsAlert.Error, error);
+            console.error("Error fetching products:", error);
         }
     };
+
 
     // Handle form submission for creating a new listing
     const handleCreateListing = async () => {
@@ -141,10 +168,16 @@ const SellerPage = () => {
                 };
 
                 try {
-                    await addData(FIRESTORE_COLLECTIONS.PRODUCTS, newProduct);
-                    setMessage("Product listed successfully!");
-                    setShowPopup(true);
-
+                    if (navigator.onLine) {
+                        await addData(FIRESTORE_COLLECTIONS.PRODUCTS, newProduct); // Save to Firestore
+                    } else {
+                        console.warn("Offline mode: Saving product locally.");
+                        const db = await initializeDB();
+                        const tx = db.transaction(FIRESTORE_COLLECTIONS.PRODUCTS, "readwrite");
+                        const store = tx.objectStore(FIRESTORE_COLLECTIONS.PRODUCTS);
+                        await store.add(newProduct);
+                        await tx.done;
+                    }
                     // Reset form
                     setProductName("");
                     setCategory("");
@@ -153,7 +186,7 @@ const SellerPage = () => {
                     setImage(null);
 
                     // Refresh listings
-                    fetchSellerProducts(userEmail);
+                    await fetchSellerProducts(userEmail);
                 } catch (error) {
                     setMessage(`Error listing product: ${(error as Error).message}`);
                     setShowPopup(true);

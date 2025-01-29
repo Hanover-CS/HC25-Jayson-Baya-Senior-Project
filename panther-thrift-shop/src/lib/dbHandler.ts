@@ -91,9 +91,10 @@ import {
     deleteDoc,
     DocumentData,
     Query,
-    CollectionReference,
+    CollectionReference, getDoc,
 } from "firebase/firestore";
 import { WhereFilterOp } from "firebase/firestore";
+import {Product} from "@/Models/Product";
 
 const useFirestore = process.env.NEXT_PUBLIC_USE_FIRESTORE === "true";
 
@@ -128,21 +129,31 @@ const initializeDB = async (): Promise<IDBPDatabase> => {
 
 const addData = async <T extends Record<string, unknown>>(
     storeName: string,
-    data: T
+    data: Omit<T, "id"> // Exclude "id" since Firestore generates it
 ): Promise<void> => {
     if (useFirestore) {
         try {
             const collectionRef = collection(firestoreDB, storeName);
-            await addDoc(collectionRef, data);
+            const docRef = await addDoc(collectionRef, data); // Firestore generates ID
+            console.log(`Firestore ID generated: ${docRef.id}`);
+
+            // Save in IndexedDB with Firestore ID
+            const db = await initializeDB();
+            const tx = db.transaction(storeName, "readwrite");
+            const store = tx.objectStore(storeName);
+            await store.add({ id: docRef.id, ...data }); // Store Firestore ID locally
+            await tx.done;
 
         } catch (error) {
             console.error(`Error adding document to ${storeName}:`, error);
         }
     } else {
+        // IndexedDB Only
         const db = await initializeDB();
         const tx = db.transaction(storeName, "readwrite");
         const store = tx.objectStore(storeName);
-        await store.add(data);
+        const id = crypto.randomUUID(); // Use UUID only for IndexedDB
+        await store.add({ id, ...data });
         await tx.done;
     }
 };
@@ -188,46 +199,43 @@ const getData = async <T>(
     }
 };
 
-const updateData = async (
-    storeName: string,
-    id: string,
-    updates: {
-        sold: boolean | undefined;
-        price: number;
-        buyerEmail: string | null;
-        description: string;
-        category: string;
-        productName: string
-    }
-): Promise<void> => {
+const updateData = async (storeName: string, id: string, updates: Partial<Product>) => {
     if (useFirestore) {
         const docRef = doc(firestoreDB, storeName, id);
-        await updateDoc(docRef, updates);
-    } else {
-        const db = await initializeDB();
-        const tx = db.transaction(storeName, "readwrite");
-        const store = tx.objectStore(storeName);
-        const existingData = await store.get(id);
-        if (!existingData) {
-            throw new Error(`No record found with id: ${id}`);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            console.error(`No document found with ID: ${id}`);
+            return;
         }
-        const updatedData = { ...existingData, ...updates };
-        await store.put(updatedData);
-        await tx.done;
+
+        await updateDoc(docRef, updates);
     }
+
+    // Update IndexedDB
+    const db = await initializeDB();
+    const tx = db.transaction(storeName, "readwrite");
+    const store = tx.objectStore(storeName);
+    const existingData = await store.get(id);
+    if (!existingData) {
+        console.warn(`No local record found with id: ${id}`);
+        return;
+    }
+    await store.put({ ...existingData, ...updates });
+    await tx.done;
 };
+
 
 const deleteData = async (storeName: string, id: string): Promise<void> => {
     if (useFirestore) {
-        const docRef = doc(firestoreDB, storeName, id);
-        await deleteDoc(docRef);
-    } else {
-        const db = await initializeDB();
-        const tx = db.transaction(storeName, "readwrite");
-        const store = tx.objectStore(storeName);
-        await store.delete(id);
-        await tx.done;
+        await deleteDoc(doc(firestoreDB, storeName, id));
     }
+    const db = await initializeDB();
+    const tx = db.transaction(storeName, "readwrite");
+    const store = tx.objectStore(storeName);
+    await store.delete(id);
+    await tx.done;
 };
 
-export { addData, getData, updateData, deleteData };
+
+export { initializeDB, addData, getData, updateData, deleteData };
