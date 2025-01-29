@@ -38,7 +38,7 @@ interface ChatBoxProps {
     onClose: () => void; // Close the chatbox
 }
 
-interface Message extends Record<string, unknown>{
+interface Message extends Record<string, unknown> {
     id: string;
     text: string;
     sender: string;
