@@ -141,7 +141,7 @@ const SellerPage = () => {
                 };
 
                 try {
-                    await addData<Product>(FIRESTORE_COLLECTIONS.PRODUCTS, newProduct);
+                    await addData(FIRESTORE_COLLECTIONS.PRODUCTS, newProduct);
                     setMessage("Product listed successfully!");
                     setShowPopup(true);
 
@@ -189,7 +189,7 @@ const SellerPage = () => {
                 buyerEmail: selectedProduct.buyerEmail || null,
             };
 
-            await updateData<Product>(
+            await updateData(
                 FIRESTORE_COLLECTIONS.PRODUCTS,
                 selectedProduct.id,
                 updatedProduct
@@ -198,7 +198,6 @@ const SellerPage = () => {
             // If product is sold, move it to Purchased Orders
             if (selectedProduct.sold && selectedProduct.buyerEmail) {
                 const purchasedItem = {
-                    id: selectedProduct.id, // Ensure ID is retained
                     productName: selectedProduct.productName,
                     category: selectedProduct.category,
                     price: selectedProduct.price,
@@ -211,7 +210,7 @@ const SellerPage = () => {
                     purchaseDate: new Date().toISOString(), // Add new timestamp
                 };
 
-                await addData<Product>(FIRESTORE_COLLECTIONS.PURCHASED_ITEMS, purchasedItem);
+                await addData(FIRESTORE_COLLECTIONS.PURCHASED_ITEMS, purchasedItem);
 
                 console.log("Item successfully added to PURCHASED_ITEMS");
             }
