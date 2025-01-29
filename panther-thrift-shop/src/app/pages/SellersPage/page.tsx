@@ -50,7 +50,7 @@ console.log("ProductListings:", ProductListings);
 console.log("EditProductModal:", EditProductModal);
 console.log("PopupAlert:", PopupAlert);
 
-interface Product {
+interface Product extends Record<string, unknown>{
     buyerEmail: string;
     purchaseDate: string;
     id: string;

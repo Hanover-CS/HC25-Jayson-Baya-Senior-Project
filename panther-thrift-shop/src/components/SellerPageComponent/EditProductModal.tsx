@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "@/components/Modal";
 import { categories } from "@/Models/ConstantData";
 
-interface Product {
+interface Product extends Record<string, unknown>{
     id: string;
     productName: string;
     price: number;

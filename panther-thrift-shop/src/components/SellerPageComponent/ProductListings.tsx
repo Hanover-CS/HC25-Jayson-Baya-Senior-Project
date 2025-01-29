@@ -1,6 +1,6 @@
 import React from "react";
 
-interface Product {
+interface Product extends Record<string, unknown>{
     id: string;
     productName: string;
     price: number;
