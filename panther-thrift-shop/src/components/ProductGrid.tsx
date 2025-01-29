@@ -83,7 +83,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({
 
         setSavedProductIds((prev) => {
             const updated = new Set(prev);
-            isSaved ? updated.delete(product.id) : updated.add(product.id);
+            if (isSaved) {
+                updated.delete(product.id);
+            } else {
+                updated.add(product.id);
+            }
             return updated;
         });
 
