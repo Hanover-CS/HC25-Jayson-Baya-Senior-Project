@@ -12,6 +12,8 @@ interface Product {
     seller: string;
     sold?: boolean;
     createdAt: string;
+    buyerEmail: string;
+    purchaseDate: string;
 }
 
 interface EditProductModalProps {
@@ -115,6 +117,25 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                         <option value="Sold">Sold</option>
                     </select>
                 </div>
+
+                {/* Buyer Email Field - Required when marking as Sold */}
+                {selectedProduct.sold && (
+                    <div className="mb-4">
+                        <label className="block mb-2 text-gray-700">Buyer Email</label>
+                        <input
+                            type="email"
+                            value={selectedProduct.buyerEmail || ""}
+                            onChange={(e) =>
+                                setSelectedProduct((prev) => ({
+                                    ...prev!,
+                                    buyerEmail: e.target.value,
+                                }))
+                            }
+                            className="w-full p-2 border rounded"
+                            required
+                        />
+                    </div>
+                    )}
 
                 <button
                     onClick={handleUpdateProduct}

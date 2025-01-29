@@ -10,6 +10,8 @@ interface Product {
     seller: string;
     sold?: boolean;
     createdAt: string;
+    buyerEmail: string;
+    purchaseDate: string;
 }
 
 interface ProductListingsProps {

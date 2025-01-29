@@ -52,6 +52,27 @@ const BuyingPage = () => {
     const [selectedTab, setSelectedTab] = useState(TAB_NAMES.SAVED_ITEMS); // Active tab
     const router = useRouter();
 
+    const fetchPurchasedItems = async (email: string) => {
+        try {
+            console.log(`Fetching purchased items for: ${email}`);
+
+            const purchasedItemsData = await getData<Product>(
+                FIRESTORE_COLLECTIONS.PURCHASED_ITEMS,
+                [{
+                    field: FIRESTORE_FIELDS.BUYER_EMAIL,
+                    operator: "==",
+                    value: email
+                }]
+            );
+
+            console.log("Purchased items received:", purchasedItemsData);
+            setPurchasedItems(purchasedItemsData);
+        } catch (error) {
+            console.error("Error fetching purchased items:", error);
+        }
+    };
+
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -67,12 +88,7 @@ const BuyingPage = () => {
                     setSavedItems(savedItemsData);
 
                     // Fetch purchased items
-                    const purchasedItemsData = await getData<Product>(FIRESTORE_COLLECTIONS.PURCHASED_ITEMS, [{
-                        field: FIRESTORE_FIELDS.BUYER_EMAIL,
-                        operator: "==",
-                        value: email
-                    }]);
-                    setPurchasedItems(purchasedItemsData);
+                    await fetchPurchasedItems(email);
 
                     // Fetch offers
                     const offersData = await getData<Product>(FIRESTORE_COLLECTIONS.OFFERS, [{

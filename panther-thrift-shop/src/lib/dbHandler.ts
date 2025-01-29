@@ -94,38 +94,6 @@ import {
     CollectionReference,
 } from "firebase/firestore";
 
-interface Product {
-    id: string;
-    productName: string;
-    price: number;
-    category: string;
-    description: string;
-    imageURL: string;
-    seller: string;
-    sold?: boolean;
-    createdAt: string;
-}
-
-interface User {
-    uid: string;
-    email: string;
-    role: string;
-    createdAt: string;
-}
-
-interface Conversation {
-    id: string;
-    participants: string[];
-    lastMessage: string;
-}
-
-interface Message {
-    id: string;
-    conversationId: string;
-    text: string;
-    sender: string;
-    timestamp: string;
-}
 
 const useFirestore = process.env.NEXT_PUBLIC_USE_FIRESTORE === "true";
 
@@ -133,33 +101,43 @@ let sqliteDB: IDBPDatabase | null = null;
 
 const initializeDB = async (): Promise<IDBPDatabase> => {
     if (!sqliteDB) {
-        sqliteDB = await openDB("PantherThriftShop", 1, {
-            upgrade(db) {
+        sqliteDB = await openDB("PantherThriftShop", 2, { // 🔹 Increment version to recreate stores
+            upgrade(db, oldVersion, newVersion) {
+                console.log(`Upgrading IndexedDB from version ${oldVersion} to ${newVersion}`);
+
+                // Ensure all required object stores exist
                 if (!db.objectStoreNames.contains("products")) {
                     db.createObjectStore("products", { keyPath: "id" });
                 }
-                if (!db.objectStoreNames.contains("users")) {
-                    db.createObjectStore("users", { keyPath: "uid" });
+                if (!db.objectStoreNames.contains("savedItems")) {
+                    db.createObjectStore("savedItems", { keyPath: "id" });
                 }
-                if (!db.objectStoreNames.contains("conversations")) {
-                    db.createObjectStore("conversations", { keyPath: "id" });
+                if (!db.objectStoreNames.contains("purchasedItems")) {
+                    db.createObjectStore("purchasedItems", { keyPath: "id" });
                 }
-                if (!db.objectStoreNames.contains("messages")) {
-                    db.createObjectStore("messages", { keyPath: "id" });
+                if (!db.objectStoreNames.contains("offers")) {
+                    db.createObjectStore("offers", { keyPath: "id" });
                 }
+
+                console.log("IndexedDB object stores successfully created/updated.");
             },
         });
     }
     return sqliteDB;
 };
 
-const addData = async <T extends Product | User | Conversation | Message>(
+const addData = async <T extends { id: string }>(
     storeName: string,
-    data: T
+    data: { createdAt: string; purchaseDate: string; buyerEmail: string }
 ): Promise<void> => {
     if (useFirestore) {
-        const collectionRef = collection(firestoreDB, storeName);
-        await addDoc(collectionRef, data);
+        try {
+            const collectionRef = collection(firestoreDB, storeName);
+            await addDoc(collectionRef, data);
+
+        } catch (error) {
+            console.error(`Error adding document to ${storeName}:`, error);
+        }
     } else {
         const db = await initializeDB();
         const tx = db.transaction(storeName, "readwrite");
@@ -186,9 +164,17 @@ const getData = async <T>(
         return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as T));
     } else {
         const db = await initializeDB();
+
+        // Check if the object store exists in IndexedDB
+        if (!db.objectStoreNames.contains(storeName)) {
+            console.error(`Object store "${storeName}" does not exist in IndexedDB.`);
+            return []; // Return an empty array instead of crashing
+        }
+
         const tx = db.transaction(storeName, "readonly");
         const store = tx.objectStore(storeName);
         const allData: T[] = await store.getAll();
+
         return filters.length
             ? allData.filter((item) =>
                 filters.every(
@@ -205,7 +191,14 @@ const getData = async <T>(
 const updateData = async <T>(
     storeName: string,
     id: string,
-    updates: Partial<T>
+    updates: {
+        sold: boolean | undefined;
+        price: number;
+        buyerEmail: string | null;
+        description: string;
+        category: string;
+        productName: string
+    }
 ): Promise<void> => {
     if (useFirestore) {
         const docRef = doc(firestoreDB, storeName, id);

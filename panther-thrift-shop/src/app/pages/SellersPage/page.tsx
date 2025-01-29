@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, storage } from "@/lib/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { addData, getData, updateData } from "@/lib/dbHandler"; // Import dbHandler functions
+import {addData, deleteData, getData, updateData} from "@/lib/dbHandler"; // Import dbHandler functions
 import {
     fetchProductsAlert,
     FIRESTORE_COLLECTIONS,
@@ -42,7 +42,11 @@ import CreateListingForm from "@/components/SellerPageComponent/CreateNewListing
 import ProductListings from "@/components/SellerPageComponent/ProductListings";
 import EditProductModal from "@/components/SellerPageComponent/EditProductModal";
 import PopupAlert from "@/components/SellerPageComponent/PopupAlert";
-import { v4 as uuidv4 } from "uuid";
+//import { v4 as uuidv4 } from "uuid";
+import {uuidv4} from "@firebase/util";
+import {meta} from "eslint-plugin-react/lib/rules/jsx-props-no-spread-multi";
+import category = meta.docs.category;
+import description = meta.docs.description;
 
 
 console.log("CreateListingForm:", CreateListingForm);
@@ -51,6 +55,8 @@ console.log("EditProductModal:", EditProductModal);
 console.log("PopupAlert:", PopupAlert);
 
 interface Product {
+    buyerEmail: string;
+    purchaseDate: string;
     id: string;
     productName: string;
     price: number;
@@ -125,6 +131,7 @@ const SellerPage = () => {
             async () => {
                 const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
                 const newProduct: Product = {
+                    buyerEmail: "",
                     id: uuidv4(),
                     productName,
                     category,
@@ -134,6 +141,7 @@ const SellerPage = () => {
                     seller: userEmail,
                     sold: false,
                     createdAt: new Date().toISOString(),
+                    purchaseDate: new Date().toISOString()
                 };
 
                 try {
@@ -167,33 +175,61 @@ const SellerPage = () => {
 
     // Handle updating the product
     const handleUpdateProduct = async () => {
-        if (selectedProduct) {
-            try {
-                const updatedProduct = {
+        if (!selectedProduct) return;
+
+        try {
+            if (selectedProduct.sold && !selectedProduct.buyerEmail) {
+                setMessage("Buyer email is required when marking an item as sold.");
+                setShowPopup(true);
+                return;
+            }
+
+            const updatedProduct = {
+                productName: selectedProduct.productName,
+                category: selectedProduct.category,
+                price: selectedProduct.price,
+                description: selectedProduct.description,
+                sold: selectedProduct.sold,
+                buyerEmail: selectedProduct.buyerEmail || null,
+            };
+
+            await updateData<Product>(
+                FIRESTORE_COLLECTIONS.PRODUCTS,
+                selectedProduct.id,
+                updatedProduct
+            );
+
+            // If product is sold, move it to Purchased Orders
+            if (selectedProduct.sold && selectedProduct.buyerEmail) {
+                const purchasedItem = {
+                    id: selectedProduct.id, // Ensure ID is retained
                     productName: selectedProduct.productName,
                     category: selectedProduct.category,
                     price: selectedProduct.price,
                     description: selectedProduct.description,
-                    sold: selectedProduct.sold,
+                    imageURL: selectedProduct.imageURL,
+                    seller: selectedProduct.seller,
+                    sold: true, // Mark as sold
+                    buyerEmail: selectedProduct.buyerEmail,
+                    createdAt: selectedProduct.createdAt, // Keep original timestamp
+                    purchaseDate: new Date().toISOString(), // Add new timestamp
                 };
 
-                await updateData<Product>(
-                    FIRESTORE_COLLECTIONS.PRODUCTS,
-                    selectedProduct.id,
-                    updatedProduct
-                );
+                await addData<Product>(FIRESTORE_COLLECTIONS.PURCHASED_ITEMS, purchasedItem);
 
-                setMessage("Product updated successfully!");
-                setShowPopup(true);
-                setSelectedProduct(null); // Reset after update
-                setShowEditModal(false); // Close the modal
-
-                // Refresh the products list
-                fetchSellerProducts(userEmail);
-            } catch (error) {
-                setMessage("Error updating product: " + (error as Error).message);
-                setShowPopup(true);
+                console.log("Item successfully added to PURCHASED_ITEMS");
             }
+
+            setMessage("Product updated successfully!");
+            setShowPopup(true);
+            setSelectedProduct(null);
+            setShowEditModal(false);
+
+            // Refresh Listings
+            await fetchSellerProducts(userEmail);
+        } catch (error) {
+            setMessage("Error updating product: " + (error as Error).message);
+            setShowPopup(true);
         }
     };
 
