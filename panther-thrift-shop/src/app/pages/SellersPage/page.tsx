@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, storage } from "@/lib/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import {addData, deleteData, getData, updateData} from "@/lib/dbHandler"; // Import dbHandler functions
+import {addData, getData, updateData} from "@/lib/dbHandler"; // Import dbHandler functions
 import {
     fetchProductsAlert,
     FIRESTORE_COLLECTIONS,
@@ -42,11 +42,7 @@ import CreateListingForm from "@/components/SellerPageComponent/CreateNewListing
 import ProductListings from "@/components/SellerPageComponent/ProductListings";
 import EditProductModal from "@/components/SellerPageComponent/EditProductModal";
 import PopupAlert from "@/components/SellerPageComponent/PopupAlert";
-//import { v4 as uuidv4 } from "uuid";
 import {uuidv4} from "@firebase/util";
-import {meta} from "eslint-plugin-react/lib/rules/jsx-props-no-spread-multi";
-import category = meta.docs.category;
-import description = meta.docs.description;
 
 
 console.log("CreateListingForm:", CreateListingForm);

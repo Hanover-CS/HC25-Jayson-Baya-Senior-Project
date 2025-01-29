@@ -93,6 +93,7 @@ import {
     Query,
     CollectionReference,
 } from "firebase/firestore";
+import { WhereFilterOp } from "firebase/firestore";
 
 
 const useFirestore = process.env.NEXT_PUBLIC_USE_FIRESTORE === "true";
@@ -126,7 +127,7 @@ const initializeDB = async (): Promise<IDBPDatabase> => {
     return sqliteDB;
 };
 
-const addData = async <T extends { id: string }>(
+const addData = async (
     storeName: string,
     data: { createdAt: string; purchaseDate: string; buyerEmail: string }
 ): Promise<void> => {
@@ -157,7 +158,7 @@ const getData = async <T>(
             storeName
         );
         filters.forEach((filter) => {
-            q = query(q, where(filter.field, filter.operator as any, filter.value));
+            q = query(q, where(filter.field, filter.operator as WhereFilterOp, filter.value));
         });
 
         const snapshot = await getDocs(q);
@@ -188,7 +189,7 @@ const getData = async <T>(
     }
 };
 
-const updateData = async <T>(
+const updateData = async (
     storeName: string,
     id: string,
     updates: {
