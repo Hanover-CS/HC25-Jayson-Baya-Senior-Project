@@ -95,6 +95,12 @@ import {
 } from "firebase/firestore";
 import { WhereFilterOp } from "firebase/firestore";
 
+interface User {
+    uid: string;
+    email: string;
+    role: string;
+    createdAt: string;
+}
 
 const useFirestore = process.env.NEXT_PUBLIC_USE_FIRESTORE === "true";
 
@@ -127,9 +133,9 @@ const initializeDB = async (): Promise<IDBPDatabase> => {
     return sqliteDB;
 };
 
-const addData = async (
+const addData = async <T extends Record<string, any>>(
     storeName: string,
-    data: { createdAt: string; purchaseDate: string; buyerEmail: string }
+    data: T
 ): Promise<void> => {
     if (useFirestore) {
         try {
