@@ -34,7 +34,7 @@ import React, { useEffect, useState } from "react";
 import { getData } from "@/lib/dbHandler"; // Use abstraction layer
 import ChatBox from "./ChatBox";
 
-interface Conversation {
+interface Conversation extends Record<string, unknown>{
     id: string;
     buyer: string;
     seller: string;
