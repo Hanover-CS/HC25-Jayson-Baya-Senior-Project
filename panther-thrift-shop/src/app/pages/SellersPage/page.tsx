@@ -33,7 +33,6 @@ import { auth, storage } from "@/lib/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import {addData, initializeDB, updateData} from "@/lib/dbHandler"; // Import dbHandler functions
 import {
-    fetchProductsAlert,
     FIRESTORE_COLLECTIONS,
     FIRESTORE_FIELDS,
     ROUTES,
