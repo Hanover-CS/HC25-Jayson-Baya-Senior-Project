@@ -95,6 +95,7 @@ import {
 } from "firebase/firestore";
 import { WhereFilterOp } from "firebase/firestore";
 import {Product} from "@/Models/Product";
+import {uuidv4} from "@firebase/util";
 
 const useFirestore = process.env.NEXT_PUBLIC_USE_FIRESTORE === "true";
 
@@ -152,7 +153,7 @@ const addData = async <T extends Record<string, unknown>>(
         const db = await initializeDB();
         const tx = db.transaction(storeName, "readwrite");
         const store = tx.objectStore(storeName);
-        const id = crypto.randomUUID(); // Use UUID only for IndexedDB
+        const id = uuidv4();
         await store.add({ id, ...data });
         await tx.done;
     }
