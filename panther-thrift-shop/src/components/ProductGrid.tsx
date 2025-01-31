@@ -23,17 +23,18 @@
  * Last Updated: January 25, 2025
  */
 
-import React, { useEffect, useState } from "react";
-import { Product } from "@/Models/Product";
+import React, {useEffect, useState} from "react";
+import {Product} from "@/Models/Product";
 import {FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS} from "@/Models/ConstantData";
 import {addData, deleteData, getData} from "@/lib/dbHandler";
 
 interface ProductGridProps {
-    products?: Product[]; // List of products to display
-    onProductClick?: (product: Product) => void; // Callback when a product is clicked
-    onSellerRedirect?: () => void; // Callback to redirect to the seller's listings
-    userEmail?: string; // Logged-in user's email
-    emptyMessage?: string; // Message to display when no products are available
+    products?: Product[],
+    onProductClick?: (product: Product) => void,
+    onSellerRedirect?: () => void,
+    userEmail?: string,
+    emptyMessage?: string,
+    onSaveProduct?: (product: Product) => Promise<void>
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({
@@ -42,6 +43,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                                                      onSellerRedirect,
                                                      userEmail,
                                                      emptyMessage = "No items available yet.",
+                                                     onSaveProduct
                                                  }) => {
     const [savedProductIds, setSavedProductIds] = useState<Set<string>>(new Set());
 
@@ -53,7 +55,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             try {
                 const savedItems = await getData<Product>(
                     FIRESTORE_COLLECTIONS.SAVED_ITEMS,
-                    [{ field: FIRESTORE_FIELDS.BUYER_EMAIL, operator: "==", value: userEmail }]
+                    [{field: FIRESTORE_FIELDS.BUYER_EMAIL, operator: "==", value: userEmail}]
                 );
 
                 // Store saved product IDs in a Set for fast lookup
@@ -135,16 +137,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                                 My Listings
                             </button>
                         ) : (
-                                <button
-                                    onClick={() => toggleSaveProduct(product)}
-                                    className={`mt-2 px-4 py-2 rounded transition ${
-                                        savedProductIds.has(product.id)
-                                            ? "bg-red-500 text-white hover:bg-red-600"
-                                            : "bg-blue-500 text-white hover:bg-blue-600"
-                                    }`}
-                                >
-                                    {savedProductIds.has(product.id) ? "Saved" : "Save"}
-                                </button>
+                            <button
+                                onClick={() => toggleSaveProduct(product)}
+                                className={`mt-2 px-4 py-2 rounded transition ${
+                                    savedProductIds.has(product.id)
+                                        ? "bg-red-500 text-white hover:bg-red-600"
+                                        : "bg-blue-500 text-white hover:bg-blue-600"
+                                }`}
+                            >
+                                {savedProductIds.has(product.id) ? "Saved" : "Save"}
+                            </button>
                         )}
                     </div>
                 ))
