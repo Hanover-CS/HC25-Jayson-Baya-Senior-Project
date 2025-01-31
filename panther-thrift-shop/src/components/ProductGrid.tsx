@@ -25,13 +25,12 @@
 
 import React, { useEffect, useState } from "react";
 import { Product } from "@/Models/Product";
-import { fetchFirestoreData } from "@/utils/fetchFirestoreData"; // Abstracted Firestore utility
-import { FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS } from "@/Models/ConstantData";
+import {FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, handleSaveProductAlert} from "@/Models/ConstantData";
+import {addData, deleteData, getData} from "@/lib/dbHandler";
 
 interface ProductGridProps {
     products?: Product[]; // List of products to display
     onProductClick?: (product: Product) => void; // Callback when a product is clicked
-    onSaveProduct?: (product: Product) => void; // Callback for saving/unsaving a product
     onSellerRedirect?: () => void; // Callback to redirect to the seller's listings
     userEmail?: string; // Logged-in user's email
     emptyMessage?: string; // Message to display when no products are available
@@ -40,7 +39,6 @@ interface ProductGridProps {
 const ProductGrid: React.FC<ProductGridProps> = ({
                                                      products = [],
                                                      onProductClick,
-                                                     onSaveProduct,
                                                      onSellerRedirect,
                                                      userEmail,
                                                      emptyMessage = "No items available yet.",
@@ -50,26 +48,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({
     // Fetch saved products for the logged-in user
     useEffect(() => {
         const fetchSavedProducts = async () => {
-            if (userEmail) {
-                try {
-                    const savedItems = await fetchFirestoreData<Product>(
-                        FIRESTORE_COLLECTIONS.SAVED_ITEMS, // Collection name
-                        userEmail, // User's email
-                        FIRESTORE_FIELDS.BUYER_EMAIL, // BUYER_EMAIL field
-                        [
-                            {
-                                field: FIRESTORE_FIELDS.BUYER_EMAIL,
-                                operator: "==",
-                                value: userEmail,
-                            },
-                        ]
-                    );
+            if (!userEmail) return;
 
-                    const savedIds = new Set(savedItems.map((item) => item.id));
-                    setSavedProductIds(savedIds);
-                } catch (error) {
-                    console.error("Error fetching saved products:", error);
-                }
+            try {
+                const savedItems = await getData<Product>(
+                    FIRESTORE_COLLECTIONS.SAVED_ITEMS,
+                    [{ field: FIRESTORE_FIELDS.BUYER_EMAIL, operator: "==", value: userEmail }]
+                );
+
+                // Store saved product IDs in a Set for fast lookup
+                const savedIds = new Set(savedItems.map((item) => item.id));
+                setSavedProductIds(savedIds);
+            } catch (error) {
+                console.error("Error fetching saved products:", error);
             }
         };
 
@@ -78,21 +69,40 @@ const ProductGrid: React.FC<ProductGridProps> = ({
 
 
     // Handle saving or unsaving a product
-    const toggleSaveProduct = (product: Product) => {
+    const toggleSaveProduct = async (product: Product) => {
+        if (!userEmail) return;
+
         const isSaved = savedProductIds.has(product.id);
-
-        setSavedProductIds((prev) => {
-            const updated = new Set(prev);
+        try {
             if (isSaved) {
-                updated.delete(product.id);
-            } else {
-                updated.add(product.id);
-            }
-            return updated;
-        });
+                // Unsaved the product (Delete from Firestore/IndexedDB)
+                await deleteData(FIRESTORE_COLLECTIONS.SAVED_ITEMS, product.id);
+                setSavedProductIds((prev) => {
+                    const updated = new Set(prev);
+                    updated.delete(product.id);
+                    return updated;
+                });
 
-        // Trigger the parent callback
-        onSaveProduct?.(product);
+            } else {
+                // Save the product (Add to Firestore/IndexedDB)
+                const savedProduct = {
+                    id: product.id,
+                    buyerEmail: userEmail,
+                    productName: product.productName,
+                    price: product.price,
+                    imageURL: product.imageURL,
+                    description: product.description,
+                    category: product.category,
+                    seller: product.seller,
+                    createdAt: new Date().toISOString(),
+                };
+
+                await addData(FIRESTORE_COLLECTIONS.SAVED_ITEMS, savedProduct);
+                setSavedProductIds((prev) => new Set(prev).add(product.id));
+            }
+        } catch (error) {
+            console.error("Error saving/unsaving product:", error);
+        }
     };
 
     return (
@@ -116,20 +126,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                         <p className="text-gray-600">${product.price.toFixed(2)}</p>
                         <p className="text-gray-500 truncate">{product.description}</p>
 
-                        {/* Action Buttons */}
+                        {/* Show 'My Listings' if Seller, otherwise 'Save'/'Saved' */}
                         {userEmail && product.seller === userEmail ? (
                             <button
-                                onClick={() => {
-                                    if (onSellerRedirect) {
-                                        onSellerRedirect();
-                                    }
-                                }}
+                                onClick={onSellerRedirect}
                                 className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
                             >
                                 My Listings
                             </button>
                         ) : (
-                            onSaveProduct && (
                                 <button
                                     onClick={() => toggleSaveProduct(product)}
                                     className={`mt-2 px-4 py-2 rounded transition ${
@@ -138,9 +143,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                                             : "bg-blue-500 text-white hover:bg-blue-600"
                                     }`}
                                 >
-                                    {savedProductIds.has(product.id) ? "Unsave" : "Save"}
+                                    {savedProductIds.has(product.id) ? "Saved" : "Save"}
                                 </button>
-                            )
                         )}
                     </div>
                 ))
