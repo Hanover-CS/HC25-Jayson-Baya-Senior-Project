@@ -34,6 +34,7 @@ interface ProductGridProps {
     onSellerRedirect?: () => void,
     userEmail?: string,
     emptyMessage?: string
+    showSaveButton: boolean
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({
@@ -41,6 +42,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                                                      onProductClick,
                                                      onSellerRedirect,
                                                      userEmail,
+                                                     showSaveButton = true,
                                                      emptyMessage = "No items available yet.",
                                                  }) => {
     const [savedProductIds, setSavedProductIds] = useState<Set<string>>(new Set());
@@ -69,7 +71,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
 
 
     // Handle saving or unsaving a product
-    const toggleSaveProduct = async (product: Product) => {
+    const toggleSaveProduct = async (product: Product, e: React.MouseEvent) => {
+        e.stopPropagation();
         if (!userEmail) return;
 
         const isSaved = savedProductIds.has(product.id);
@@ -130,14 +133,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                         {/* Show 'My Listings' if Seller, otherwise 'Save'/'Saved' */}
                         {userEmail && product.seller === userEmail ? (
                             <button
-                                onClick={onSellerRedirect}
+                                onClick={(e) => {e.stopPropagation(); onSellerRedirect;}}
                                 className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
                             >
                                 My Listings
                             </button>
-                        ) : (
+                        ) :  showSaveButton &&  (
                             <button
-                                onClick={() => toggleSaveProduct(product)}
+                                onClick={(e) => toggleSaveProduct(product, e)}
                                 className={`mt-2 px-4 py-2 rounded transition ${
                                     savedProductIds.has(product.id)
                                         ? "bg-red-500 text-white hover:bg-red-600"

@@ -34,7 +34,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
-import { getData } from "@/lib/dbHandler"; // Import the dbHandler function
+import {deleteData, getData} from "@/lib/dbHandler"; // Import the dbHandler function
 import {
     FIRESTORE_COLLECTIONS,
     FIRESTORE_FIELDS,
@@ -44,11 +44,14 @@ import {
 import { TAB_NAMES } from "@/Models/ConstantData";
 import ProductGrid from "@/components/ProductGrid";
 import { Product } from "@/Models/Product";
+import ProductModal from "@/components/ProductModal";
 
 const BuyingPage = () => {
     const [savedItems, setSavedItems] = useState<Product[]>([]); // Saved items
     const [purchasedItems, setPurchasedItems] = useState<Product[]>([]); // Purchased items
     const [selectedTab, setSelectedTab] = useState(TAB_NAMES.SAVED_ITEMS); // Active tab
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [showProductModal, setShowProductModal] = useState(false);
     const router = useRouter();
 
     const fetchPurchasedItems = async (email: string) => {
@@ -100,6 +103,13 @@ const BuyingPage = () => {
         return () => unsubscribe();
     }, [router]);
 
+    // Handle product click to show details in modal
+    const handleProductClick = (product: Product) => {
+        setSelectedProduct(product);
+        setShowProductModal(true);
+    };
+
+
     // Render tab content based on the active tab
     const renderTabContent = () => {
         switch (selectedTab) {
@@ -107,6 +117,9 @@ const BuyingPage = () => {
                 return (
                     <ProductGrid
                         products={savedItems}
+                        onProductClick={handleProductClick} // Makes items clickable
+                        userEmail={auth.currentUser?.email || ""}
+                        showSaveButton={true}
                         emptyMessage={renderTabContentMessage.emptySaved}
                     />
                 );
@@ -114,6 +127,9 @@ const BuyingPage = () => {
                 return (
                     <ProductGrid
                         products={purchasedItems}
+                        onProductClick={handleProductClick}
+                        userEmail={auth.currentUser?.email || ""}
+                        showSaveButton={false}
                         emptyMessage={renderTabContentMessage.emptyPurchased}
                     />
                 );
@@ -149,6 +165,15 @@ const BuyingPage = () => {
                     {renderTabContent()}
                 </div>
             </div>
+
+            {/* Product Details Modal */}
+            {showProductModal && selectedProduct && (
+                <ProductModal
+                    product={selectedProduct}
+                    isOpen={showProductModal}
+                    onClose={() => setShowProductModal(false)}
+                />
+            )}
         </div>
     );
 };
