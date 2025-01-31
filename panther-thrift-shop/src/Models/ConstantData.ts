@@ -28,8 +28,7 @@ export const ROUTES = {
 
 export const TAB_NAMES = {
     SAVED_ITEMS: "Saved Items",
-    PURCHASED_ORDERS: "Purchased Orders",
-    OFFERS: "Offers",
+    PURCHASED_ORDERS: "Purchased Orders"
 };
 
 export const handleSaveProductAlert = {

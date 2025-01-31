@@ -5,7 +5,7 @@
  * The `BuyingPage` serves as the main dashboard for buyers, allowing them to:
  * - View their saved items.
  * - Check their purchase history.
- * - View offers they have made on products.
+ * - View offers they have made on products. (for now need to remove this feature, the least priority)
  *
  * The component fetches data in real-time from Firebase Firestore and organizes it into three tabs:
  * "Saved Items", "Purchased Orders", and "Offers". Buyers can easily navigate between these tabs to
@@ -48,7 +48,6 @@ import { Product } from "@/Models/Product";
 const BuyingPage = () => {
     const [savedItems, setSavedItems] = useState<Product[]>([]); // Saved items
     const [purchasedItems, setPurchasedItems] = useState<Product[]>([]); // Purchased items
-    const [offers, setOffers] = useState<Product[]>([]); // Offers made
     const [selectedTab, setSelectedTab] = useState(TAB_NAMES.SAVED_ITEMS); // Active tab
     const router = useRouter();
 
@@ -90,13 +89,6 @@ const BuyingPage = () => {
                     // Fetch purchased items
                     await fetchPurchasedItems(email);
 
-                    // Fetch offers
-                    const offersData = await getData<Product>(FIRESTORE_COLLECTIONS.OFFERS, [{
-                        field: FIRESTORE_FIELDS.BUYER_EMAIL,
-                        operator: "==",
-                        value: email
-                    }]);
-                    setOffers(offersData);
                 } catch (error) {
                     console.error("Error fetching data:", error);
                 }
@@ -123,13 +115,6 @@ const BuyingPage = () => {
                     <ProductGrid
                         products={purchasedItems}
                         emptyMessage={renderTabContentMessage.emptyPurchased}
-                    />
-                );
-            case TAB_NAMES.OFFERS:
-                return (
-                    <ProductGrid
-                        products={offers}
-                        emptyMessage={renderTabContentMessage.emptyOffers}
                     />
                 );
             default:
