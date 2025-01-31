@@ -25,7 +25,7 @@
 
 import React, {useEffect, useState} from "react";
 import {Product} from "@/Models/Product";
-import {FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS} from "@/Models/ConstantData";
+import {FIRESTORE_COLLECTIONS, FIRESTORE_FIELDS, handleSaveProductAlert} from "@/Models/ConstantData";
 import {addData, deleteData, getData} from "@/lib/dbHandler";
 
 interface ProductGridProps {
@@ -82,7 +82,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                     updated.delete(product.id);
                     return updated;
                 });
-
+                alert(handleSaveProductAlert.UNSAVED_ITEMS)
             } else {
                 // Save the product (Add to Firestore/IndexedDB)
                 const savedProduct = {
@@ -99,6 +99,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
 
                 await addData(FIRESTORE_COLLECTIONS.SAVED_ITEMS, savedProduct);
                 setSavedProductIds((prev) => new Set(prev).add(product.id));
+                alert(handleSaveProductAlert.SAVED_ITEMS)
             }
         } catch (error) {
             console.error("Error saving/unsaving product:", error);

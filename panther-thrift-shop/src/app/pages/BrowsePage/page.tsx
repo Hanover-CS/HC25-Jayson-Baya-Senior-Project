@@ -36,10 +36,9 @@ import {
     FIRESTORE_COLLECTIONS,
     FIRESTORE_FIELDS,
     ROUTES,
-    handleSaveProductAlert,
     fetchProductsAlert,
 } from "@/Models/ConstantData";
-import { getData, addData, deleteData } from "@/lib/dbHandler"; // Use dbHandler functions
+import { getData } from "@/lib/dbHandler"; // Use dbHandler functions
 import ProductGrid from "@/components/ProductGrid";
 import ProductModal from "@/components/ProductModal"; // Modal for product details
 
@@ -80,58 +79,6 @@ const BrowsePage = () => {
             setLoading(false);
         }
     };
-
-    // Handle saving and unsaving a product
-    const handleSaveProduct = async (product: Product) => {
-        try {
-            console.log("Saving product:", product)
-
-            // Ensure the product has an `id`
-            if (!product.id) {
-                console.error("Product ID is missing!", product);
-                alert("Error: Product ID is missing!");
-                return;
-            }
-
-            // Check if the product is already saved
-            const savedItems = await getData<Product>(FIRESTORE_COLLECTIONS.SAVED_ITEMS, [
-                { field: FIRESTORE_FIELDS.BUYER_EMAIL, operator: "==", value: userEmail },
-                { field: FIRESTORE_FIELDS.PRODUCT_ID, operator: "==", value: product.id },
-            ]);
-
-            if (savedItems.length > 0) {
-                await deleteData(FIRESTORE_COLLECTIONS.SAVED_ITEMS, savedItems[0].id);
-                alert("Item unsaved successfully!");
-            } else {
-                // Ensure the saved object has a valid `id`
-                const productData = {
-                    [FIRESTORE_FIELDS.BUYER_EMAIL]: userEmail,
-                    [FIRESTORE_FIELDS.PRODUCT_ID]: product.id,
-                    [FIRESTORE_FIELDS.productName]: product.productName,
-                    [FIRESTORE_FIELDS.PRICE]: product.price,
-                    [FIRESTORE_FIELDS.IMAGE_URL]: product.imageURL,
-                    [FIRESTORE_FIELDS.DESCRIPTION]: product.description,
-                    [FIRESTORE_FIELDS.category]: product.category,
-                    [FIRESTORE_FIELDS.SELLER]: product.seller,
-                    createdAt: new Date().toISOString(), // Ensure creation date
-                    purchaseDate: "", // Empty string since this is not purchased yet
-                    buyerEmail: userEmail, // Assign current user as the "buyer" for saved items
-                };
-
-                console.log("Saving product to IndexedDB:", productData);
-
-                await addData(FIRESTORE_COLLECTIONS.SAVED_ITEMS, productData);
-                alert("Item saved successfully!");
-            }
-
-            // Refresh products after saving/unsaving
-            await fetchProducts();
-        } catch (error) {
-            console.error(handleSaveProductAlert.Error, error);
-            alert(handleSaveProductAlert.Alert);
-        }
-    };
-
 
     // Handle product click to open modal
     const handleProductClick = (product: Product) => {

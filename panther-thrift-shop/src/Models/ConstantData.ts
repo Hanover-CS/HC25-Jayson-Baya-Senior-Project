@@ -34,7 +34,8 @@ export const TAB_NAMES = {
 export const handleSaveProductAlert = {
     SAVED_ITEMS: "Item saved successfully!",
     Error: "Error saving product:",
-    Alert: "Error saving item. Please try again."
+    Alert: "Error saving item. Please try again.",
+    UNSAVED_ITEMS: "Item unsaved successfully!"
 }
 
 export const fetchProductsAlert = {
