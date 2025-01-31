@@ -62,7 +62,7 @@ interface Product extends Record<string, unknown>{
     imageURL: string;
     description: string;
     seller: string;
-    sold?: boolean;
+    sold: boolean;
     createdAt: string;
 }
 
