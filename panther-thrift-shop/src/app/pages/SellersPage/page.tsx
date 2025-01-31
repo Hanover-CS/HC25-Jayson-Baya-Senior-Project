@@ -102,23 +102,27 @@ const SellerPage = () => {
             const store = tx.objectStore(FIRESTORE_COLLECTIONS.PRODUCTS);
             const localProducts = await store.getAll();
 
-            if (localProducts.length > 0) {
-                console.log("Loading from IndexedDB:", localProducts);
-                setProducts(localProducts);
+            // 🔹 Filter Local IndexedDB Products by Seller Email
+            const sellerLocalProducts = localProducts.filter(product => product.seller === email);
+
+            if (sellerLocalProducts.length > 0) {
+                console.log("Loading seller's products from IndexedDB:", sellerLocalProducts);
+                setProducts(sellerLocalProducts);
             } else {
-                console.log("Fetching from Firestore...");
+                console.log("Fetching seller's products from Firestore...");
                 const snapshot = await getDocs(query(
                     collection(firestoreDB, FIRESTORE_COLLECTIONS.PRODUCTS),
-                    where(FIRESTORE_FIELDS.SELLER, "==", email)
+                    where(FIRESTORE_FIELDS.SELLER, "==", email)  // Ensure seller email matches
                 ));
 
                 const firestoreProducts = snapshot.docs.map((doc) => ({
-                    id: doc.id, ...doc.data()
+                    id: doc.id,
+                    ...doc.data()
                 })) as Product[];
 
                 setProducts(firestoreProducts);
 
-                // Save Firestore products to IndexedDB
+                // 🔹 Save Only Seller's Products to IndexedDB
                 const txWrite = db.transaction(FIRESTORE_COLLECTIONS.PRODUCTS, "readwrite");
                 const storeWrite = txWrite.objectStore(FIRESTORE_COLLECTIONS.PRODUCTS);
                 for (const product of firestoreProducts) {
@@ -127,9 +131,10 @@ const SellerPage = () => {
                 await txWrite.done;
             }
         } catch (error) {
-            console.error("Error fetching products:", error);
+            console.error("Error fetching seller's products:", error);
         }
     };
+
 
 
     // Handle form submission for creating a new listing
@@ -197,9 +202,15 @@ const SellerPage = () => {
 
     // Handle product click for editing
     const handleEditProduct = (product: Product) => {
+        if (product.seller !== userEmail) {
+            setMessage("You can only edit your own listings.");
+            setShowPopup(true);
+            return;
+        }
         setSelectedProduct(product);
         setShowEditModal(true);
     };
+
 
     // Handle updating the product
     const handleUpdateProduct = async () => {
