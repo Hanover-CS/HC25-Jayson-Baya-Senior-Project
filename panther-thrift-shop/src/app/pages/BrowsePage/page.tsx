@@ -158,7 +158,6 @@ const BrowsePage = () => {
                         <ProductGrid
                             products={products}
                             onProductClick={handleProductClick}
-                            onSaveProduct={handleSaveProduct}
                             onSellerRedirect={handleSellerRedirect}
                             userEmail={userEmail}
                             emptyMessage="No products available to browse."

@@ -33,8 +33,7 @@ interface ProductGridProps {
     onProductClick?: (product: Product) => void,
     onSellerRedirect?: () => void,
     userEmail?: string,
-    emptyMessage?: string,
-    onSaveProduct?: (product: Product) => Promise<void>
+    emptyMessage?: string
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({
@@ -43,7 +42,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                                                      onSellerRedirect,
                                                      userEmail,
                                                      emptyMessage = "No items available yet.",
-                                                     onSaveProduct
                                                  }) => {
     const [savedProductIds, setSavedProductIds] = useState<Set<string>>(new Set());
 
