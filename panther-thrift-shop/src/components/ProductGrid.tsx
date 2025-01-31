@@ -133,7 +133,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                         {/* Show 'My Listings' if Seller, otherwise 'Save'/'Saved' */}
                         {userEmail && product.seller === userEmail ? (
                             <button
-                                onClick={(e) => {e.stopPropagation(); onSellerRedirect;}}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onSellerRedirect?.();
+                                }}
                                 className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
                             >
                                 My Listings

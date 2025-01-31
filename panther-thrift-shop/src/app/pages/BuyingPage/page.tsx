@@ -34,7 +34,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
-import {deleteData, getData} from "@/lib/dbHandler"; // Import the dbHandler function
+import {getData} from "@/lib/dbHandler"; // Import the dbHandler function
 import {
     FIRESTORE_COLLECTIONS,
     FIRESTORE_FIELDS,

@@ -108,7 +108,7 @@ const BrowsePage = () => {
                             onSellerRedirect={handleSellerRedirect}
                             userEmail={userEmail}
                             emptyMessage="No products available to browse."
-                        />
+                            showSaveButton={true}/>
                     )}
                 </div>
 
