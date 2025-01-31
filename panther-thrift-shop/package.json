@@ -1,14 +1,14 @@
 {
   "name": "panther-thrift-shop",
   "version": "0.1.0",
-  "type": "module",
+  "type": "commonjs",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "ts-node --swc jest.config.ts && jest"
+    "test": "ts-node --swc jest.config.cjs && jest"
   },
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.0",
