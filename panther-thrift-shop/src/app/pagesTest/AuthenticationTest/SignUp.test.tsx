@@ -6,11 +6,16 @@ import SignUp from "@/app/pages/SignUp/page";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import {addData} from "@/lib/dbHandler";
 
 jest.mock("@/lib/firebaseConfig", () => ({
     auth: {},
-    db: {},
+    db: {}, // Firestore Mock
     storage: {},
+}));
+
+jest.mock("@/lib/dbHandler", () => ({
+    addData: jest.fn(), // Mock IndexedDB
 }));
 
 jest.mock("firebase/app", () => ({
@@ -57,29 +62,49 @@ describe("SignUp Component", () => {
     });
 
 
-    it("handles successful sign-up", async () => {
+    it("handles successful sign-up with Firestore", async () => {
+        process.env.NEXT_PUBLIC_USE_FIRESTORE = "true"; //  Firestore mode
         render(<SignUp />);
+
         const emailInput = screen.getByPlaceholderText("Email");
         const passwordInput = screen.getByPlaceholderText("Password");
         const signUpButton = screen.getByRole("button", { name: "Sign Up" });
 
-        // Mock Firebase response
         const mockUser = { user: { uid: "12345", email: "test@hanover.edu" } };
         (createUserWithEmailAndPassword as jest.Mock).mockResolvedValue(mockUser);
         (setDoc as jest.Mock).mockResolvedValueOnce(undefined);
 
-        // Simulate user input
         fireEvent.change(emailInput, { target: { value: "test@hanover.edu" } });
         fireEvent.change(passwordInput, { target: { value: "password123" } });
         fireEvent.click(signUpButton);
 
-        // Expect success message and redirection
         expect(await screen.findByText("You successfully registered!")).toBeInTheDocument();
-        expect(mockPush).toHaveBeenCalledWith("/pages/BrowsePage");
+        await waitFor(() => {
+            expect(mockPush).toHaveBeenCalledWith("/pages/BrowsePage");
+        });
     });
 
+    it("handles successful sign-up with IndexedDB", async () => {
+        process.env.NEXT_PUBLIC_USE_FIRESTORE = "false"; // IndexedDB mode
+        render(<SignUp />);
 
+        const emailInput = screen.getByPlaceholderText("Email");
+        const passwordInput = screen.getByPlaceholderText("Password");
+        const signUpButton = screen.getByRole("button", { name: "Sign Up" });
 
+        const mockUser = { user: { uid: "12345", email: "test@hanover.edu" } };
+        (createUserWithEmailAndPassword as jest.Mock).mockResolvedValue(mockUser);
+        (addData as jest.Mock).mockResolvedValue(undefined); // ✅ Mock IndexedDB
+
+        fireEvent.change(emailInput, { target: { value: "test@hanover.edu" } });
+        fireEvent.change(passwordInput, { target: { value: "password123" } });
+        fireEvent.click(signUpButton);
+
+        expect(await screen.findByText("You successfully registered!")).toBeInTheDocument();
+        await waitFor(() => {
+            expect(mockPush).toHaveBeenCalledWith("/pages/BrowsePage");
+        });
+    });
 
     it("handles 'Email ID already registered.' error", async () => {
         render(<SignUp />);

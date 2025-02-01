@@ -30,13 +30,15 @@
 
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebaseConfig";
+import {auth, db} from "@/lib/firebaseConfig";
 import { addData } from "@/lib/dbHandler";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "@firebase/app";
+import {collection, doc, setDoc} from "firebase/firestore";
 
 const SignUp = () => {
+    const useFirestore = process.env.NEXT_PUBLIC_USE_FIRESTORE === "true";
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -55,13 +57,24 @@ const SignUp = () => {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Add user information to the database
-            await addData("users", {
+            const userData = {
                 uid: user.uid,
                 email: user.email,
                 role: "customer",
-                createdAt: new Date().toISOString(), // Store as ISO string
-            });
+                createdAt: new Date().toISOString(),
+            };
+
+            if (useFirestore) {
+                // Save to Firestore
+                const usersRef = collection(db, "users");
+                await setDoc(doc(usersRef, user.uid), userData);
+                console.log("✅ User data saved to Firestore");
+            } else {
+                // Save to IndexedDB
+                await addData("users", userData);
+                console.log("✅ User data saved to IndexedDB");
+            }
+
 
             setMessage("You successfully registered!");
             // Redirect to BrowsePage after successful sign up
