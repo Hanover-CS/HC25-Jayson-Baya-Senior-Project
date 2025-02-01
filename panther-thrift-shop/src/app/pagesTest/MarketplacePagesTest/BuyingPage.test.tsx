@@ -1,11 +1,9 @@
 //  BuyingPage.test.tsx
 import React from "react";
-import {fireEvent, render, screen, waitFor, within} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { ROUTES } from "@/Models/ConstantData";
 import { useRouter } from "next/navigation";
-import { Product } from "@/Models/Product";
-import { fetchFirestoreData } from "@/utils/fetchFirestoreData";
 import BuyingPage from "@/app/pages/BuyingPage/page";
 import {getData} from "@/lib/dbHandler";
 
