@@ -346,4 +346,123 @@ describe("SellerPage Component", () => {
     });
 
 
+    test("allows seller to mark an item as sold and add buyer email", async () => {
+        // Create a dummy Firestore document snapshot representing an unsold product.
+        const dummyProductDoc = {
+            id: "dummy-id",
+            data: () => ({
+                productName: "Old Product",
+                category: "Appliances",
+                price: 99.99,
+                description: "Old description",
+                imageURL: "http://example.com/old-image.png",
+                seller: "seller@example.com",
+                sold: false,
+                createdAt: "2025-01-01T00:00:00Z",
+                buyerEmail: "",
+                purchaseDate: "2025-01-01T00:00:00Z",
+            }),
+        };
+
+        // Override Firestore's getDocs so that it initially returns our dummy product.
+        const { getDocs } = require("firebase/firestore");
+        getDocs.mockResolvedValue({
+            docs: [dummyProductDoc],
+        });
+
+        // Simulate an authenticated seller.
+        const fakeUser = { email: "seller@example.com" };
+        (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+            callback(fakeUser);
+            return jest.fn();
+        });
+
+        // Render the SellerPage.
+        const { getByText, container, queryByText } = render(<SellerPage />);
+
+        // Wait until the product listing ("Old Product") is displayed.
+        await waitFor(() => {
+            expect(getByText("Old Product")).toBeInTheDocument();
+        });
+
+        // Click on the product listing to open the edit modal.
+        fireEvent.click(getByText("Old Product"));
+
+        // Wait until the edit modal appears.
+        await waitFor(() => {
+            expect(getByText("Edit Product")).toBeInTheDocument();
+        });
+
+        // Locate the status select element by finding its label "Status"
+        const statusLabel = getByText("Status");
+        // Assume the parent element contains the select
+        const statusSelect = statusLabel.parentElement?.querySelector("select") as HTMLSelectElement;
+        // Initially, the status should be "Still Selling" (since sold is false).
+        expect(statusSelect.value).toBe("Still Selling");
+
+        // Change the status to "Sold".
+        fireEvent.change(statusSelect, { target: { value: "Sold" } });
+        expect(statusSelect.value).toBe("Sold");
+
+        // Since the product is now marked as sold, a buyer email input should appear.
+        // (Since the label isn't properly associated, we query directly.)
+        const buyerEmailInput = await waitFor(() =>
+            container.querySelector('input[type="email"]')
+        ) as HTMLInputElement;
+        // Enter a buyer email.
+        fireEvent.change(buyerEmailInput, { target: { value: "buyer@example.com" } });
+        expect(buyerEmailInput.value).toBe("buyer@example.com");
+
+        // Before clicking update, override getDocs so that the next fetch returns the updated product.
+        getDocs.mockResolvedValueOnce({
+            docs: [
+                {
+                    id: "dummy-id",
+                    data: () => ({
+                        productName: "Old Product", // Name remains unchanged in this test.
+                        category: "Appliances",
+                        price: 99.99,
+                        description: "Old description",
+                        imageURL: "http://example.com/old-image.png",
+                        seller: "seller@example.com",
+                        sold: true,
+                        createdAt: "2025-01-01T00:00:00Z",
+                        buyerEmail: "buyer@example.com",
+                        purchaseDate: "2025-01-01T00:00:00Z",
+                    }),
+                },
+            ],
+        });
+
+        // Click the "Update Product" button.
+        const updateButton = getByText("Update Product");
+        fireEvent.click(updateButton);
+
+        // Verify that updateData was called with the updated product details.
+        await waitFor(() => {
+            const { updateData } = require("@/lib/dbHandler");
+            expect(updateData).toHaveBeenCalledWith(
+                FIRESTORE_COLLECTIONS.PRODUCTS,
+                "dummy-id",
+                expect.objectContaining({
+                    sold: true,
+                    buyerEmail: "buyer@example.com",
+                })
+            );
+        });
+
+        // Wait until the modal is closed.
+        await waitFor(() => {
+            expect(queryByText("Edit Product")).not.toBeInTheDocument();
+        });
+
+        // NEW EXPECTATION:
+        // Verify that the updated product listing now displays "Sold".
+        // We query for the element that displays the sold status.
+        await waitFor(() => {
+            const soldStatusEl = container.querySelector("p.text-red-500.font-bold");
+            expect(soldStatusEl).toBeTruthy();
+            expect(soldStatusEl?.textContent?.trim()).toBe("Sold");
+        });
+    });
 });
