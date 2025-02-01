@@ -233,4 +233,117 @@ describe("SellerPage Component", () => {
             expect(getByText("$99.99")).toBeInTheDocument();
         });
     });
+
+    test("allows seller to edit their existing product listing", async () => {
+        // Create a dummy Firestore document snapshot representing an existing product.
+        const dummyProductDoc = {
+            id: "dummy-id",
+            data: () => ({
+                productName: "Old Product",
+                category: "Appliances",
+                price: 99.99,
+                description: "Old description",
+                imageURL: "http://example.com/old-image.png",
+                seller: "seller@example.com",
+                sold: false,
+                createdAt: "2025-01-01T00:00:00Z",
+                buyerEmail: "",
+                purchaseDate: "2025-01-01T00:00:00Z",
+            }),
+        };
+
+        // Override Firestore's getDocs so that it initially returns our dummy product.
+        const { getDocs } = require("firebase/firestore");
+        getDocs.mockResolvedValue({
+            docs: [dummyProductDoc],
+        });
+
+        // Simulate an authenticated seller.
+        const fakeUser = { email: "seller@example.com" };
+        (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+            callback(fakeUser);
+            return jest.fn();
+        });
+
+        // Render the SellerPage.
+        const { getByText, getByDisplayValue, queryByText } = render(<SellerPage />);
+
+        // Wait until the product listing ("Old Product") is displayed.
+        await waitFor(() => {
+            expect(getByText("Old Product")).toBeInTheDocument();
+        });
+
+        // Simulate clicking on the product listing to open the edit modal.
+        fireEvent.click(getByText("Old Product"));
+
+        // Wait until the edit modal appears.
+        await waitFor(() => {
+            expect(getByText("Edit Product")).toBeInTheDocument();
+        });
+
+        // Find the product name input in the modal (with the current value "Old Product").
+        const productNameInput = getByDisplayValue("Old Product") as HTMLInputElement;
+
+
+        // Change the product name to "New Product".
+        fireEvent.change(productNameInput, { target: { value: "New Product" } });
+        expect(productNameInput.value).toBe("New Product");
+
+        // Before clicking update, override getDocs so that the next fetch returns the updated product.
+        getDocs.mockResolvedValueOnce({
+            docs: [
+                {
+                    id: "dummy-id",
+                    data: () => ({
+                        productName: "New Product",
+                        category: "Appliances",
+                        price: 99.99,
+                        description: "Old description",
+                        imageURL: "http://example.com/old-image.png",
+                        seller: "seller@example.com",
+                        sold: false,
+                        createdAt: "2025-01-01T00:00:00Z",
+                        buyerEmail: "",
+                        purchaseDate: "2025-01-01T00:00:00Z",
+                    }),
+                },
+            ],
+        });
+
+        // Click the "Update Product" button.
+        const updateButton = getByText("Update Product");
+        fireEvent.click(updateButton);
+
+        // Verify that updateData was called with the updated product details.
+        await waitFor(() => {
+            const { updateData } = require("@/lib/dbHandler");
+            expect(updateData).toHaveBeenCalledWith(
+                FIRESTORE_COLLECTIONS.PRODUCTS,
+                "dummy-id",
+                expect.objectContaining({
+                    productName: "New Product",
+                })
+            );
+        });
+
+        // Wait until the modal is closed.
+        await waitFor(() => {
+            expect(queryByText("Edit Product")).not.toBeInTheDocument();
+        });
+
+        // NEW EXPECTATION:
+        // Verify that the updated product listing now displays "New Product".
+        // We use a custom matcher in case the text is split across multiple nodes.
+        await waitFor(() => {
+            expect(
+                getByText((content, node) => {
+                    // Remove extra whitespace.
+                    const normalizedText = content.replace(/\s+/g, " ").trim();
+                    return normalizedText.includes("New Product");
+                })
+            ).toBeInTheDocument();
+        });
+    });
+
+
 });
