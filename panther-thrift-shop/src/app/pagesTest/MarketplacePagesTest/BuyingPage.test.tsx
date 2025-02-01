@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { ROUTES } from "@/Models/ConstantData";
 import { useRouter } from "next/navigation";
 import BuyingPage from "@/app/pages/BuyingPage/page";
-import {addData, deleteData, getData} from "@/lib/dbHandler";
+import {getData} from "@/lib/dbHandler";
 import {Product} from "@/Models/Product";
 
 // Mock firebase/auth
