@@ -56,8 +56,6 @@ const BuyingPage = () => {
 
     const fetchPurchasedItems = async (email: string) => {
         try {
-            console.log(`Fetching purchased items for: ${email}`);
-
             const purchasedItemsData = await getData<Product>(
                 FIRESTORE_COLLECTIONS.PURCHASED_ITEMS,
                 [{
@@ -67,7 +65,6 @@ const BuyingPage = () => {
                 }]
             );
 
-            console.log("Purchased items received:", purchasedItemsData);
             setPurchasedItems(purchasedItemsData);
         } catch (error) {
             console.error("Error fetching purchased items:", error);
