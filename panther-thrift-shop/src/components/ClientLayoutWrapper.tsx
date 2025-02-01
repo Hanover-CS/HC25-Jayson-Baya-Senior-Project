@@ -6,7 +6,6 @@ import MarketplaceNavBar from "@/components/MarketplaceNavbar";
 import MarketplaceSidebar from "@/components/MarketplaceSidebar";
 import NavBar from "@/components/Navbar"; // Navbar with Login/SignUp
 import routeToCategory from "@/components/routeToCategory";
-import ChatPanel from "@/components/BuyingPageComponent/ChatPanel";
 import {onAuthStateChanged} from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 
@@ -81,7 +80,6 @@ const ClientLayoutWrapper: React.FC<ClientLayoutWrapperProps> = ({ children }) =
                     </div>
                 </>
             )}
-            <ChatPanel userEmail={userEmail} onSelectConversation={handleSelectConversation} />
         </>
     );
 };
