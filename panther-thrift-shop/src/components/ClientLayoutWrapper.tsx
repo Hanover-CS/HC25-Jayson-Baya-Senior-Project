@@ -54,11 +54,6 @@ const ClientLayoutWrapper: React.FC<ClientLayoutWrapperProps> = ({ children }) =
         return () => unsubscribe();
     }, []);
 
-    const handleSelectConversation = (conversationId: string) => {
-        console.log("Selected conversation:", conversationId);
-        // Pass this conversationId to the ChatBox (we'll implement next).
-    };
-
     return (
         <>
             {isAuthPage() || isHomePage() ? (
