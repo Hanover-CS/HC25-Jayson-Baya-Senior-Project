@@ -95,7 +95,7 @@ const SellerPage = () => {
             const store = tx.objectStore(FIRESTORE_COLLECTIONS.PRODUCTS);
             const localProducts = await store.getAll();
 
-            // 🔹 Filter Local IndexedDB Products by Seller Email
+            // Filter Local IndexedDB Products by Seller Email
             const sellerLocalProducts = localProducts.filter(product => product.seller === email);
 
             if (sellerLocalProducts.length > 0) {
@@ -115,7 +115,7 @@ const SellerPage = () => {
 
                 setProducts(firestoreProducts);
 
-                // 🔹 Save Only Seller's Products to IndexedDB
+                // Save Only Seller's Products to IndexedDB
                 const txWrite = db.transaction(FIRESTORE_COLLECTIONS.PRODUCTS, "readwrite");
                 const storeWrite = txWrite.objectStore(FIRESTORE_COLLECTIONS.PRODUCTS);
                 for (const product of firestoreProducts) {
