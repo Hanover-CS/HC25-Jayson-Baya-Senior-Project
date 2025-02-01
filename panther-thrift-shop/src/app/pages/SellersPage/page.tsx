@@ -45,13 +45,6 @@ import {uuidv4} from "@firebase/util";
 import {collection, getDocs, query, where} from "firebase/firestore";
 import { db as firestoreDB } from "@/lib/firebaseConfig";
 
-
-
-console.log("CreateListingForm:", CreateListingForm);
-console.log("ProductListings:", ProductListings);
-console.log("EditProductModal:", EditProductModal);
-console.log("PopupAlert:", PopupAlert);
-
 interface Product extends Record<string, unknown>{
     buyerEmail: string;
     purchaseDate: string;
