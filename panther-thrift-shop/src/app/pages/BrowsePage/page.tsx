@@ -69,16 +69,18 @@ const BrowsePage = () => {
         setLoading(true);
         try {
             const fetchedProducts = await getData<Product>(FIRESTORE_COLLECTIONS.PRODUCTS, [
-                {field: FIRESTORE_FIELDS.sold, operator: "==", value: false},
-            ]);
+                { field: FIRESTORE_FIELDS.sold, operator: "==", value: false },
+            ]) || [];
+
             setProducts(fetchedProducts);
         } catch (error) {
-            console.error(fetchProductsAlert.Error, error);
             setError(fetchProductsAlert.Alert);
+            setProducts([]);
         } finally {
             setLoading(false);
         }
     };
+
 
     // Handle product click to open modal
     const handleProductClick = (product: Product) => {

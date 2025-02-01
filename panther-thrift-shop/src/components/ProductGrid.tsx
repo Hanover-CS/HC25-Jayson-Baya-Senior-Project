@@ -53,16 +53,17 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             if (!userEmail) return;
 
             try {
-                const savedItems = await getData<Product>(
+                const savedItems = (await getData<Product>(
                     FIRESTORE_COLLECTIONS.SAVED_ITEMS,
-                    [{field: FIRESTORE_FIELDS.BUYER_EMAIL, operator: "==", value: userEmail}]
-                );
+                    [{ field: FIRESTORE_FIELDS.BUYER_EMAIL, operator: "==", value: userEmail }]
+                )) || []; // array
 
                 // Store saved product IDs in a Set for fast lookup
                 const savedIds = new Set(savedItems.map((item) => item.id));
                 setSavedProductIds(savedIds);
             } catch (error) {
                 console.error("Error fetching saved products:", error);
+                setSavedProductIds(new Set()); // resets to an empty Set
             }
         };
 

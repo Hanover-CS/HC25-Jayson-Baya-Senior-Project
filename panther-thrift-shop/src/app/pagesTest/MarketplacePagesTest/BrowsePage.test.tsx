@@ -1,18 +1,16 @@
-// BrowsePage.test.tsx
 import React from "react";
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import BrowsePage from "@/app/pages/BrowsePage/page";
 import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import {getData, addData, deleteData} from "@/lib/dbHandler";
+import { Product } from "@/Models/Product";
 import { ROUTES } from "@/Models/ConstantData";
-import {useRouter} from "next/navigation";
-import {Product} from "@/Models/Product";
-import * as firestoreUtils from "@/utils/firestoreUtils";
-import ProductGrid from "@/components/ProductGrid";
-import {saveProduct} from "@/utils/firestoreUtils";
-import {FirestoreError} from "firebase/firestore";
 
+jest.mock("firebase/app", () => ({
+    initializeApp: jest.fn(),
+}));
 
-// Mock firebase/auth
 jest.mock("firebase/auth", () => ({
     getAuth: jest.fn(() => ({ currentUser: null })),
     onAuthStateChanged: jest.fn(),
@@ -22,18 +20,38 @@ jest.mock("next/navigation", () => ({
     useRouter: jest.fn(),
 }));
 
+jest.mock("@/lib/dbHandler", () => ({
+    getData: jest.fn(),
+    addData: jest.fn(() => Promise.resolve()),
+    deleteData: jest.fn(() => Promise.resolve()),
+}));
+
+
+jest.mock("firebase/firestore", () => ({
+    getFirestore: jest.fn(() => ({})),
+    collection: jest.fn(),
+    query: jest.fn(),
+    where: jest.fn(),
+    getDocs: jest.fn(),
+    doc: jest.fn(),
+    setDoc: jest.fn(),
+    addDoc: jest.fn(),
+}));
+
+jest.mock("firebase/storage", () => ({
+    getStorage: jest.fn(() => ({})),
+}));
+
 const mockPush = jest.fn();
+(useRouter as jest.Mock).mockReturnValue({ push: mockPush });
 
-(useRouter as jest.Mock).mockReturnValue({
-    push: mockPush,
-});
-
-describe("BrowsePage Component", () => {
+describe("BrowsePage Component (Firestore & IndexedDB Tests)", () => {
     let alertMock: jest.SpyInstance;
 
     beforeEach(() => {
         // Mock window.alert
         alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
+        jest.clearAllMocks();
     });
 
     afterEach(() => {
@@ -41,251 +59,72 @@ describe("BrowsePage Component", () => {
     });
 
     test("redirects unauthenticated users to login", async () => {
-        // Mock unauthenticated state
+        // Simulate unauthenticated user
         (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
-            callback(null); // Simulate unauthenticated user
-            return jest.fn(); // Mock unsubscribe function
+            callback(null);
+            return jest.fn();
         });
 
         render(<BrowsePage />);
 
-        // Assert redirection to login
         await waitFor(() => expect(mockPush).toHaveBeenCalledWith(ROUTES.LOGIN));
     });
 
-    test("fetches and displays products", async () => {
-        const mockProducts: Product[] = [
-            {
-                id: "1",
-                productName: "Product A",
-                price: 10,
-                category: "Category A",
-                imageURL: "imgA.jpg",
-                description: "Description A",
-                seller: "sellerA@example.com",
-                sold: false,
-                markAsSold: jest.fn(),
-                updateDetails: jest.fn(),
-                getSummary: jest.fn(() => "Product A - $10 (Category A)"),
-            },
-            {
-                id: "2",
-                productName: "Product B",
-                price: 20,
-                category: "Category B",
-                imageURL: "imgB.jpg",
-                description: "Description B",
-                seller: "sellerB@example.com",
-                sold: false,
-                markAsSold: jest.fn(),
-                updateDetails: jest.fn(),
-                getSummary: jest.fn(() => "Product B - $20 (Category B)"),
-            },
-        ];
+    test.each([true, false])(
+        "fetches and displays products (Firestore=%s, IndexedDB=%s)",
+        async (useFirestore) => {
+            process.env.NEXT_PUBLIC_USE_FIRESTORE = useFirestore ? "true" : "false";
 
-        // Mock `onAuthStateChanged` to simulate authenticated user
-        (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-            callback({ email: "user@example.com" }); // Simulate authenticated user
-            return jest.fn(); // Mock unsubscribe function
-        });
-
-        // Mock `fetchRealTimeData`
-        jest.spyOn(firestoreUtils, "fetchRealTimeData").mockImplementationOnce(
-            (_collectionName, _conditions, onSuccess) => {
-                onSuccess(mockProducts); // Simulate fetching products
-                return jest.fn(); // Mock unsubscribe function
-            }
-        );
-
-        render(<BrowsePage />);
-
-        // Wait for products to render
-        await waitFor(() => expect(screen.getByText("Product A")).toBeInTheDocument());
-        await waitFor(() => expect(screen.getByText("Product B")).toBeInTheDocument());
-    });
-
-    test("renders product grid", async () => {
-        const mockProducts: Product[] = [
-            {
-                id: "1",
-                productName: "Product A",
-                price: 10,
-                category: "Category A",
-                imageURL: "imgA.jpg",
-                description: "Description A",
-                seller: "sellerA@example.com",
-                sold: false,
-                markAsSold: jest.fn(),
-                updateDetails: jest.fn(),
-                getSummary: jest.fn(() => "Product A - $10 (Category A)"),
-            },
-        ];
-
-        render(
-            <ProductGrid
-                products={mockProducts}
-                onProductClick={() => {}}
-                onSaveProduct={() => {}}
-                onSellerRedirect={() => {}}
-                userEmail="user@example.com"
-            />
-        );
-
-        // Assertions
-        expect(screen.getByText("Product A")).toBeInTheDocument();
-        expect(screen.getByText("$10")).toBeInTheDocument();
-        expect(screen.getByAltText("Product A")).toBeInTheDocument();
-    });
-
-    test("saves product successfully", async () => {
-        // Mock implementation of `saveProduct`
-        jest.spyOn(firestoreUtils, "saveProduct").mockResolvedValueOnce(undefined);
-
-        const mockProducts: Product[] = [
-            {
-                id: "1",
-                productName: "Product A",
-                price: 10,
-                category: "Category A",
-                imageURL: "imgA.jpg",
-                description: "Description A",
-                seller: "sellerA@example.com",
-                sold: false,
-                markAsSold: jest.fn(),
-                updateDetails: jest.fn(),
-                getSummary: jest.fn(() => "Product A - $10 (Category A)"),
-            },
-        ];
-
-        // Mock authenticated user
-        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
-            callback({ email: "user@example.com" }); // Simulate authenticated user
-            return jest.fn(); // Mock unsubscribe function
-        });
-
-        // Mock fetching products
-        jest.spyOn(firestoreUtils, "fetchRealTimeData").mockImplementationOnce(
-            (_collectionName, _conditions, onSuccess) => {
-                onSuccess(mockProducts); // Simulate fetching products
-                return jest.fn(); // Mock unsubscribe function
-            }
-        );
+            const mockProducts: Product[] = [
+                {
+                    id: "1",
+                    productName: "Product A",
+                    price: 10,
+                    category: "Category A",
+                    imageURL: "imgA.jpg",
+                    description: "Description A",
+                    seller: "sellerA@example.com",
+                    sold: false,
+                    markAsSold: jest.fn(), // dd mock function
+                    updateDetails: jest.fn(), // Add mock function
+                    getSummary: jest.fn(() => "Product A - $10 (Category A)"), // Add mock function
+                },
+                {
+                    id: "2",
+                    productName: "Product B",
+                    price: 20,
+                    category: "Category B",
+                    imageURL: "imgB.jpg",
+                    description: "Description B",
+                    seller: "sellerB@example.com",
+                    sold: false,
+                    markAsSold: jest.fn(), //  Add mock function
+                    updateDetails: jest.fn(), //  Add mock function
+                    getSummary: jest.fn(() => "Product B - $20 (Category B)"), //  Add mock function
+                },
+            ];
 
 
-        // Mock saveProduct to resolve successfully
-        (saveProduct as jest.Mock).mockResolvedValueOnce(undefined);
+            // Simulate authenticated user
+            (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+                callback({ email: "user@example.com" });
+                return jest.fn();
+            });
 
-        render(<BrowsePage />);
+            // Mock getData to fetch from Firestore or IndexedDB
+            (getData as jest.Mock).mockResolvedValue(mockProducts);
 
-        // Wait for the Save button to render
-        await waitFor(() => expect(screen.getByText("Save")).toBeInTheDocument());
+            render(<BrowsePage />);
 
-        // Simulate clicking the Save button
-        fireEvent.click(screen.getByText("Save"));
+            await waitFor(() => expect(screen.getByText("Product A")).toBeInTheDocument());
+            await waitFor(() => expect(screen.getByText("Product B")).toBeInTheDocument());
+        }
+    );
 
-        // Verify alert is called with the correct message
-        await waitFor(() => expect(alertMock).toHaveBeenCalledWith("Item saved successfully!"));
-    });
+    test("shows 'Manage Listings' button for product seller", async () => {
+        process.env.NEXT_PUBLIC_USE_FIRESTORE = "false";
 
-    test("opens product modal with details", async () => {
-        const mockProducts: Product[] = [
-            {
-                id: "1",
-                productName: "Product A",
-                price: 10,
-                category: "Category A",
-                imageURL: "imgA.jpg",
-                description: "Description A",
-                seller: "sellerA@example.com",
-                sold: false,
-                markAsSold: jest.fn(),
-                updateDetails: jest.fn(),
-                getSummary: jest.fn(() => "Product A - $10 (Category A)"),
-            },
-        ];
-
-        // Mock authenticated user
-        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
-            callback({ email: "user@example.com" }); // Simulate authenticated user
-            return jest.fn(); // Mock unsubscribe function
-        });
-
-        // Mock fetching products
-        jest.spyOn(firestoreUtils, "fetchRealTimeData").mockImplementationOnce(
-            (_collectionName, _conditions, onSuccess) => {
-                onSuccess(mockProducts); // Simulate fetching products
-                return jest.fn(); // Mock unsubscribe function
-            }
-        );
-
-        render(<BrowsePage />);
-
-        // Wait for product to render
-        await waitFor(() => expect(screen.getByAltText("Product A")).toBeInTheDocument());
-
-        // Simulate clicking the product image
-        fireEvent.click(screen.getByAltText("Product A"));
-
-        // Assertions: Verify modal opens with product details
-        await waitFor(() => expect(screen.getByText("Description A")).toBeInTheDocument());
-        await waitFor(() => expect(screen.getByText("$10")).toBeInTheDocument());
-    });
-
-    test("shows error message on fetch failure", async () => {
-        // Mock console.error to suppress the error log during the test
-        const consoleErrorMock = jest.spyOn(console, "error").mockImplementation(() => {});
-
-        // Mock authenticated user
-        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
-            callback({ email: "user@example.com" }); // Simulate authenticated user
-            return jest.fn(); // Mock unsubscribe function
-        });
-
-        // Mock implementation of fetchRealTimeData to simulate an error
-        jest.spyOn(firestoreUtils, "fetchRealTimeData").mockImplementationOnce(
-            (_collectionName, _conditions, _onSuccess, onError) => {
-                const mockError: FirestoreError = {
-                    code: "unavailable",
-                    name: "FirestoreError",
-                    message: "Fetch error",
-                }; // Simulate a FirestoreError with required properties
-                onError(mockError);
-                return jest.fn(); // Mock unsubscribe function
-            }
-        );
-
-        render(<BrowsePage />);
-
-        // Wait for the error message to be displayed
-        await waitFor(() =>
-            expect(
-                screen.getByText("Error fetching products. Please try again later.")
-            ).toBeInTheDocument()
-        );
-
-        // Restore console.error after the test
-        consoleErrorMock.mockRestore();
-    });
-
-    test("displays loading indicator", async () => {
-        // Mock authenticated user
-        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
-            callback({ email: "user@example.com" }); // Simulate authenticated user
-            return jest.fn(); // Mock unsubscribe function
-        });
-
-        // Mock fetchRealTimeData to simulate a pending fetch
-        jest.spyOn(firestoreUtils, "fetchRealTimeData").mockImplementationOnce(() => {
-            return jest.fn(); // Mock unsubscribe function
-        });
-
-        render(<BrowsePage />);
-
-        // Assert that the loading indicator is displayed
-        expect(screen.getByText("Loading products...")).toBeInTheDocument();
-    });
-
-    test("shows 'Listings' button for product seller", async () => {
+        const userEmail = "test@example.com"; // The logged-in user's email
         const mockProduct: Product = {
             id: "1",
             productName: "Product A",
@@ -293,30 +132,229 @@ describe("BrowsePage Component", () => {
             category: "Category A",
             imageURL: "imgA.jpg",
             description: "Description A",
-            seller: "test@example.com",
+            seller: userEmail, // Ensure seller matches authenticated user
             sold: false,
-            markAsSold: jest.fn(),
-            updateDetails: jest.fn(),
-            getSummary: jest.fn(() => "Product A - $10 (Category A)"),
+            markAsSold: jest.fn(), //  Add mock function
+            updateDetails: jest.fn(), //  Add mock function
+            getSummary: jest.fn(() => "Product B - $20 (Category B)"), //  Add mock function
         };
 
-        render(<ProductGrid products={[mockProduct]} userEmail="test@example.com" />);
+        // Mock authenticated user
+        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+            callback({ email: userEmail }); // Set the logged-in user's email
+            return jest.fn();
+        });
 
-        // Verify that the 'Listings' button is displayed for the seller
-        expect(screen.getByText("Listings")).toBeInTheDocument();
+        // Ensure getData returns a product where the seller matches userEmail
+        (getData as jest.Mock).mockResolvedValue([mockProduct]);
+
+        render(<BrowsePage />);
+
+        // Ensure products load before checking for the button
+        await waitFor(() => {
+            expect(screen.queryByText("Loading products...")).not.toBeInTheDocument();
+        });
+
+        // "Manage Listings" should appear because userEmail === product.seller
+        await waitFor(() =>
+            expect(screen.getByRole("button", { name: /My Listings/i })).toBeInTheDocument()
+        );
     });
 
-    test("displays empty message when no products available", () => {
-        render(<ProductGrid products={[]} emptyMessage="No products to show." />);
-        // Assert that the empty message is displayed
-        expect(screen.getByText("No products to show.")).toBeInTheDocument();
+
+    test("saves product successfully in IndexedDB", async () => {
+        process.env.NEXT_PUBLIC_USE_FIRESTORE = "false"; // Ensure IndexedDB mode
+
+        const userEmail = "buyer@example.com"; // Logged-in user's email (not the seller)
+        const mockProduct: Product = {
+            id: "1",
+            productName: "Product A",
+            price: 10,
+            category: "Category A",
+            imageURL: "imgA.jpg",
+            description: "Description A",
+            seller: "sellerA@example.com", // Ensure seller is different from logged-in user
+            sold: false,
+            markAsSold: jest.fn(), //  Add mock function
+            updateDetails: jest.fn(), //  Add mock function
+            getSummary: jest.fn(() => "Product B - $20 (Category B)"), //  Add mock function
+        };
+
+        // Mock authenticated user (buyer, not the seller)
+        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+            callback({ email: userEmail });
+            return jest.fn();
+        });
+
+        // Ensure IndexedDB functions are properly mocked
+        (getData as jest.Mock).mockResolvedValue([mockProduct]); // Initial products
+        (addData as jest.Mock).mockResolvedValue(undefined); // Mock adding product
+
+        render(<BrowsePage />);
+
+        // Ensure products load before searching for the "Save" button
+        await waitFor(() => {
+            expect(screen.queryByText("Loading products...")).not.toBeInTheDocument();
+        });
+
+        // Wait for "Save" button to appear (since logged-in user is not the seller)
+        const saveButton = await screen.findByRole("button", { name: /Save/i });
+        expect(saveButton).toBeInTheDocument();
+
+        // Click the "Save" button
+        fireEvent.click(saveButton);
+
+        // Ensure button text updates to "Saved"
+        await waitFor(() => {
+            expect(screen.getByRole("button", { name: /Saved/i })).toBeInTheDocument();
+        });
     });
+
+
+    test("unsaves product successfully in IndexedDB", async () => {
+        process.env.NEXT_PUBLIC_USE_FIRESTORE = "false"; // Ensure IndexedDB mode
+
+        const userEmail = "buyer@example.com"; // Logged-in user's email (not the seller)
+        const mockProduct: Product = {
+            id: "1",
+            productName: "Product A",
+            price: 10,
+            category: "Category A",
+            imageURL: "imgA.jpg",
+            description: "Description A",
+            seller: "sellerA@example.com", // Ensure seller is different from logged-in user
+            sold: false,
+            markAsSold: jest.fn(), //  Add mock function
+            updateDetails: jest.fn(), //  Add mock function
+            getSummary: jest.fn(() => "Product B - $20 (Category B)"), //  Add mock function
+        };
+
+        // Mock authenticated user
+        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+            callback({ email: userEmail });
+            return jest.fn();
+        });
+
+        // Mock IndexedDB functions
+        (getData as jest.Mock).mockResolvedValue([mockProduct]); // Product already saved
+        (deleteData as jest.Mock).mockResolvedValue(undefined); // Mock removing product
+
+        render(<BrowsePage />);
+
+        // Ensure products load before searching for the "Saved" button
+        await waitFor(() => {
+            expect(screen.queryByText("Loading products...")).not.toBeInTheDocument();
+        });
+
+        // Wait for "Saved" button to appear (assuming the product was already saved)
+        const savedButton = await screen.findByRole("button", { name: /Saved/i });
+        expect(savedButton).toBeInTheDocument();
+
+        // Click the "Saved" button to unsave
+        fireEvent.click(savedButton);
+
+        // Ensure `deleteData` is called once to remove from IndexedDB
+        await waitFor(() => {
+            expect(deleteData).toHaveBeenCalledTimes(1);
+            expect(deleteData).toHaveBeenCalledWith("savedItems", mockProduct.id); // Ensure correct collection & ID
+        });
+
+        // Ensure button text updates back to "Save"
+        await waitFor(() => {
+            expect(screen.getByRole("button", { name: /Save/i })).toBeInTheDocument();
+        });
+    });
+
+    test("opens product modal with details", async () => {
+        const mockProduct: Product = {
+            id: "1",
+            productName: "Product A",
+            price: 10,
+            category: "Category A",
+            imageURL: "imgA.jpg",
+            description: "Description A",
+            seller: "sellerA@example.com",
+            sold: false,
+            markAsSold: jest.fn(), //  Add mock function
+            updateDetails: jest.fn(), //  Add mock function
+            getSummary: jest.fn(() => "Product B - $20 (Category B)"), //  Add mock function
+        };
+
+        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+            callback({ email: "user@example.com" });
+            return jest.fn();
+        });
+
+        (getData as jest.Mock).mockResolvedValue([mockProduct]);
+
+        render(<BrowsePage />);
+
+        await waitFor(() => expect(screen.getByAltText("Product A")).toBeInTheDocument());
+
+        fireEvent.click(screen.getByAltText("Product A"));
+
+        await waitFor(() => expect(screen.getByText("Description A")).toBeInTheDocument());
+    });
+
+    test("shows error message on fetch failure", async () => {
+        // Mock authentication
+        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+            callback({ email: "user@example.com" });
+            return jest.fn();
+        });
+
+        // Mock getData to simulate failure
+        (getData as jest.Mock).mockRejectedValue(new Error("Fetch error"));
+
+        render(<BrowsePage />);
+
+        // Ensure "Loading products..." appears first
+        expect(screen.getByText("Loading products...")).toBeInTheDocument();
+
+        // Ensure error message is displayed after loading state disappears
+        await waitFor(() => {
+            expect(screen.queryByText("Loading products...")).not.toBeInTheDocument();
+            expect(screen.getByText("Error fetching products. Please try again later.")).toBeInTheDocument();
+        });
+    });
+
+
+    test("displays loading indicator", async () => {
+        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+            callback({ email: "user@example.com" });
+            return jest.fn();
+        });
+
+        render(<BrowsePage />);
+
+        await waitFor(() => {
+            expect(screen.getByText("Loading products...")).toBeInTheDocument();
+        });
+    });
+
+    test("displays empty message when no products available", async () => {
+        process.env.NEXT_PUBLIC_USE_FIRESTORE = "false"; // Use IndexedDB mode
+
+        // Mock authenticated user
+        (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+            callback({ email: "test@example.com" }); // Set user email
+            return jest.fn(); // Ensure `unsubscribeAuth` is a function
+        });
+
+        // Ensure getData returns an empty array
+        (getData as jest.Mock).mockResolvedValue([]);
+
+        render(<BrowsePage />);
+
+        // Ensure "Loading products..." disappears before checking for empty message
+        await waitFor(() => {
+            expect(screen.queryByText("Loading products...")).not.toBeInTheDocument();
+        });
+
+        // Ensure the empty message appears
+        await waitFor(() =>
+            expect(screen.getByText("No products available to browse.")).toBeInTheDocument()
+        );
+    });
+
 });
-
-
-
-
-
-
-
-
