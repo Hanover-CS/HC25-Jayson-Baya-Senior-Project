@@ -27,10 +27,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                 <p className="text-gray-600 mb-4">Description: {product.description}</p>
                 <p className="text-gray-600 font-bold">Seller: {product.seller}</p>
 
-                {/*"Save" button is inside modal */}
-                <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                    Save
-                </button>
             </div>
         </Modal>
     );
