@@ -164,4 +164,73 @@ describe("SellerPage Component", () => {
         expect(priceInput.value).toBe("0");
         expect(descriptionInput.value).toBe("");
     });
+
+    test("displays product listing (still selling) after creating a new listing", async () => {
+        // Create a dummy Firestore document snapshot that represents your product.
+        const dummyProductDoc = {
+            id: "dummy-id",
+            data: () => ({
+                productName: "Test Product",
+                category: "Appliances",
+                price: 99.99,
+                description: "A test product",
+                imageURL: "http://example.com/test-image.png",
+                seller: "seller@example.com",
+                sold: false,
+                createdAt: "2025-01-01T00:00:00Z",
+                buyerEmail: "",
+                purchaseDate: "2025-01-01T00:00:00Z",
+            }),
+        };
+
+        // Override Firestore's getDocs so that it always returns our dummy product.
+        const { getDocs } = require("firebase/firestore");
+        getDocs.mockResolvedValue({
+            docs: [dummyProductDoc],
+        });
+
+        // Simulate an authenticated seller.
+        const fakeUser = { email: "seller@example.com" };
+        (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+            callback(fakeUser);
+            return jest.fn();
+        });
+
+        // Render the SellerPage.
+        const { container, getByText } = render(<SellerPage />);
+
+        // Fill in the "Create New Listing" form.
+        const productNameInput = container.querySelector('input[type="text"]') as HTMLInputElement;
+        const categorySelect = container.querySelector("select") as HTMLSelectElement;
+        const priceInput = container.querySelector('input[type="number"]') as HTMLInputElement;
+        const descriptionInput = container.querySelector("textarea") as HTMLTextAreaElement;
+        const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
+        const createButton = getByText(/create listing/i);
+
+        fireEvent.change(productNameInput, { target: { value: "Test Product" } });
+        // Use a valid category value available in your form (e.g., "Appliances")
+        fireEvent.change(categorySelect, { target: { value: "Appliances" } });
+        fireEvent.change(priceInput, { target: { value: "99.99" } });
+        fireEvent.change(descriptionInput, { target: { value: "A test product" } });
+        const file = new File(["dummy content"], "test-image.png", { type: "image/png" });
+        fireEvent.change(fileInput, { target: { files: [file] } });
+
+        // Click the "Create Listing" button.
+        fireEvent.click(createButton);
+
+        // Wait for the image upload to complete (i.e. getDownloadURL is called).
+        await waitFor(() => {
+            const { getDownloadURL } = require("firebase/storage");
+            expect(getDownloadURL).toHaveBeenCalled();
+        });
+
+        // Because handleCreateListing calls fetchSellerProducts after a successful creation,
+        // our dummy doc should now be used to update the listing.
+        // Wait until the product title "Test Product" appears in the document.
+        await waitFor(() => {
+            expect(getByText("Test Product")).toBeInTheDocument();
+            expect(getByText("Still Selling")).toBeInTheDocument();
+            expect(getByText("$99.99")).toBeInTheDocument();
+        });
+    });
 });
