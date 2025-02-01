@@ -73,7 +73,7 @@ const BrowsePage = () => {
             ]) || [];
 
             setProducts(fetchedProducts);
-        } catch (error) {
+        } catch {
             setError(fetchProductsAlert.Alert);
             setProducts([]);
         } finally {

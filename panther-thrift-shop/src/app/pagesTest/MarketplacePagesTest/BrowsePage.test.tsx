@@ -21,7 +21,7 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("@/lib/dbHandler", () => ({
-    getData: jest.fn(),
+    getData: jest.fn(() => Promise.resolve([])),
     addData: jest.fn(() => Promise.resolve()),
     deleteData: jest.fn(() => Promise.resolve()),
 }));
@@ -46,11 +46,8 @@ const mockPush = jest.fn();
 (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
 
 describe("BrowsePage Component (Firestore & IndexedDB Tests)", () => {
-    let alertMock: jest.SpyInstance;
 
     beforeEach(() => {
-        // Mock window.alert
-        alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
         jest.clearAllMocks();
     });
 
@@ -180,6 +177,8 @@ describe("BrowsePage Component (Firestore & IndexedDB Tests)", () => {
             getSummary: jest.fn(() => "Product B - $20 (Category B)"), //  Add mock function
         };
 
+        const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
+
         // Mock authenticated user (buyer, not the seller)
         (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
             callback({ email: userEmail });
@@ -187,7 +186,14 @@ describe("BrowsePage Component (Firestore & IndexedDB Tests)", () => {
         });
 
         // Ensure IndexedDB functions are properly mocked
-        (getData as jest.Mock).mockResolvedValue([mockProduct]); // Initial products
+
+        (getData as jest.Mock).mockImplementation((collection) => {
+            if (collection === "savedItems") {
+                return Promise.resolve([]); // No saved items initially
+            }
+            return Promise.resolve([mockProduct]); // Return product listings
+        });
+
         (addData as jest.Mock).mockResolvedValue(undefined); // Mock adding product
 
         render(<BrowsePage />);
@@ -204,10 +210,25 @@ describe("BrowsePage Component (Firestore & IndexedDB Tests)", () => {
         // Click the "Save" button
         fireEvent.click(saveButton);
 
+        /// Ensure `addData` was called correctly
+        await waitFor(() => {
+            expect(addData).toHaveBeenCalledWith("savedItems", expect.objectContaining({
+                id: mockProduct.id,
+                buyerEmail: userEmail
+            }));
+        });
+
+        // Ensure alert is triggered
+        await waitFor(() => {
+            expect(alertMock).toHaveBeenCalledWith("Item saved successfully!");
+        });
+
         // Ensure button text updates to "Saved"
         await waitFor(() => {
             expect(screen.getByRole("button", { name: /Saved/i })).toBeInTheDocument();
         });
+
+        alertMock.mockRestore()
     });
 
 
@@ -228,6 +249,8 @@ describe("BrowsePage Component (Firestore & IndexedDB Tests)", () => {
             updateDetails: jest.fn(), //  Add mock function
             getSummary: jest.fn(() => "Product B - $20 (Category B)"), //  Add mock function
         };
+
+        const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
 
         // Mock authenticated user
         (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
@@ -259,10 +282,18 @@ describe("BrowsePage Component (Firestore & IndexedDB Tests)", () => {
             expect(deleteData).toHaveBeenCalledWith("savedItems", mockProduct.id); // Ensure correct collection & ID
         });
 
+        // Ensure alert was triggered when unsaving
+        await waitFor(() => {
+            expect(alertMock).toHaveBeenCalledWith("Item unsaved successfully!"); // Match the alert message
+        });
+
         // Ensure button text updates back to "Save"
         await waitFor(() => {
             expect(screen.getByRole("button", { name: /Save/i })).toBeInTheDocument();
         });
+
+        // Restore alert mock
+        alertMock.mockRestore();
     });
 
     test("opens product modal with details", async () => {

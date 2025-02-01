@@ -15,7 +15,7 @@ type ClientLayoutWrapperProps = {
 
 const ClientLayoutWrapper: React.FC<ClientLayoutWrapperProps> = ({ children }) => {
     const [selectedCategory, setSelectedCategory] = useState<string>("Browse All");
-    const [userEmail, setUserEmail] = useState<string>("");
+    const [, setUserEmail] = useState<string>("");
     const router = useRouter();
     const pathname = usePathname();
 
