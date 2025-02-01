@@ -5,6 +5,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/Models/ConstantData";
 
+jest.mock("firebase/app", () => ({
+    initializeApp: jest.fn(),
+}));
+
 // Mock Firebase authentication
 jest.mock("firebase/auth", () => ({
     getAuth: jest.fn(() => ({ currentUser: null })),
@@ -21,11 +25,30 @@ jest.mock("@/lib/dbHandler", () => ({
     updateData: jest.fn(() => Promise.resolve()),
 }));
 
+jest.mock("firebase/firestore", () => ({
+    getFirestore: jest.fn(() => ({})),
+    collection: jest.fn(),
+    query: jest.fn(),
+    where: jest.fn(),
+    getDocs: jest.fn(),
+    doc: jest.fn(),
+    setDoc: jest.fn(),
+    addDoc: jest.fn(),
+}));
+
+jest.mock("firebase/storage", () => ({
+    getStorage: jest.fn(() => ({})),
+}));
+
 const mockPush = jest.fn();
 (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
 
 describe("SellerPage Component", () => {
     beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    afterEach(() => {
         jest.clearAllMocks();
     });
 
