@@ -1,3 +1,33 @@
+/**
+ * EditProductModal.tsx
+ *
+ * This file defines the EditProductModal component for the Panther Thrift Shop web application.
+ * The EditProductModal component renders a modal form that allows sellers to edit the details of an
+ * existing product listing. Sellers can update fields such as product name, category, price, description,
+ * and sold status. When a product is marked as sold, the modal prompts the seller to provide the buyer's email.
+ *
+ * Key Features:
+ * - Renders a modal interface for editing product details.
+ * - Editable fields include product name, category, price, description, and sale status.
+ * - Conditional input for buyer email when the product is marked as sold.
+ * - Uses controlled inputs to update the product state via provided setter functions.
+ *
+ * Props:
+ * - selectedProduct: The current product object being edited (or null if no product is selected).
+ * - setSelectedProduct: Function to update the selected product's state.
+ * - setShowEditModal: Function to toggle the visibility of the edit modal.
+ * - handleUpdateProduct: Function invoked when the "Update Product" button is clicked to save changes.
+ *
+ * Dependencies:
+ * - React for component rendering and state management.
+ * - Modal component from "@/components/Modal" for modal display.
+ * - The categories array from "@/Models/ConstantData" to populate the category dropdown.
+ *
+ * Author: Jayson Baya
+ * Last Updated: February 2, 2025
+ */
+
+
 import React from "react";
 import Modal from "@/components/Modal";
 import { categories } from "@/Models/ConstantData";

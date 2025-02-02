@@ -1,3 +1,27 @@
+/**
+ * ProductListings.tsx
+ *
+ * This file defines the ProductListings component for the Panther Thrift Shop web application.
+ * The component displays a grid layout of product listings for sellers to view their items.
+ * Each listing includes an image, product name, price, description, and an indicator of whether the
+ * product is sold or still available. Clicking on a product listing triggers the provided callback
+ * to enable editing of the product details.
+ *
+ * Key Features:
+ * - Renders a responsive grid of product listings using Tailwind CSS.
+ * - Displays essential product details including image, name, price, description, and sale status.
+ * - Provides visual cues for the sale status (e.g., "Sold" in red for sold products, "Still Selling" in green for available products).
+ * - Each product listing is clickable, triggering a callback to facilitate editing.
+ *
+ * Dependencies:
+ * - React for component creation and rendering.
+ * - Tailwind CSS for responsive styling and layout.
+ *
+ * Author: Jayson Baya
+ * Last Updated: February 2, 2025
+ */
+
+
 import React from "react";
 
 interface Product extends Record<string, unknown>{

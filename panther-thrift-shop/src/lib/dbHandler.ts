@@ -2,29 +2,18 @@
  * dbHandler.ts
  *
  * This module provides a unified interface for managing data in the Panther Thrift Shop web application.
- * It supports both Firebase Firestore and a local SQLite-like database (using IndexedDB via the `idb` library).
- * By toggling the `useFirestore` environment variable, the application can seamlessly switch between these
- * two database solutions.
+ * It supports both Firebase Firestore and a local SQLite-like database using IndexedDB (via the `idb` library).
+ * By toggling the `NEXT_PUBLIC_USE_FIRESTORE` environment variable, the application can seamlessly switch
+ * between these two database solutions.
  *
  * Features:
- * - CRUD (Create, Read, Update, Delete) operations for various data types such as `Product`, `User`, `Conversation`, and `Message`.
- * - TypeScript support with strong typings for all data types and operations.
- * - Filter support for querying data in both Firestore and IndexedDB.
+ * - CRUD (Create, Read, Update, Delete) operations for various data types such as Product, User, Conversation, and Message.
+ * - Support for filtering queries in both Firestore and IndexedDB.
  * - Graceful fallback to a local database when Firestore is unavailable or exceeds its quota.
- *
- * Usage:
- * - Use `addData` to insert new data into the database.
- * - Use `getData` to retrieve data with optional filters.
- * - Use `updateData` to update existing records by ID.
- * - Use `deleteData` to delete records by ID.
- *
- * Key Features:
- * - Abstracted operations for both Firestore and IndexedDB.
  * - Strong TypeScript typings ensure data integrity.
- * - Environment-based toggling for database usage.
  *
  * Environment Variable:
- * - `NEXT_PUBLIC_USE_FIRESTORE`: Set to `"true"` to use Firestore; otherwise, the local IndexedDB database is used.
+ * - `NEXT_PUBLIC_USE_FIRESTORE`: Set to `"true"` to use Firestore; if not set to `"true"`, IndexedDB is used.
  *
  * Data Types:
  * - `Product`: Represents a product listing in the application.
@@ -32,50 +21,25 @@
  * - `Conversation`: Represents a chat conversation.
  * - `Message`: Represents a message within a chat conversation.
  *
- * Example:
- * ```typescript
- * // Add a new product
- * await addData<Product>("products", {
- *   id: "product123",
- *   name: "Laptop",
- *   price: 1000,
- *   category: "Electronics",
- *   description: "A high-end gaming laptop.",
- *   imageURL: "https://example.com/laptop.jpg",
- *   seller: "seller123",
- * });
- *
- * // Fetch products in the "Electronics" category
- * const products = await getData<Product>("products", [
- *   { field: "category", operator: "==", value: "Electronics" },
- * ]);
- * console.log(products);
- *
- * // Update product price
- * await updateData<Product>("products", "product123", { price: 900 });
- *
- * // Delete a product
- * await deleteData("products", "product123");
- * ```
- *
- * Author: Jayson Baya
- * Last Updated: January 25, 2025
- *
- * Dependencies:
- * - `idb`: Provides a wrapper for IndexedDB.
- * - `firebase/firestore`: Enables Firestore operations.
- *
  * Functions:
- * - `addData<T>`: Adds a new record to the database.
- * - `getData<T>`: Fetches records from the database with optional filters.
- * - `updateData<T>`: Updates an existing record in the database by ID.
- * - `deleteData`: Deletes a record from the database by ID.
+ * - `initializeDB`: Initializes and upgrades the local IndexedDB instance.
+ * - `addData<T>`: Adds a new record to the specified store in the selected database.
+ * - `getData<T>`: Retrieves records from the specified store with optional filters.
+ * - `updateData`: Updates an existing record in the specified store by ID.
+ * - `deleteData`: Deletes a record from the specified store by ID.
  *
  * Limitations:
  * - Firestore usage is subject to quota limitations in the free tier.
  * - IndexedDB is only accessible in the browser and cannot be used in server-side code.
  *
+ * Dependencies:
+ * - `idb`: Provides a wrapper for IndexedDB.
+ * - `firebase/firestore`: Enables Firestore operations.
+ *
+ * Author: Jayson Baya
+ * Last Updated: January 25, 2025
  */
+
 
 
 import { openDB, IDBPDatabase } from "idb";

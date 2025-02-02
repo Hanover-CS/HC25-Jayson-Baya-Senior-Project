@@ -1,3 +1,31 @@
+/**
+ * login.test.tsx
+ *
+ * This file contains unit tests for the Login component of the Panther Thrift Shop web application,
+ * using React Testing Library and Jest. The tests verify that the Login component behaves as expected,
+ * including rendering the login form, handling authentication errors, and redirecting after a successful login.
+ *
+ * Key Features Tested:
+ * - **Form Rendering:** Ensures the login form displays email and password inputs along with a login button.
+ * - **Error Handling:** Simulates a failed login attempt by mocking a rejected Firebase authentication promise,
+ *   and verifies that an appropriate error message ("User is not registered!") is displayed.
+ * - **Successful Login and Redirection:** Mocks a successful login attempt by resolving the Firebase authentication
+ *   promise and verifies that a success message is displayed and that the user is redirected to the Browse Page.
+ *
+ * Mocks:
+ * - Firebase Authentication's `signInWithEmailAndPassword` function is mocked to simulate both success and failure scenarios.
+ * - Next.js' `useRouter` hook is mocked to monitor and assert the redirection behavior (using `router.push`).
+ *
+ * Dependencies:
+ * - `@testing-library/react` for rendering components and simulating user interactions.
+ * - `@testing-library/jest-dom` for extended DOM assertions.
+ * - Firebase Auth functions and Next.js navigation hooks are mocked to isolate component behavior.
+ *
+ * Author: Jayson Baya
+ * Last Updated: January 25, 2025
+ */
+
+
 import React from "react"
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";

@@ -1,4 +1,43 @@
-// SellerPage.test.tsx
+/**
+ * SellerPage.test.tsx
+ *
+ * This file contains unit tests for the SellerPage component of the Panther Thrift Shop web application,
+ * using React Testing Library and Jest. The tests simulate various scenarios to verify that the SellerPage
+ * component behaves as expected, including user authentication, creating and updating product listings,
+ * handling image uploads via Firebase Storage, and displaying/editing listings through modals.
+ *
+ * Key Features Tested:
+ * - **Authentication:** Ensures unauthenticated users are redirected to the login page.
+ * - **Creating a New Listing:** Verifies that a seller can successfully create a new product listing.
+ *   This includes simulating form field inputs, image file selection, and triggering Firebase Storage's
+ *   upload process, then confirming that the new product is added via the database handler.
+ * - **Displaying Product Listings:** Confirms that product listings are correctly displayed (e.g., showing
+ *   "Still Selling" for unsold products) after a new listing is created.
+ * - **Editing a Listing:** Tests the functionality for a seller to open an edit modal for an existing
+ *   listing, update product details (such as product name), and have the changes saved via the database
+ *   handler.
+ * - **Marking an Item as Sold:** Simulates a seller marking a product as sold by changing its status,
+ *   entering a buyer's email, and ensuring that the update is reflected in the listing (displaying "Sold").
+ *
+ * Mocks and Dependencies:
+ * - **Firebase Modules:** Firebase Authentication (`onAuthStateChanged`), Firestore, and Storage functions are mocked
+ *   to isolate the component behavior. For example, the Firebase Storage functions (such as `uploadBytesResumable`
+ *   and `getDownloadURL`) are mocked to simulate a successful image upload.
+ * - **Next.js Router:** The `useRouter` hook is mocked to monitor redirection (e.g., redirecting unauthenticated
+ *   users to the login page).
+ * - **Database Handler:** Functions from the `@/lib/dbHandler` module (e.g., `getData`, `addData`, `updateData`)
+ *   are mocked to simulate data interactions with either IndexedDB or Firestore.
+ * - **Firestore Mocks:** Firestore's `getDocs`, `collection`, and related functions are mocked to simulate product
+ *   data retrieval and updates.
+ *
+ * Usage:
+ * - Run these tests with Jest to ensure that the SellerPage component correctly handles listing creation, editing,
+ *   and status updates, as well as proper redirection for unauthenticated users.
+ *
+ * Author: Jayson Baya
+ * Last Updated: January 25, 2025
+ */
+
 import React from "react";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import SellerPage from "@/app/pages/SellersPage/page";

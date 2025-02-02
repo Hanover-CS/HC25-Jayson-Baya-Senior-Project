@@ -1,3 +1,34 @@
+/**
+ * BrowsePage.test.tsx
+ *
+ * This file contains unit tests for the BrowsePage component of the Panther Thrift Shop web application,
+ * using React Testing Library and Jest. The tests cover various scenarios to ensure that the component
+ * behaves correctly under different conditions, including authentication, product fetching, UI rendering,
+ * product saving/unsaving, and error handling.
+ *
+ * Key Features Tested:
+ * - **User Authentication:** Verifies that unauthenticated users are redirected to the login page.
+ * - **Product Fetching and Display:** Ensures that products are fetched from the appropriate source (Firestore
+ *   or IndexedDB) based on the environment variable, and that the product grid is correctly rendered.
+ * - **UI States:** Confirms the presence of loading indicators, empty state messages, and error messages as needed.
+ * - **Product Actions:** Tests the functionality of saving and unsaving products (including the corresponding alerts)
+ *   and the proper display of action buttons ("Save", "Saved", or "My Listings") based on the logged-in user's role.
+ * - **Product Modal Display:** Ensures that clicking on a product opens a modal displaying detailed product information.
+ *
+ * Mocks:
+ * - Firebase modules (auth, firestore, storage) are mocked to isolate component behavior.
+ * - Next.js' useRouter hook is mocked to simulate client-side redirection.
+ * - IndexedDB helper functions (`getData`, `addData`, `deleteData`) are mocked to simulate local data operations.
+ *
+ * Dependencies:
+ * - @testing-library/react and @testing-library/jest-dom for component rendering and DOM assertions.
+ * - Jest for mocking functions and modules.
+ *
+ * Author: Jayson Baya
+ * Last Updated: January 25, 2025
+ */
+
+
 import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import BrowsePage from "@/app/pages/BrowsePage/page";

@@ -1,3 +1,28 @@
+/**
+ * PopupAlert.tsx
+ *
+ * This file defines the PopupAlert component for the Panther Thrift Shop web application.
+ * The PopupAlert component renders a modal-like overlay that displays a message along with a
+ * "Close" button. It is used to show notifications, alerts, or error messages to the user.
+ * When the "Close" button is clicked, the provided onClose callback is invoked to dismiss the alert.
+ *
+ * Key Features:
+ * - Displays a centered overlay with a semi-transparent background.
+ * - Shows a custom message passed via the `message` prop.
+ * - Includes a "Close" button that triggers the onClose callback when clicked.
+ *
+ * Props:
+ * - message (string): The alert message to be displayed.
+ * - onClose (function): A callback function to handle closing/dismissing the alert.
+ *
+ * Dependencies:
+ * - React for component creation and rendering.
+ *
+ * Author: Jayson Baya
+ * Last Updated: February 2, 2025
+ */
+
+
 import React from "react";
 
 interface PopupAlertProps {

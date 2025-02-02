@@ -1,27 +1,37 @@
 /**
  * ProductGrid.tsx
  *
- * This component renders a grid of products. It supports features such as:
- * - Clicking on a product to view details.
- * - Saving or unsaving products for a logged-in user.
- * - Redirecting to the seller's listings if the logged-in user owns the product.
+ * This file defines the ProductGrid component for the Panther Thrift Shop web application.
+ * The ProductGrid component renders a responsive grid of product cards with the following features:
+ * - Displays product details such as image, name, price, and description.
+ * - Allows a logged-in user to save or unsave products, updating the saved products collection in Firestore (or IndexedDB).
+ * - Redirects the seller to their own listings if the logged-in user is the owner of the product.
  *
- * Dependencies:
- * - Firebase Firestore for fetching saved products.
- * - Tailwind CSS for styling.
- * - React state for managing UI interactions.
+ * Key Features:
+ * - Renders a grid layout using Tailwind CSS for responsive design.
+ * - Enables product detail viewing through the onProductClick callback.
+ * - Provides a "Save" / "Saved" button that toggles a product's saved status for the logged-in user.
+ * - Displays a "My Listings" button for products owned by the logged-in user, which triggers the onSellerRedirect callback.
+ * - Shows a customizable empty state message when no products are available.
  *
  * Props:
- * - `products`: List of products to display.
- * - `onProductClick`: Callback when a product is clicked.
- * - `onSaveProduct`: Callback to save/unsave a product.
- * - `onSellerRedirect`: Callback to redirect to the seller's listings.
- * - `userEmail`: Logged-in user's email.
- * - `emptyMessage`: Message to display when no products are available.
+ * - products (Product[]): An array of product objects to be displayed.
+ * - onProductClick (function): Callback invoked when a product is clicked to view its details.
+ * - onSellerRedirect (function): Callback invoked when a seller wants to view their own listings.
+ * - userEmail (string): The email of the logged-in user, used to determine ownership and saved status.
+ * - emptyMessage (string): A message to display when there are no products available.
+ * - showSaveButton (boolean): Flag to control whether the save/unsave button is rendered.
+ *
+ * Dependencies:
+ * - React for component creation and state management.
+ * - Firebase Firestore (via getData, addData, deleteData functions) for fetching and updating saved products.
+ * - Tailwind CSS for styling and responsive layout.
+ * - Constant values from "@/Models/ConstantData" for Firestore collection and field names, as well as alert messages.
  *
  * Author: Jayson Baya
  * Last Updated: January 25, 2025
  */
+
 
 import React, {useEffect, useState} from "react";
 import {Product} from "@/Models/Product";

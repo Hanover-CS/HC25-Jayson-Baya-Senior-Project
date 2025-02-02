@@ -1,3 +1,38 @@
+/**
+ * signup.test.tsx
+ *
+ * This file contains unit tests for the SignUp component of the Panther Thrift Shop web application,
+ * using React Testing Library and Jest. The tests verify that the SignUp component behaves correctly
+ * under various scenarios, including successful registration using both Firestore and IndexedDB, as well as
+ * handling error conditions.
+ *
+ * Key Features Tested:
+ * - **Form Rendering:** Ensures the sign-up form displays email and password inputs along with the sign-up button.
+ * - **Successful Registration (Firestore):** Simulates a successful registration when Firestore is enabled.
+ *   It verifies that the success message ("You successfully registered!") is displayed and that the user
+ *   is redirected to the Browse Page.
+ * - **Successful Registration (IndexedDB):** Simulates a successful registration when Firestore is disabled
+ *   (using IndexedDB), verifying the same success and redirection behavior.
+ * - **Email Already Registered Error:** Simulates a Firebase error when the email is already in use, verifying
+ *   that the appropriate error message ("Email ID already registered.") is shown and that no redirection occurs.
+ * - **General Error Handling:** Tests the display of a general error message when an unknown error occurs during registration.
+ *
+ * Mocks:
+ * - Firebase Authentication's `createUserWithEmailAndPassword` is mocked to simulate both successful and failing scenarios.
+ * - Firestore functions such as `setDoc` are mocked when Firestore mode is enabled.
+ * - The IndexedDB helper function `addData` is mocked to simulate local data storage.
+ * - Next.js' `useRouter` hook is mocked to monitor redirection behavior via `router.push`.
+ *
+ * Dependencies:
+ * - `@testing-library/react` for component rendering and simulating user interactions.
+ * - `@testing-library/jest-dom` for extended DOM assertions.
+ * - Firebase Authentication, Firestore, and Storage modules are mocked to isolate component behavior.
+ *
+ * Author: Jayson Baya
+ * Last Updated: January 25, 2025
+ */
+
+
 import React from "react"
 import { FirebaseError } from "@firebase/app";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";

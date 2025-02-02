@@ -1,4 +1,32 @@
-//  BuyingPage.test.tsx
+/**
+ * BuyingPage.test.tsx
+ *
+ * This file contains unit tests for the BuyingPage component of the Panther Thrift Shop web application,
+ * using React Testing Library and Jest. These tests verify that the BuyingPage component behaves as expected
+ * in various scenarios, including authentication, data fetching from IndexedDB/Firestore, tab navigation,
+ * modal display for product details, and error handling.
+ *
+ * Key Features Tested:
+ * - **User Authentication:** Ensures that unauthenticated users are redirected to the login page.
+ * - **Tab Navigation:** Verifies that the component displays the "Saved Items" tab by default, and that switching
+ *   between "Saved Items" and "Purchased Orders" shows the corresponding empty state messages when no items exist.
+ * - **Product Display:** Confirms that saved and purchased products are rendered correctly and that product details
+ *   are displayed when a product is clicked.
+ * - **Modal Functionality:** Ensures that clicking on a product opens a modal displaying detailed product information,
+ *   and that the modal can be closed correctly.
+ *
+ * Mocks and Dependencies:
+ * - **Firebase Auth:** The `onAuthStateChanged` function is mocked to simulate both authenticated and unauthenticated states.
+ * - **Next.js Navigation:** The `useRouter` hook is mocked to monitor redirection (using `router.push`).
+ * - **Data Fetching:** The `getData` function (and others such as `addData` and `deleteData`) from the database handler
+ *   module is mocked to simulate data retrieval from either Firestore or IndexedDB.
+ * - **Component Imports:** The BuyingPage component and related models (e.g., Product) are imported to perform the tests.
+ *
+ * Author: Jayson Baya
+ * Last Updated: January 25, 2025
+ */
+
+
 import React from "react";
 import {fireEvent, render, screen, waitFor, within} from "@testing-library/react";
 import { onAuthStateChanged } from "firebase/auth";

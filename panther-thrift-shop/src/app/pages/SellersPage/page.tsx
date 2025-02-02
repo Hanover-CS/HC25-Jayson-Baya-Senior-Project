@@ -1,28 +1,44 @@
 /**
  * SellerPage.tsx
  *
- * This file defines the `SellerPage` component for the Panther Thrift Shop web application.
- * The `SellerPage` allows users with a seller role to upload and manage their own product listings.
- * Sellers can create new listings, edit existing listings, and update the status of their products
- * (e.g., mark as sold). The component includes real-time interaction with Firebase Firestore and
- * Firebase Storage for image uploads.
+ * This file defines the SellerPage component for the Panther Thrift Shop web application.
+ * The SellerPage component provides functionality for users with a seller role to manage their
+ * product listings.
+ * Sellers can:
+ * - Create new product listings with image uploads.
+ * - View and manage their existing product listings.
+ * - Edit product details, including marking items as sold.
+ *
+ * The component leverages Firebase for real-time data management and image uploads:
+ * - Firebase Firestore is used for storing and retrieving product data.
+ * - Firebase Storage handles image uploads and retrieval of download URLs.
+ *
+ * In addition, the component includes offline support by caching seller products in IndexedDB.
+ * It first attempts to load products from IndexedDB and, if none are found, fetches them from Firestore,
+ * then caches the results locally. When editing a product, if the product is marked as sold and a buyer email
+ * is provided, the product is also moved to the "Purchased Orders" collection.
  *
  * Key Features:
- * - Allows sellers to create new product listings with image upload.
- * - Real-time display of the seller's own product listings.
- * - Modal for editing product information, including product details and sold status.
- * - Responsive design using Tailwind CSS.
+ * - **Create Listings:** Upload images and create new product listings with complete details.
+ * - **Offline Support:** Fetch and cache seller products using IndexedDB for offline accessibility.
+ * - **Edit Listings:** Edit product information in a modal, with validations such as requiring a buyer email
+ *   when marking an item as sold.
+ * - **Real-Time Data Management:** Seamless integration with Firebase Firestore for updating and retrieving data.
+ * - **Responsive Design:** Utilizes Tailwind CSS for a responsive UI, with dedicated components for forms,
+ *   listings, modals, and alerts.
  *
  * Dependencies:
  * - Firebase Auth for user authentication.
  * - Firebase Firestore for real-time product data management.
- * - Firebase Storage for uploading product images.
- * - `MarketplaceNavBar` and `MarketplaceSidebar` components for navigation.
- * - `Modal` component for editing product details.
+ * - Firebase Storage for handling image uploads.
+ * - IndexedDB integration via custom utility functions (initializeDB, addData, updateData) for offline support.
+ * - Next.js useRouter for client-side navigation and redirection.
+ * - UI Components: CreateListingForm, ProductListings, EditProductModal, and PopupAlert.
  *
  * Author: Jayson Baya
- * Last Updated: November 14, 2024
+ * Last Updated: February 2, 2025
  */
+
 
 "use client";
 

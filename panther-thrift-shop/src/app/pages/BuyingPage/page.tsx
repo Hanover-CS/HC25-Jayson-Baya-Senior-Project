@@ -1,32 +1,36 @@
 /**
  * BuyingPage.tsx
  *
- * This file defines the `BuyingPage` component for the Panther Thrift Shop web application.
- * The `BuyingPage` serves as the main dashboard for buyers, allowing them to:
+ * This file defines the BuyingPage component for the Panther Thrift Shop web application.
+ * The BuyingPage serves as the primary dashboard for buyers, providing them with the ability to:
  * - View their saved items.
  * - Check their purchase history.
- * - View offers they have made on products. (for now need to remove this feature, the least priority)
  *
- * The component fetches data in real-time from Firebase Firestore and organizes it into three tabs:
- * "Saved Items", "Purchased Orders", and "Offers". Buyers can easily navigate between these tabs to
- * manage their items and track their activities.
- * Model, This ensures that all product data fetched from Firestore follows a consistent structure,
- * making it easier to handle and display.
+ * Note: The "Offers" feature has been deprioritized and is not included in the current implementation.
+ *
+ * The component fetches data in real-time from Firebase Firestore and organizes it into two main tabs:
+ * "Saved Items" and "Purchased Orders". Buyers can seamlessly navigate between these tabs to manage their
+ * items and review their purchasing activities.
  *
  * Key Features:
- * - Real-time data fetching for saved items, purchased items, and offers using Firebase Firestore.
- * - User authentication via Firebase Auth with redirection to login if the user is not authenticated.
- * - Responsive UI with tab-based navigation.
- * - Displays detailed information for each item, including product image, name, price, and description.
+ * - Real-time data fetching for saved items and purchased orders from Firestore.
+ * - User authentication using Firebase Auth; unauthenticated users are redirected to the login page.
+ * - Responsive, tab-based UI for easy navigation between different sections.
+ * - Detailed product display using the ProductGrid component.
+ * - Product details are presented in a modal popup via the ProductModal component when an item is clicked.
  *
  * Dependencies:
- * - Firebase Auth for user authentication.
- * - Firebase Firestore for data retrieval.
- * - `MarketplaceNavBar` and `MarketplaceSidebar` components for navigation.
+ * - Firebase Auth for managing user authentication.
+ * - Firebase Firestore for real-time data retrieval.
+ * - Next.js useRouter for client-side navigation and redirection.
+ * - ProductGrid component for rendering the grid layout of products.
+ * - ProductModal component for displaying detailed product information in a modal.
+ * - Custom utility function getData from dbHandler for querying Firestore.
  *
  * Author: Jayson Baya
- * Last Updated: November 14, 2024
+ * Last Updated: February 2, 2025
  */
+
 
 "use client";
 

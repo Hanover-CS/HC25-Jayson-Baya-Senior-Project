@@ -1,29 +1,41 @@
 /**
  * BrowsePage.tsx
  *
- * This file defines the `BrowsePage` component for the Panther Thrift Shop web application.
- * The `BrowsePage` serves as the main homepage for users and buyers, allowing them to view
- * available products and save items for later. It displays product listings in real-time,
- * fetching data from Firebase Firestore. Users can click on products to view details,
- * save products to their saved items list, or redirect to the seller's listings if they
- * are the product owner.
+ * This file defines the BrowsePage component, which serves as the primary
+ * interface for browsing available products on the Panther Thrift Shop web application.
+ * The component is responsible for:
+ *
+ * - **User Authentication:** It listens for authentication state changes using
+ *   Firebase Auth. Unauthenticated users are redirected to the login page.
+ * - **Product Retrieval:** It fetches a real-time list of unsold products from
+ *   Firebase Firestore using a custom `getData` function.
+ * - **Product Display:** It renders the fetched products in a grid layout using
+ *   the `ProductGrid` component.
+ * - **Product Details:** When a product is clicked, detailed information is shown
+ *   in a modal popup via the `ProductModal` component.
+ * - **Seller Redirection:** If the current user interacts with their own product,
+ *   the component can redirect them to the seller's page.
  *
  * Key Features:
- * - Real-time product listings using Firebase Firestore.
- * - Category-based browsing with a sidebar navigation.
- * - Save item functionality for buyers.
- * - Modal pop-up for viewing product details.
- * - Redirects to the seller's page if the current user is the product owner.
+ * - Real-time fetching of unsold products from Firestore.
+ * - Conditional rendering based on authentication and data loading states.
+ * - Modular UI using `ProductGrid` for displaying products and `ProductModal` for
+ *   detailed views.
+ * - Navigation management with Next.js' `useRouter`.
  *
  * Dependencies:
- * - Firebase Auth for user authentication.
- * - Firebase Firestore for real-time product data.
- * - `MarketplaceNavBar` and `MarketplaceSidebar` components for navigation.
- * - `Modal` component for displaying product details.
+ * - **React:** For state management and component rendering.
+ * - **Next.js:** For client-side navigation using `useRouter`.
+ * - **Firebase Auth:** To handle user authentication.
+ * - **Firebase Firestore:** For storing and fetching product data in real-time.
+ * - **ProductGrid Component:** Renders the grid view of available products.
+ * - **ProductModal Component:** Displays detailed information about a selected product.
+ * - **Custom Utilities:** The `getData` function from `dbHandler` is used to query Firestore.
  *
  * Author: Jayson Baya
- * Last Updated: November 14, 2024
+ * Last Updated: February 2, 2025
  */
+
 
 "use client";
 

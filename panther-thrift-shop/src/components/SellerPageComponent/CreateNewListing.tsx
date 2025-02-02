@@ -1,3 +1,33 @@
+/**
+ * CreateListingForm.tsx
+ *
+ * This file defines the CreateListingForm component for the Panther Thrift Shop web application.
+ * The component renders a form that allows sellers to create a new product listing. Users can enter
+ * product details such as name, select a category from a predefined list, specify the price, add a
+ * description, and upload a product image. Upon clicking the "Create Listing" button, the provided
+ * handleCreateListing function is triggered to process and submit the listing data.
+ *
+ * Props:
+ * - name: A string representing the product name.
+ * - setName: A function to update the product name.
+ * - category: A string representing the selected category.
+ * - setCategory: A function to update the selected category.
+ * - price: A number representing the product price.
+ * - setPrice: A function to update the product price.
+ * - description: A string representing the product description.
+ * - setDescription: A function to update the product description.
+ * - setImage: A function to set the product image file.
+ * - handleCreateListing: A function that is called when the "Create Listing" button is clicked to submit the form.
+ *
+ * Dependencies:
+ * - React for building the component.
+ * - The categories array from "@/Models/ConstantData" to populate the category dropdown.
+ *
+ * Author: Jayson Baya
+ * Last Updated: February 2, 2025
+ */
+
+
 import React from "react";
 import { categories } from "@/Models/ConstantData";
 
