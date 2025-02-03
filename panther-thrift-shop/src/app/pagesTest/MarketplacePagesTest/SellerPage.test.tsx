@@ -44,7 +44,9 @@ import SellerPage from "@/app/pages/SellersPage/page";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { ROUTES, FIRESTORE_COLLECTIONS } from "@/Models/ConstantData";
-import { addData } from "@/lib/dbHandler";
+import {addData, updateData} from "@/lib/dbHandler";
+import {getDownloadURL} from "firebase/storage";
+import {getDocs} from "firebase/firestore";
 
 
 jest.mock("firebase/app", () => ({
@@ -102,7 +104,7 @@ jest.mock("firebase/storage", () => ({
     // For simplicity, our ref() returns the path string.
     ref: jest.fn((_storage, path) => path),
     // Simulate uploadBytesResumable: immediately invoke the "complete" callback.
-    uploadBytesResumable: jest.fn((ref, file) => ({
+    uploadBytesResumable: jest.fn((_ref, _file) => ({
         on: (_event: string, _progress: Function, _error: Function, complete: Function) => {
             // Directly call the complete callback to simulate a successful upload.
             complete();
@@ -176,7 +178,6 @@ describe("SellerPage Component", () => {
 
         // Wait for the image upload to finish (i.e. getDownloadURL is called).
         await waitFor(() => {
-            const { getDownloadURL } = require("firebase/storage");
             expect(getDownloadURL).toHaveBeenCalled();
         });
 
@@ -223,8 +224,7 @@ describe("SellerPage Component", () => {
         };
 
         // Override Firestore's getDocs so that it always returns our dummy product.
-        const { getDocs } = require("firebase/firestore");
-        getDocs.mockResolvedValue({
+        (getDocs as jest.Mock).mockResolvedValue({
             docs: [dummyProductDoc],
         });
 
@@ -259,7 +259,6 @@ describe("SellerPage Component", () => {
 
         // Wait for the image upload to complete (i.e. getDownloadURL is called).
         await waitFor(() => {
-            const { getDownloadURL } = require("firebase/storage");
             expect(getDownloadURL).toHaveBeenCalled();
         });
 
@@ -292,8 +291,7 @@ describe("SellerPage Component", () => {
         };
 
         // Override Firestore's getDocs so that it initially returns our dummy product.
-        const { getDocs } = require("firebase/firestore");
-        getDocs.mockResolvedValue({
+        (getDocs as jest.Mock).mockResolvedValue({
             docs: [dummyProductDoc],
         });
 
@@ -329,7 +327,7 @@ describe("SellerPage Component", () => {
         expect(productNameInput.value).toBe("New Product");
 
         // Before clicking update, override getDocs so that the next fetch returns the updated product.
-        getDocs.mockResolvedValueOnce({
+        (getDocs as jest.Mock).mockResolvedValueOnce({
             docs: [
                 {
                     id: "dummy-id",
@@ -355,7 +353,7 @@ describe("SellerPage Component", () => {
 
         // Verify that updateData was called with the updated product details.
         await waitFor(() => {
-            const { updateData } = require("@/lib/dbHandler");
+
             expect(updateData).toHaveBeenCalledWith(
                 FIRESTORE_COLLECTIONS.PRODUCTS,
                 "dummy-id",
@@ -404,8 +402,7 @@ describe("SellerPage Component", () => {
         };
 
         // Override Firestore's getDocs so that it initially returns our dummy product.
-        const { getDocs } = require("firebase/firestore");
-        getDocs.mockResolvedValue({
+        (getDocs as jest.Mock).mockResolvedValue({
             docs: [dummyProductDoc],
         });
 
@@ -453,7 +450,7 @@ describe("SellerPage Component", () => {
         expect(buyerEmailInput.value).toBe("buyer@example.com");
 
         // Before clicking update, override getDocs so that the next fetch returns the updated product.
-        getDocs.mockResolvedValueOnce({
+        (getDocs as jest.Mock).mockResolvedValueOnce({
             docs: [
                 {
                     id: "dummy-id",
@@ -479,7 +476,6 @@ describe("SellerPage Component", () => {
 
         // Verify that updateData was called with the updated product details.
         await waitFor(() => {
-            const { updateData } = require("@/lib/dbHandler");
             expect(updateData).toHaveBeenCalledWith(
                 FIRESTORE_COLLECTIONS.PRODUCTS,
                 "dummy-id",
