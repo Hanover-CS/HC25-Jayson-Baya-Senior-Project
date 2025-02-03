@@ -90,8 +90,7 @@ jest.mock("firebase/storage", () => ({
     // ref returns the path string.
     ref: jest.fn((_storage: unknown, path: string): string => path),
     // uploadBytesResumable now types its callbacks explicitly.
-    uploadBytesResumable: jest.fn(
-        (..._args: unknown[]): {
+    uploadBytesResumable: jest.fn((): {
             on: (
                 event: string,
                 progress: (snapshot: { bytesTransferred: number; totalBytes: number }) => void,
