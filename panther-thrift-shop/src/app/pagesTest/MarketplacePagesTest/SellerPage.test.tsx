@@ -91,7 +91,7 @@ jest.mock("firebase/storage", () => ({
     ref: jest.fn((_storage: unknown, path: string): string => path),
     // uploadBytesResumable now types its callbacks explicitly.
     uploadBytesResumable: jest.fn(
-        (_ref: unknown, _file: unknown): {
+        (..._args: unknown[]): {
             on: (
                 event: string,
                 progress: (snapshot: { bytesTransferred: number; totalBytes: number }) => void,
@@ -336,7 +336,7 @@ describe("SellerPage Component", () => {
         });
 
         await waitFor(() => {
-            expect(getByText((content, node) => {
+            expect(getByText((content) => {
                 const normalizedText = content.replace(/\s+/g, " ").trim();
                 return normalizedText.includes("New Product");
             })).toBeInTheDocument();
