@@ -104,7 +104,7 @@ jest.mock("firebase/storage", () => ({
     // For simplicity, our ref() returns the path string.
     ref: jest.fn((_storage, path) => path),
     // Simulate uploadBytesResumable: immediately invoke the "complete" callback.
-    uploadBytesResumable: jest.fn((_ref, _file) => ({
+    uploadBytesResumable: jest.fn((_ref: unknown, _file: unknown) => ({
         on: (_event: string, _progress: Function, _error: Function, complete: Function) => {
             // Directly call the complete callback to simulate a successful upload.
             complete();
