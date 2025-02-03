@@ -37,13 +37,13 @@ const MarketplaceSidebar: React.FC<SidebarProps> = ({ selectedCategory }: Sideba
         { name: "Selling", path: "/pages/SellersPage" },
     ];
 
-    const categories = [
-        { name: "Men's Clothing", path: "/marketplace/mens-clothing" },
-        { name: "Women's Clothing", path: "/marketplace/womens-clothing" },
-        { name: "Appliances", path: "/marketplace/appliances" },
-        { name: "Room Decoration", path: "/marketplace/room-decoration" },
-        { name: "Textbooks", path: "/marketplace/textbooks" },
-    ];
+    // const categories = [
+    //     { name: "Men's Clothing", path: "/marketplace/mens-clothing" },
+    //     { name: "Women's Clothing", path: "/marketplace/womens-clothing" },
+    //     { name: "Appliances", path: "/marketplace/appliances" },
+    //     { name: "Room Decoration", path: "/marketplace/room-decoration" },
+    //     { name: "Textbooks", path: "/marketplace/textbooks" },
+    // ];
 
     const handleNavigation = (path: string) => {
         router.push(path); // Navigate to the specified path
@@ -66,20 +66,20 @@ const MarketplaceSidebar: React.FC<SidebarProps> = ({ selectedCategory }: Sideba
 
             {/* Divider between Special Sections and Categories */}
             <hr className="my-4 border-gray-300" />
-            <h3 className="text-lg font-semibold mb-2">Categories</h3>
+            {/*<h3 className="text-lg font-semibold mb-2">Categories</h3>*/}
 
             {/* Categories */}
-            {categories.map((category, idx) => (
-                <button
-                    key={idx}
-                    onClick={() => handleNavigation(category.path)} // Navigate to the category path
-                    className={`block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded ${
-                        selectedCategory === category.name ? "bg-gray-200" : ""
-                    }`}
-                >
-                    {category.name}
-                </button>
-            ))}
+            {/*{categories.map((category, idx) => (*/}
+            {/*    <button*/}
+            {/*        key={idx}*/}
+            {/*        onClick={() => handleNavigation(category.path)} // Navigate to the category path*/}
+            {/*        className={`block text-left w-full text-gray-700 hover:bg-gray-200 p-2 rounded ${*/}
+            {/*            selectedCategory === category.name ? "bg-gray-200" : ""*/}
+            {/*        }`}*/}
+            {/*    >*/}
+            {/*        {category.name}*/}
+            {/*    </button>*/}
+            {/*))}*/}
         </div>
     );
 };
